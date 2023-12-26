@@ -47,10 +47,6 @@ module.exports = {
 			'error',
 			'windows'
 		],
-		'quotes': [
-			'error',
-			'single'
-		],
 		'semi': [
 			'error',
 			'always'
@@ -74,6 +70,7 @@ module.exports = {
         "no-tabs": 0,
 		'react/jsx-filename-extension': [2, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
 		"comma-dangle": 0,
+		'react/button-has-type': 'off',
 		"react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
 	}
 };

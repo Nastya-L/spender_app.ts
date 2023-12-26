@@ -1,0 +1,79 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.greetings {
+    &__container {
+        padding: 0;
+        margin: 0;
+        background-color: #fff;
+        display: flex;
+        gap: 1.6667rem;
+        height: 100vh;
+    }
+
+    &__img {
+        width: 50%;
+        overflow: auto;
+        margin: 0 0 0 3.3333rem;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+
+        &-wrap {
+            width: 100%;
+        }
+
+        img {
+            width: 100%;
+        }
+
+    }
+
+    &__content {
+        border-radius: $border-radius;
+        background-color: $background-color-grey;
+        
+        @include flex-center;
+
+        width: 50%;
+        margin: 3rem 3.3333rem 3rem 0;
+
+        &-wrap {
+            @include flex-center;
+        }
+
+        &-title {
+            @include title-text(2.4rem, 2.8rem, 400);
+
+            margin-bottom: 2rem;
+        }
+
+        &-descr {
+            @include basic-text(1rem, 1.3333rem);
+
+            max-width: 22rem;
+            margin-bottom: 1.3333rem;
+            align-self: flex-start;
+        }
+    }
+
+    &__button {
+        @include button(1rem, 1.3333rem);
+
+        padding: 0.6667rem 10rem;
+    }
+
+    &__button-signin {
+        @include basic-text(1rem, 1.3333rem);
+
+        margin-top: 1.3333rem;
+        user-select: none;
+    }
+
+    &__button-signin:hover {
+        @include basic-text(1.2rem, 1.3333rem);
+
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}

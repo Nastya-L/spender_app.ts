@@ -1,0 +1,39 @@
+@use '../utils/variables' as *;
+
+@mixin basic-text($size, $line) {
+    color: $basic-color-text;
+    font-family: "Noto Sans", sans-serif;
+    font-weight: 400;
+    font-size: $size;
+    line-height: $line;
+}
+
+@mixin flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin title-text($size, $line, $weight) {
+    color: $basic-color-text;
+    font-family: Oswald, sans-serif;
+    font-size: $size;
+    font-weight: $weight;
+    line-height: $line;
+}
+
+@mixin button($size, $line) {
+    @include basic-text($size,  $line);
+    border-radius: 0.6667rem;
+    background: #76DE37;
+    border: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+@mixin input {
+    border-radius: 0.4667rem;
+    border: 1px solid $basic-color-text;
+    background: $background-color-grey;
+}

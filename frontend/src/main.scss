@@ -1,0 +1,11 @@
+// base
+@use './scss/base/normalize';
+
+// components
+
+// pages
+@use './scss/pages/greetings';
+
+// utils
+@use './scss/utils/mixins';
+@use './scss/utils/variables';
