@@ -1,0 +1,42 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.sing-in {
+    @include flex-center;
+
+    &__title {
+        @include title-text(2.4rem, 2.8rem, 700);
+
+        align-self: flex-start;
+        margin-bottom: 2.8667rem;
+    }
+
+    &__form {
+        @include flex-center;
+
+        gap: 1.5625rem;
+        position: relative;
+    }
+
+    &__input {
+        @include input;
+        @include basic-text(1rem, 1.12rem);
+
+        padding: 0.3333rem 0.8rem;
+        width: 18.3333rem;   
+    }
+
+    &__img {
+        position: absolute;
+        top: 3.7333rem;
+        right: 0.3333rem;
+        border: none;
+        background: none;
+    }
+
+    &__button {
+        @include button(1rem, 1.3333rem);
+
+        padding: 0.6667rem 8.45rem;
+    }
+}

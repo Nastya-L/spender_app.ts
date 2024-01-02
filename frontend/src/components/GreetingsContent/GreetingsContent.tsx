@@ -15,7 +15,7 @@ const GreetingsContent: React.FC = () => {
 				Or do you save every penny? Simply log your expenses to see how much of a
 				spender you are. Register now, it&apos;s easy and will only take a few minutes.
 			</p>
-			<button className="greetings__button">Get Started</button>
+			<button className="greetings__button" onClick={ClickStarted}>Get Started</button>
 			<a href="/" className="greetings__button-signin">Already have an account? Sign In</a>
 		</div>
 	);

@@ -25,6 +25,7 @@
 
 @mixin button($size, $line) {
     @include basic-text($size,  $line);
+    
     border-radius: 0.6667rem;
     background: #76DE37;
     border: none;
