@@ -1,0 +1,41 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.sing-up {
+    @include flex-center;
+    
+    &__title {
+        @include title-text(2.4rem, 2.8rem, 700);
+
+        align-self: flex-start;
+        margin-bottom: 2.8rem;
+    }
+
+    &__form {
+        @include flex-center;
+
+        gap: 1.3333rem;
+    }
+
+    &__input {
+        @include input;
+        @include basic-text(1rem, 1.12rem);
+
+        padding: 0.333rem 0.8rem;
+        width: 18.3333rem;
+    }
+
+    &__button {
+        @include button(1rem, 1.3333rem);
+
+        padding: 0.6667rem 8.2rem;
+        margin-top: 1rem;
+    }
+
+    &__error {
+        @include basic-text(0.8rem, 1.12rem);
+
+        color: red;
+        margin-bottom: 10px;
+    }
+}
