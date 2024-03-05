@@ -3,10 +3,12 @@ import type { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import userRouter from './routes/userRoutes.js';
+import authorizationRouters from './routes/authorizationRouters.js';
 
 const app: Express = express();
 app.use(express.json());
 app.use('/user/register', userRouter);
+app.use('/user/login', authorizationRouters);
 
 dotenv.config();
 const {

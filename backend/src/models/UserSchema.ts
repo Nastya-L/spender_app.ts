@@ -19,7 +19,10 @@ const UserSchema = new Schema({
     type: String,
     required: [true]
   },
-  token: { type: String },
+  token: {
+    token: { type: String },
+    time: { type: Date }
+  },
   time: {
     type: Date,
     default: Date.now

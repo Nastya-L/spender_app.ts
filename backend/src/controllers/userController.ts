@@ -1,26 +1,11 @@
 import type { Request, Response } from 'express';
-import { type ErrorFormatter, type ValidationError, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import User from '../models/UserSchema.js';
 import { createHash } from 'crypto';
+import errorFormatter from '../utils/errorFormatter.js';
 
 export const getUser = (req: Request, res: Response): void => {
   res.send('Not implemented');
-};
-
-const createToken = (): string => {
-  const abc: string = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
-  let token: string = '';
-  for (let i = 0; i < 16; i++) {
-    token += abc[Math.floor(Math.random() * (abc.length - 1))];
-  }
-  return token;
-};
-
-const errorFormatter: ErrorFormatter = (error: ValidationError) => {
-  if (error.type === 'field') {
-    return { msg: error.msg, field: error.path };
-  }
-  return { msg: error.msg };
 };
 
 export const registerUser = (req: Request, res: Response): void => {
@@ -29,7 +14,7 @@ export const registerUser = (req: Request, res: Response): void => {
   const password: string = createHash('sha256').update(req.body.password as string).digest('hex');
 
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ error: errors.array() });
     return;
   }
 
@@ -38,7 +23,7 @@ export const registerUser = (req: Request, res: Response): void => {
     firstName: req.body.firstName,
     email: email,
     password: password,
-    token: createToken()
+    token: null
   });
 
   User.findOne({ email: email })
