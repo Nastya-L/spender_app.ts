@@ -32,7 +32,7 @@ export const registerUser = (req: Request, res: Response): void => {
         return res.status(400).json({ error: [{ msg: 'Account with the e-mail address already exists.', field: 'email' }] });
       }
       user.save().then((user) => {
-        return res.status(200).json({ result: 'You have been successfully registered with us!' });
+        return res.status(200).json({ result: 'You have been successfully registered!' });
       }).catch((err) => {
         return res.status(500).json({ error: [{ msg: String(err) }] });
       });

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import type { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
@@ -6,10 +7,6 @@ import userRouter from './routes/userRoutes.js';
 import authorizationRouters from './routes/authorizationRouters.js';
 
 const app: Express = express();
-app.use(express.json());
-app.use('/user/register', userRouter);
-app.use('/user/login', authorizationRouters);
-
 dotenv.config();
 const {
   PORT,
@@ -18,6 +15,11 @@ const {
   DATABASE_PORT,
   DB_NAME
 } = process.env;
+app.use(cors());
+app.use(express.json());
+app.use('/user/register', userRouter);
+app.use('/user/login', authorizationRouters);
+
 const dbHost = process.env.MONGODB_HOST || 'localhost';
 const mongoString = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${dbHost}:${DATABASE_PORT}/`;
 
