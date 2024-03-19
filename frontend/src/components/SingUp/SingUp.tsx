@@ -1,8 +1,21 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { User, ValidateUser, ValidateUserField } from '../../validators/ValidateUser';
+import { routeUserRegister } from '../../services/BackendUrl';
+import { ErrorResponse } from '../../types/Error';
+
+enum ResultMessageType {
+	error = 'error',
+	success = 'success',
+}
+
+interface ResultResponse {
+	result: string
+}
 
 const SingUp: React.FC = () => {
-	const [errorMessage, setErrorMessage] = useState('');
+	const [message, setMessage] = useState('');
+	const [messageStyle, setMessageStyle] = useState(ResultMessageType.error);
 	const [regUser] = useState<User>({
 		firstName: '',
 		lastName: '',
@@ -11,21 +24,46 @@ const SingUp: React.FC = () => {
 		repeatPassword: ''
 	});
 
+	const DisplayMessage = (text: string, type: ResultMessageType) => {
+		setMessageStyle(type);
+		setMessage(text);
+	};
+
 	const SingUpClick = (event: React.MouseEvent<HTMLElement>) => {
 		event.preventDefault();
-		const error = ValidateUser(regUser);
-		if (error !== undefined) {
-			setErrorMessage(error);
+		const errors = ValidateUser(regUser);
+		if (errors !== undefined) {
+			DisplayMessage(errors, ResultMessageType.error);
 		} else {
 			// Request to api
-			console.log(regUser);
+			const user = {
+				firstName: regUser.firstName,
+				lastName: regUser.lastName,
+				email: regUser.email,
+				password: regUser.password,
+			};
+			axios
+				.post<ResultResponse>(routeUserRegister, user)
+				.then((response) => {
+					const responseData = response.data.result;
+					DisplayMessage(responseData, ResultMessageType.success);
+				}).catch((error) => {
+					if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
+						if (error.response) {
+							const errorRequest = error.response.data.error;
+							DisplayMessage(errorRequest[0].msg, ResultMessageType.error);
+						} else {
+							DisplayMessage('Something went wrong', ResultMessageType.error);
+						}
+					}
+				});
 		}
 	};
 
 	const OutFocus = (event: React.FormEvent<HTMLInputElement>) => {
 		const inputName = event.currentTarget.name;
 		const inputValue = event.currentTarget.value;
-		setErrorMessage(ValidateUserField(inputName, inputValue, regUser));
+		DisplayMessage(ValidateUserField(inputName, inputValue, regUser), ResultMessageType.error);
 	};
 
 	const onFormChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -40,10 +78,12 @@ const SingUp: React.FC = () => {
 			<h2 className="sing-up__title">
 				Sign Up
 			</h2>
-			<p className="sing-up__error">
-				{errorMessage}
-				&nbsp;
-			</p>
+			<div className="sing-up__message">
+				<p className={`sing-up__message_${messageStyle}`}>
+					{message}
+					&nbsp;
+				</p>
+			</div>
 			<form id="sing-up" className="sing-up__form">
 				<input
 					required
