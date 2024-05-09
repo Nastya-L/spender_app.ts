@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import openEye from '../../images/icon/open-eye.png';
 import eye from '../../images/icon/eye.png';
+import PreAuthContent from '../PreAuthContent/PreAuthContent';
 
 const SingIn: React.FC = () => {
 	const [passVisible, setPassVisible] = useState(false);
@@ -36,42 +38,49 @@ const SingIn: React.FC = () => {
 	};
 
 	return (
-		<div className="sing-in">
-			<h2 className="sing-in__title">
-				Sign in
-			</h2>
-			<form id="sing-in" className="sing-in__form">
-				<input
-					required
-					onChange={changeEmail}
-					formNoValidate
-					form="sing-in"
-					placeholder="mail.exemple@gmail.com"
-					type="text"
-					className="sing-in__input"
-				/>
-				<input
-					required
-					onChange={changePassword}
-					minLength={6}
-					maxLength={10}
-					form="sing-in"
-					placeholder="**************"
-					type={passVisible ? 'text' : 'password'}
-					className="sing-in__input password"
-				/>
-				<button className="sing-in__img" aria-label="ShowPassword" onClick={ShowPassword}>
-					<img
-						alt="eye"
-						src={passVisible ? openEye : eye}
-					/>
-				</button>
-				<button className="sing-in__button" onClick={ClickSingIn}>
-					Sign In
-				</button>
-			</form>
-			<a href="/" className="greetings__button-signin">Don&lsquo;t have an account? Sign up</a>
-		</div>
+		<section className="sing-in">
+			<div className="sing-in__container">
+				<PreAuthContent />
+				<div className="sing-in__content">
+					<div className="sing-in__wrap">
+						<h2 className="sing-in__title">
+							Sign in
+						</h2>
+						<form id="sing-in" className="sing-in__form">
+							<input
+								required
+								onChange={changeEmail}
+								formNoValidate
+								form="sing-in"
+								placeholder="mail.exemple@gmail.com"
+								type="text"
+								className="sing-in__input"
+							/>
+							<input
+								required
+								onChange={changePassword}
+								minLength={6}
+								maxLength={10}
+								form="sing-in"
+								placeholder="**************"
+								type={passVisible ? 'text' : 'password'}
+								className="sing-in__input password"
+							/>
+							<button className="sing-in__img" aria-label="ShowPassword" onClick={ShowPassword}>
+								<img
+									alt="eye"
+									src={passVisible ? openEye : eye}
+								/>
+							</button>
+							<button className="sing-in__button" onClick={ClickSingIn}>
+								Sign In
+							</button>
+						</form>
+						<NavLink to="/user/register" className="greetings__button-signin">Don&lsquo;t have an account? Sign up</NavLink>
+					</div>
+				</div>
+			</div>
+		</section>
 	);
 };
 

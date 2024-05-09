@@ -53,6 +53,7 @@
     "react": "^18.2.0",
     "react-axios": "^2.0.6",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
     "redux": "^5.0.0",
     "stylelint": "^16.0.2",
     "stylelint-scss": "^6.0.0"

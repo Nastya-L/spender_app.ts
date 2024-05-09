@@ -1,0 +1,16 @@
+.prea-auth-content {
+    width: 50%;
+    overflow: auto;
+    margin: 0 0 0 3.3333rem;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+
+    &__wrap {
+        width: 100%;
+
+        img {
+            width: 100%;
+        }
+    }
+}

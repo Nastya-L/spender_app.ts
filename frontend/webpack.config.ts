@@ -8,6 +8,7 @@ module.exports = {
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "build"),
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -47,5 +48,6 @@ module.exports = {
       directory: path.join(__dirname, "build"),
     },
     port: 8000,
+    historyApiFallback: true,
   },
 };

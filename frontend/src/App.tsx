@@ -1,9 +1,9 @@
 import React from 'react';
 import './main.scss';
-import Greetings from './components/Greetings/Greetings';
+import RoutesApp from './components/Routes/RoutesApp';
 
 const App = () => (
-	<Greetings />
+	<RoutesApp />
 );
 
 export default App;

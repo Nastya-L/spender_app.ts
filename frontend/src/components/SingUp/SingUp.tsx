@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { User, ValidateUser, ValidateUserField } from '../../validators/ValidateUser';
 import { routeUserRegister } from '../../services/BackendUrl';
 import { ErrorResponse } from '../../types/Error';
+import PreAuthContent from '../PreAuthContent/PreAuthContent';
 
 enum ResultMessageType {
 	error = 'error',
@@ -74,78 +76,85 @@ const SingUp: React.FC = () => {
 	};
 
 	return (
-		<div className="sing-up">
-			<h2 className="sing-up__title">
-				Sign Up
-			</h2>
-			<div className="sing-up__message">
-				<p className={`sing-up__message_${messageStyle}`}>
-					{message}
-					&nbsp;
-				</p>
+		<section className="sing-up">
+			<div className="sing-up__container">
+				<PreAuthContent />
+				<div className="sing-up__content">
+					<div className="sing-up__wrap">
+						<h2 className="sing-up__title">
+							Sign Up
+						</h2>
+						<div className="sing-up__message">
+							<p className={`sing-up__message_${messageStyle}`}>
+								{message}
+								&nbsp;
+							</p>
+						</div>
+						<form id="sing-up" className="sing-up__form">
+							<input
+								required
+								form="sing-up"
+								placeholder="First Name"
+								type="text"
+								className="sing-up__input"
+								name="firstName"
+								onChange={onFormChange}
+								onBlur={OutFocus}
+							/>
+							<input
+								required
+								form="sing-up"
+								placeholder="Last Name"
+								type="text"
+								className="sing-up__input"
+								name="lastName"
+								onChange={onFormChange}
+								onBlur={OutFocus}
+							/>
+							<input
+								required
+								onChange={onFormChange}
+								formNoValidate
+								form="sing-up"
+								placeholder="mail.exemple@gmail.com"
+								type="email"
+								className="sing-up__input"
+								name="email"
+								onBlur={OutFocus}
+							/>
+							<input
+								required
+								onChange={onFormChange}
+								onBlur={OutFocus}
+								minLength={6}
+								maxLength={10}
+								form="sing-up"
+								placeholder="Password"
+								type="text"
+								className="sing-up__input"
+								name="password"
+							/>
+							<input
+								required
+								minLength={6}
+								maxLength={10}
+								form="sing-up"
+								placeholder="Repeat the password"
+								type="text"
+								className="sing-up__input"
+								name="repeatPassword"
+								onChange={onFormChange}
+								onBlur={OutFocus}
+							/>
+							<button className="sing-up__button" onClick={SingUpClick}>
+								Sign Up
+							</button>
+						</form>
+						<NavLink to="/user/login" className="greetings__button-signin">Already have an account? Sign In</NavLink>
+					</div>
+				</div>
 			</div>
-			<form id="sing-up" className="sing-up__form">
-				<input
-					required
-					form="sing-up"
-					placeholder="First Name"
-					type="text"
-					className="sing-up__input"
-					name="firstName"
-					onChange={onFormChange}
-					onBlur={OutFocus}
-				/>
-				<input
-					required
-					form="sing-up"
-					placeholder="Last Name"
-					type="text"
-					className="sing-up__input"
-					name="lastName"
-					onChange={onFormChange}
-					onBlur={OutFocus}
-				/>
-				<input
-					required
-					onChange={onFormChange}
-					formNoValidate
-					form="sing-up"
-					placeholder="mail.exemple@gmail.com"
-					type="email"
-					className="sing-up__input"
-					name="email"
-					onBlur={OutFocus}
-				/>
-				<input
-					required
-					onChange={onFormChange}
-					onBlur={OutFocus}
-					minLength={6}
-					maxLength={10}
-					form="sing-up"
-					placeholder="Password"
-					type="text"
-					className="sing-up__input"
-					name="password"
-				/>
-				<input
-					required
-					minLength={6}
-					maxLength={10}
-					form="sing-up"
-					placeholder="Repeat the password"
-					type="text"
-					className="sing-up__input"
-					name="repeatPassword"
-					onChange={onFormChange}
-					onBlur={OutFocus}
-				/>
-				<button className="sing-up__button" onClick={SingUpClick}>
-					Sign Up
-				</button>
-			</form>
-			<a href="/" className="greetings__button-signin">Already have an account? Sign In</a>
-		</div>
+		</section>
 	);
 };
 
