@@ -1,0 +1,10 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.home {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    column-gap: 2.1333rem;
+    height: 100vh;
+    padding: 1.8667rem;
+}

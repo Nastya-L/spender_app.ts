@@ -3,11 +3,13 @@
 
 // components
 @use './scss/components/preAuthContent';
+@use './scss/components/sidebar';
 
 // pages
 @use './scss/pages/greetings';
 @use './scss/pages/singIn';
 @use './scss/pages/singUp';
+@use './scss/pages/home';
 
 // utils
 @use './scss/utils/mixins';
