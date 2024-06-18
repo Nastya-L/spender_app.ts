@@ -1,0 +1,99 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.sidebar {
+    height: calc(100vh - 28px);
+    padding-right: 4.2667rem;
+
+    &__container {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+
+        &-title {
+            @include title-text(2.133rem, 3.2rem, 600);
+
+            padding: 2.2667rem 0 2.2667rem 0.6667rem;
+        }
+    }
+
+    &__wrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        height: 77%;
+        padding-bottom: 0.3333rem;
+    }
+
+    &__jars {
+        &-title {
+            @include title-text(1rem, 1rem, 600);
+
+            padding: 0 0 1.2rem 0.8rem;
+        }
+
+        &-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9333rem;
+            padding-left: 1.6rem;
+            
+        }
+
+        &-jar {
+            display: flex;
+            gap: 0.4667rem;
+        }
+
+        &-name {
+            @include basic-text(0.9333rem, 1rem);
+        }
+
+        &-add {
+            @include basic-text(0.9333rem, 1.2rem);
+
+            font-weight: 300;
+            background: transparent;
+            background-image: url('~/src/images/icon/add.png');
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            padding-left: 1.6rem;
+        }
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9333rem;
+        padding-left: 0.8rem;
+
+        &-settings {
+            @include basic-text(0.9333rem, 1rem);
+
+            background-image: url('~/src/images/icon/settings.png');
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            padding-left: 1.6rem;
+        }
+
+        &-sign-out {
+            @include basic-text(0.9333rem, 1rem);
+
+            background-image: url('~/src/images/icon/log-out.png');
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            padding-left: 1.6rem;
+        }
+    }
+
+}
+
+.filters {
+    padding-left: 0.8rem;
+    margin-top: 1.2rem;
+
+    &__title {
+        @include title-text(1rem, 1rem, 600);
+    }
+}

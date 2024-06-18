@@ -1,0 +1,18 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.home {
+    display: flex;
+    justify-content: flex-end;
+    background-color: $background-color-grey;
+    height: calc(100vh - 28px);
+    width: calc(100vw - 28px);
+    padding: 0.9333rem;
+
+    &__content-mock {
+        background-color: $background-main;
+        height: 100%;
+        width: 60%;
+        border-radius: 15px;
+    }
+}

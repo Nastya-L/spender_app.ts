@@ -16,8 +16,8 @@
 }
 
 @mixin title-text($size, $line, $weight) {
-    color: $basic-color-text;
-    font-family: Oswald, sans-serif;
+    color: $title-color-text;
+    font-family: "Noto Sans", sans-serif;
     font-size: $size;
     font-weight: $weight;
     line-height: $line;

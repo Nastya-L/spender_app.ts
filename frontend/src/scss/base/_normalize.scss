@@ -1,6 +1,7 @@
 html, body, p, h1, h2, h3, h4 {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 html, body {
@@ -9,4 +10,9 @@ html, body {
 
 a, ul, li {
     text-decoration: none;
+}
+
+button {
+    border: none;
+    cursor: pointer;
 }
