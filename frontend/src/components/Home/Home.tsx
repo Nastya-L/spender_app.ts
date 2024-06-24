@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from '../Sidebar/Sidebar';
+import HistoryJar from '../HistoryJar/HistoryJar';
 
 const Home:React.FC = () => {
 	console.log();
@@ -7,10 +8,8 @@ const Home:React.FC = () => {
 	return (
 		<main className="home">
 			<Sidebar />
-			<div className="home__content-mock">
-				<div>
-					&nbsp;
-				</div>
+			<div className="home__main">
+				<HistoryJar />
 			</div>
 		</main>
 	);

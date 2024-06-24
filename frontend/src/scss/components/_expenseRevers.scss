@@ -1,0 +1,14 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.expense {
+    &__descr {
+        &-wrap_revers {
+            align-items: flex-end;
+        }
+    }
+
+    &_revers {
+        flex-direction: row-reverse;
+    }
+}

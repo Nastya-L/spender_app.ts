@@ -9,10 +9,12 @@
     width: calc(100vw - 28px);
     padding: 0.9333rem;
 
-    &__content-mock {
+    &__main {
         background-color: $background-main;
-        height: 100%;
-        width: 60%;
+        border: 1px solid #BDBDBD;
+        height: calc(100% - 36px);
+        width: 55%;
         border-radius: 15px;
+        padding: 1.2rem 1.8667rem;
     }
 }

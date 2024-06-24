@@ -1,0 +1,32 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.history-jar {
+    max-width: 378px;
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 0.7333rem;
+
+        &-icon {
+            padding: 0;
+            background: transparent;
+        }
+    }
+
+    &__name {
+        @include title-text(2.4rem, 2.8rem, 400);
+        
+        margin-bottom: 0.6667rem;
+        padding-right: 0.4667rem;
+    }
+}
+
+.history-day {
+    padding: 0.8rem 0;
+
+    &__title {
+        @include title-text(1.3333rem, 1.8667rem, 500);
+    }
+}

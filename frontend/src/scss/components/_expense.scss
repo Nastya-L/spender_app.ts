@@ -1,0 +1,44 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.expense {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid #000028;
+    position: relative;
+    max-height: 64px;
+    padding: 0.8rem 1.0667rem;
+
+    &__descr {
+        @include flex-center;
+
+        flex-direction: row;
+        gap: 0.8rem;
+
+        &-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &__categories {
+        @include basic-text(0.9333rem, 1rem);
+
+        margin-bottom: 0.3333rem;            
+    }
+
+    &__owner {
+        @include basic-text(0.8rem, 1rem);
+    }
+
+    &__value {
+        @include basic-text(0.9333rem, 1rem);
+    }
+}
+
+.expense:hover {
+    background-color: $selected-color;
+    border-radius: 0.2667rem 0.2667rem 0 0;
+}
