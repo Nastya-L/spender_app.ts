@@ -1,0 +1,82 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.react-calendar {
+    @include flex-center;
+
+    align-items: stretch;
+
+    &__navigation {
+        @include flex-center;
+
+        flex-direction: row;
+        margin-bottom: 1.2rem;
+
+        &__label {
+            @include title-text(1.2667rem, 1.4667rem, 400);
+
+            color: $calendar-month-color;
+        }
+
+        &__arrow {
+            @include title-text(1.2667rem, 1.4667rem, 400);
+
+            color: $calendar-month-color;
+        }
+
+        &__prev2-button,
+        &__next2-button {
+            display: none;
+        }
+    }
+
+    &__month-view {
+        &__weekdays {
+            @include basic-text(0.8rem, 1rem);
+
+            text-align: center;
+            color: $calendar-month-day-color;
+            text-transform: uppercase;
+            margin-bottom: 1.4667rem;
+        }
+
+        &__days {
+            row-gap: 1rem;
+
+            &__day {
+                @include basic-text(0.8rem, 1rem);
+
+                padding: 0.3333rem 0;
+                color: $calendar-month-day-color;
+            }
+
+            &__day--neighboringMonth {
+                color: $calendar-day-color;
+            }
+        }
+
+        &__day--weekend {
+            color: $calendar-weekend-color;
+        }
+
+    }
+
+    &__tile--range {
+        background-color: $selected-color;
+        border-radius: 3px;
+    }
+
+    &__year-view__months,
+    &__decade-view__years,
+    &__century-view__decades {
+        row-gap: 0.3333rem;
+    }
+
+    &__year-view__months__month, 
+    &__decade-view__years__year,
+    &__century-view__decades__decade {
+        @include basic-text(0.8rem, 1rem);
+    
+        color: $calendar-month-color;
+    }
+ }

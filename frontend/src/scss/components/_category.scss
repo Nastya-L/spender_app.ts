@@ -1,0 +1,30 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.category {
+	&__input {
+		display: none;
+	}
+
+	&__input + label {
+		@include basic-text(0.7333rem, 0.8rem);
+		@include flex-center;
+		
+		gap: 4px;
+		color: $basic-color-text;
+		cursor: pointer;
+		width: 4rem;
+		height: 4rem;
+		padding: 0;
+	}
+
+	&__label:hover {
+		background-color: $selected-color;
+		border-radius: 0.2667rem 0.2667rem 0 0;
+	}
+
+	&__input:checked + label {
+	    background-color: $selected-color;
+	    border-radius: 0.2667rem 0.2667rem 0 0;
+	  }
+}
