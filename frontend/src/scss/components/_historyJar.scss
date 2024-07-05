@@ -2,7 +2,8 @@
 @use '../utils/mixins' as *;
 
 .history-jar {
-    max-width: 378px;
+    max-width: $content-max-width;
+    height: 100%;
 
     &__head {
         display: flex;

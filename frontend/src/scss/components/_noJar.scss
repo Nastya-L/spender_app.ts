@@ -1,0 +1,37 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.no-jar {
+    max-width: $content-max-width;
+    height: 100%;
+    width: 100%;
+    align-content: center;
+    
+    &__container {
+        @include flex-center;
+
+        gap: 0.7333rem;
+    }
+
+    &__title {
+        @include title-text(2.4rem, 2.8rem, 400);
+    }
+
+    &__descr {
+        @include basic-text(0.8rem, 1.0667rem);
+
+        padding: 0 5.3333rem;
+        text-align: center;
+    }
+
+    &__add {
+        @include basic-text(0.9333rem, 1.0667rem);
+
+        background-image: url('~/src/images/icon/add.png');
+        background-repeat: no-repeat;
+        background-position: 9px 6px;
+        background-color: $grey-medium-color;
+        padding: 0.4rem 0.8rem 0.4rem 2rem;
+        border-radius: 0.5333rem;
+    }
+}
