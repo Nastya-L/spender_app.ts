@@ -1,13 +1,35 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { ErrorResponse } from '../../types/Error';
+import PreAuthContent from '../PreAuthContent/PreAuthContent';
+import { apiUserAuthorization } from '../../services/BackendUrl';
+import { loginSuccess } from '../../reducers/AuthReducer';
+import { IUser } from '../../interfaces/User';
 import openEye from '../../images/icon/open-eye.png';
 import eye from '../../images/icon/eye.png';
-import PreAuthContent from '../PreAuthContent/PreAuthContent';
+
+enum ResultMessageType {
+	error = 'error',
+	success = 'success',
+}
 
 const SingIn: React.FC = () => {
 	const [passVisible, setPassVisible] = useState(false);
 	const [valueEmail, setValueEmail] = useState('');
 	const [valuePassword, setValuePassword] = useState('');
+
+	const [messageServer, setMessageServer] = useState('');
+	const [messageStyle, setMessageStyle] = useState(ResultMessageType.error);
+
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const DisplayMessage = (text: string, type: ResultMessageType) => {
+		setMessageStyle(type);
+		setMessageServer(text);
+	};
 
 	const ClickSingIn = (event: React.MouseEvent<HTMLElement>): void => {
 		event.preventDefault();
@@ -15,7 +37,22 @@ const SingIn: React.FC = () => {
 			email: valueEmail,
 			password: valuePassword
 		};
-		console.log(message);
+		axios
+			.post<IUser>(apiUserAuthorization, message)
+			.then((response) => {
+				const responseData = response.data;
+				dispatch(loginSuccess(responseData));
+				navigate('/home');
+			}).catch((error) => {
+				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
+					if (error.response) {
+						const errorRequest = error.response.data.error;
+						DisplayMessage(errorRequest[0].msg, ResultMessageType.error);
+					} else {
+						DisplayMessage('Something went wrong', ResultMessageType.error);
+					}
+				}
+			});
 	};
 
 	const ShowPassword = (event: React.MouseEvent<HTMLElement>): void => {
@@ -46,6 +83,12 @@ const SingIn: React.FC = () => {
 						<h2 className="sing-in__title">
 							Sign in
 						</h2>
+						<div className="sing-up__message">
+							<p className={`sing-up__message_${messageStyle}`}>
+								{messageServer}
+								&nbsp;
+							</p>
+						</div>
 						<form id="sing-in" className="sing-in__form">
 							<input
 								required
