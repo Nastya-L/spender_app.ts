@@ -1,8 +1,11 @@
 import express from 'express';
 import { createJar, deleteJar, getJar, updateJar } from '../controllers/jarController.js';
 import jarValidator from '../validators/jarValidator.js';
+import getUserFromToken from '../middleware/getUserFromToken.js';
 
 const jarRouter = express.Router();
+
+jarRouter.use(getUserFromToken);
 
 /** GET Methods */
 /**
@@ -29,7 +32,7 @@ const jarRouter = express.Router();
  *         '500':
  *           description: Server is not responding
  */
-jarRouter.get('/:id', getJar);
+jarRouter.get('/', getJar);
 
 /** POST Methods */
 /**

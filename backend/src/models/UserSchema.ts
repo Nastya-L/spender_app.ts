@@ -1,23 +1,40 @@
 import mongoose from 'mongoose';
+import type { Document, Model } from 'mongoose';
 
 const { Schema } = mongoose;
 
-const UserSchema = new Schema({
+export interface IToken {
+  token: string
+  time: Date
+}
+
+export interface IUser extends Document {
+  _id: mongoose.Types.ObjectId
+  lastName: string
+  firstName: string
+  email: string
+  password: string
+  token: IToken
+  time: Date
+  role: number
+}
+
+const UserSchema = new Schema<IUser>({
   lastName: {
     type: String,
-    required: [true]
+    required: true
   },
   firstName: {
     type: String,
-    required: [true]
+    required: true
   },
   email: {
     type: String,
-    required: [true]
+    required: true
   },
   password: {
     type: String,
-    required: [true]
+    required: true
   },
   token: {
     token: { type: String },
@@ -33,6 +50,6 @@ const UserSchema = new Schema({
   }
 });
 
-const User = mongoose.model('User', UserSchema);
+const User: Model<IUser> = mongoose.model('User', UserSchema);
 
 export default User;
