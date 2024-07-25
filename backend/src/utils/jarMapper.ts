@@ -5,9 +5,9 @@ interface IJarToFE {
   _id: mongoose.Types.ObjectId
   name: string
   color: string
-  users: [mongoose.Schema.Types.ObjectId]
+  users: [mongoose.Types.ObjectId]
   created: Date
-  owner: mongoose.Schema.Types.ObjectId
+  owner: mongoose.Types.ObjectId
 }
 
 const jarMapper = (jar: IJar): IJarToFE => {

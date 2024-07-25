@@ -8,8 +8,8 @@ export interface IJar extends Document {
   name: string
   color: string
   created: Date
-  users: [mongoose.Schema.Types.ObjectId]
-  owner: mongoose.Schema.Types.ObjectId
+  users: [mongoose.Types.ObjectId]
+  owner: mongoose.Types.ObjectId
 }
 
 const JarSchema = new Schema<IJar>({
