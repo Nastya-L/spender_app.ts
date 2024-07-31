@@ -74,6 +74,7 @@ module.exports = {
 		'react/button-has-type': 'off',
 		"react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
 		"no-shadow": "off",
-    	"@typescript-eslint/no-shadow": "warn"
+    	"@typescript-eslint/no-shadow": "warn",
+		'no-underscore-dangle': 'off'
 	}
 };

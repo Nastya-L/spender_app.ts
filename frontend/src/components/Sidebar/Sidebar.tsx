@@ -1,10 +1,15 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import img from '../../images/icon/filter.png';
+import { IJar } from '../../interfaces/Jar';
 
-const Sidebar: React.FC = () => {
-	// TODO: Prevents it from becoming an inline function
-	console.log();
+interface SidebarProps {
+	jars: IJar[];
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
+	const onChange = (_id: string) => {
+		console.log(_id);
+	};
 
 	return (
 		<div className="sidebar">
@@ -18,10 +23,20 @@ const Sidebar: React.FC = () => {
 							Jars
 						</h3>
 						<div className="sidebar__jars-container">
-							<div className="sidebar__jars-jar">
-								<img alt="jar" src={img} />
-								<p className="sidebar__jars-name">Foo Jar</p>
-							</div>
+							{jars.map((jar) => (
+								<NavLink
+									key={jar._id}
+									to={`/home/jar/${jar._id}`}
+									id={jar._id}
+									onClick={() => onChange(jar._id)}
+									className={({ isActive }) => (isActive ? 'is-active' : 'sidebar__jars-jar')}
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" style={{ fill: jar.color, stroke: jar.color }}>
+										<circle cx="14" cy="14" r="12" />
+									</svg>
+									<p className="sidebar__jars-name">{jar.name}</p>
+								</NavLink>
+							))}
 							<button className="sidebar__jars-add">
 								Add new Jar
 							</button>
