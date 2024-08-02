@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { IJar } from '../../interfaces/Jar';
+import ButtonNewJar from '../UI/ButtonNewJar/ButtonNewJar';
 
 interface SidebarProps {
 	jars: IJar[];
@@ -37,9 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
 									<p className="sidebar__jars-name">{jar.name}</p>
 								</NavLink>
 							))}
-							<button className="sidebar__jars-add">
-								Add new Jar
-							</button>
+							<ButtonNewJar nameClass="sidebar__jars-add" />
 						</div>
 						<div className="filters">
 							<h3 className="filters__title">Filters</h3>

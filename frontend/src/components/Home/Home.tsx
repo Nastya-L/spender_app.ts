@@ -9,6 +9,7 @@ import { IAuthState } from '../../interfaces/AuthState';
 import { IJar } from '../../interfaces/Jar';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import NoJar from '../NoJar/NoJar';
+import Modal from '../UI/Modal/Modal';
 
 const Home:React.FC = () => {
 	const navigate = useNavigate();
@@ -44,6 +45,7 @@ const Home:React.FC = () => {
 				{(userJars.length > 0)
 					? <HistoryJar />
 					: <NoJar />}
+				<Modal />
 			</div>
 		</main>
 	);

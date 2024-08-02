@@ -1,43 +1,16 @@
 @use '../utils/variables' as *;
 @use '../utils/mixins' as *;
 
-
-.modal {
-    &__background {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100vh;
-        width: 100vw;
-        background-color: rgb(0, 0, 0, 20%);
-    }
-}
-
 .create-jar {
-    max-width: 400px;
-    max-height: 276px;
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    border-radius: 8px;
-    background-color: $background-main;
+    @include flex-center;
 
-    &__container {
-        @include flex-center;
-
-        gap: 2.1333rem;
-        margin: 2.6667rem;
-        position: relative;
-    }
+    gap: 2.1333rem;
+    margin: 2.6667rem;
+    position: relative;
+    max-width: 330px;
 
     &__title {
         @include title-text(1.3333rem, 1.6rem, 600);
-    }
-
-    &__close {
-        position: absolute;
-        top: 0;
-        left: -1rem;
     }
 
     &__descr {
@@ -72,5 +45,13 @@
         color: #fff;
         padding: 0.7667rem 5.5rem;
         border-radius: 0.5333rem;
+    }
+
+    &__color {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-evenly;
+        margin: 0 50px;
     }
 }

@@ -75,6 +75,7 @@ module.exports = {
 		"react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
 		"no-shadow": "off",
     	"@typescript-eslint/no-shadow": "warn",
-		'no-underscore-dangle': 'off'
+		'no-underscore-dangle': 'off',
+		'no-param-reassign': ['error', { props: false }]
 	}
 };
