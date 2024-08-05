@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import AuthReducer from './reducers/AuthReducer';
 import ModalReducer from './reducers/ModalReducer';
+import JarsReducer from './reducers/JarsReducer';
 import authMiddleware from './Middleware/authMiddleware';
 import { IUser } from './interfaces/User';
 
@@ -25,6 +26,7 @@ const store = configureStore({
 	reducer: {
 		auth: AuthReducer,
 		modal: ModalReducer,
+		jars: JarsReducer,
 	},
 	preloadedState,
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authMiddleware),

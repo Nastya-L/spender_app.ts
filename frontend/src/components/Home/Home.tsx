@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ErrorResponse } from '../../types/Error';
 import Sidebar from '../Sidebar/Sidebar';
@@ -10,11 +10,14 @@ import { IJar } from '../../interfaces/Jar';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import NoJar from '../NoJar/NoJar';
 import Modal from '../UI/Modal/Modal';
+import { setJars } from '../../reducers/JarsReducer';
+import { RootState } from '../../store';
 
 const Home:React.FC = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
-	const [userJars, serUserJars] = useState<IJar[]>([]);
+	const jars = useSelector((state: RootState) => state.jars.jars);
 
 	useEffect(() => {
 		if (!authState) {
@@ -24,7 +27,7 @@ const Home:React.FC = () => {
 		authClient.get<Array<IJar>>('/jar')
 			.then((response) => {
 				const responseData = response.data;
-				serUserJars(responseData);
+				dispatch(setJars(responseData));
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -40,9 +43,9 @@ const Home:React.FC = () => {
 
 	return (
 		<main className="home">
-			<Sidebar jars={userJars} />
+			<Sidebar jars={jars} />
 			<div className="home__main">
-				{(userJars.length > 0)
+				{(jars.length > 0)
 					? <HistoryJar />
 					: <NoJar />}
 				<Modal />

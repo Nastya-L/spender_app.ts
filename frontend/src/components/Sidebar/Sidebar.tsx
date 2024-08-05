@@ -32,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
 									onClick={() => onChange(jar._id)}
 									className={({ isActive }) => (isActive ? 'is-active' : 'sidebar__jars-jar')}
 								>
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" style={{ fill: jar.color, stroke: jar.color }}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" style={{ fill: `#${jar.color}`, stroke: jar.color }}>
 										<circle cx="14" cy="14" r="12" />
 									</svg>
 									<p className="sidebar__jars-name">{jar.name}</p>

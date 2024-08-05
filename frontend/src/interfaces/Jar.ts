@@ -6,3 +6,7 @@ export interface IJar {
     created: Date
     owner: string
 }
+
+export interface IInitialJars {
+    jars: IJar[]
+}
