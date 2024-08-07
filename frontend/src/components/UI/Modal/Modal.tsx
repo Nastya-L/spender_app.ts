@@ -4,13 +4,15 @@ import { IModalState } from '../../../interfaces/Modal';
 import arrow from '../../../images/icon/arrow-right.png';
 import CreateJarModal from '../../CreateJarModal/CreateJarModal';
 import { closeModal } from '../../../reducers/ModalReducer';
+import DeleteJarModal from '../../DeleteJarModal/DeleteJarModal';
 
 interface IModalContent {
 	[componentName: string]: React.ComponentType
 }
 
 const modalContentTable: IModalContent = {
-	createJar: CreateJarModal
+	createJar: CreateJarModal,
+	deleteJar: DeleteJarModal
 };
 
 const Modal: React.FC = () => {

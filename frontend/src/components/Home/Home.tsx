@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ErrorResponse } from '../../types/Error';
 import Sidebar from '../Sidebar/Sidebar';
 import HistoryJar from '../HistoryJar/HistoryJar';
@@ -16,6 +16,7 @@ import { RootState } from '../../store';
 const Home:React.FC = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const { id } = useParams();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const jars = useSelector((state: RootState) => state.jars.jars);
 
@@ -40,6 +41,14 @@ const Home:React.FC = () => {
 				}
 			});
 	}, []);
+
+	useEffect(() => {
+		if (jars.length > 0) {
+			if (!id) {
+				navigate(`/home/jar/${jars[0]._id}`);
+			}
+		}
+	}, [jars]);
 
 	return (
 		<main className="home">

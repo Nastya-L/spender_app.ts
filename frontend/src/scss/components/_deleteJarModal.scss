@@ -1,0 +1,47 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.delete-jar {
+    @include flex-center;
+
+    gap: 2.1333rem;
+    margin: 2.6667rem;
+    position: relative;
+
+    &__title {
+        @include title-text(1.3333rem, 1.6rem, 600);
+    }
+
+    &__descr {
+        @include basic-text(0.8667rem, 1rem);
+
+        text-align: center;
+    }
+
+    &__confirm {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        &__delete {
+            @include title-text(0.8667rem, 1rem, 600);
+
+            display: flex;
+            align-items: flex-end;
+            gap: 0.3333rem;
+            background-color: $error-color;
+            color: #fff;
+            padding: 0.8rem 1.4rem;
+            border-radius: 0.5333rem;
+        }
+
+        &__cancel {
+            @include title-text(0.8667rem, 1rem, 600);
+
+            background-color: $btn-color;
+            color: #fff;
+            padding: 0.8rem 1.4rem;
+            border-radius: 0.5333rem;
+        }
+    }
+}
