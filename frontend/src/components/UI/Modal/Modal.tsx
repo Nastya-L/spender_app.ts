@@ -5,6 +5,7 @@ import arrow from '../../../images/icon/arrow-right.png';
 import CreateJarModal from '../../CreateJarModal/CreateJarModal';
 import { closeModal } from '../../../reducers/ModalReducer';
 import DeleteJarModal from '../../DeleteJarModal/DeleteJarModal';
+import EditJarModal from '../../EditJarModal/EditJarModal';
 
 interface IModalContent {
 	[componentName: string]: React.ComponentType
@@ -12,7 +13,8 @@ interface IModalContent {
 
 const modalContentTable: IModalContent = {
 	createJar: CreateJarModal,
-	deleteJar: DeleteJarModal
+	deleteJar: DeleteJarModal,
+	editJar: EditJarModal
 };
 
 const Modal: React.FC = () => {

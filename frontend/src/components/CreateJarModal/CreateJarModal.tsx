@@ -9,8 +9,9 @@ import { ErrorResponse } from '../../types/Error';
 import { closeModal } from '../../reducers/ModalReducer';
 import { addJar } from '../../reducers/JarsReducer';
 
+export const defaultColors = ['FFE074', 'FF9C64', 'FA7878', 'F881DE', 'B28FFE', '5E90F2', '07A4B9', '5BE8B1', '42AE31', 'B23B98'];
+
 const CreateJarModal: React.FC = () => {
-	const defaultColors = ['FFE074', 'FF9C64', 'FA7878', 'F881DE', 'B28FFE', '5E90F2', '07A4B9', '5BE8B1', '42AE31', 'B23B98'];
 	const [colorValue, setColorValue] = useState('');
 	const [nameJar, setNameJar] = useState('');
 	const dispatch = useDispatch();

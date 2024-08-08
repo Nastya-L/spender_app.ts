@@ -36,6 +36,10 @@ const HistoryJar: React.FC = () => {
 		dispatch(openModal('deleteJar'));
 	};
 
+	const EditJar = () => {
+		dispatch(openModal('editJar'));
+	};
+
 	return (
 		<div className="history-jar">
 			<div className="history-jar__head">
@@ -55,7 +59,7 @@ const HistoryJar: React.FC = () => {
 							<button className="history-jar__head-item">
 								<img src={addUsers} alt="addUsers" />
 							</button>
-							<button className="history-jar__head-item">
+							<button onClick={EditJar} className="history-jar__head-item">
 								<img src={pencil} alt="pencil" />
 							</button>
 							<button onClick={DeleteJar} className="history-jar__head-item">

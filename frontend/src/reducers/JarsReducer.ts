@@ -17,9 +17,20 @@ const JarsReducer = createSlice({
 		},
 		deleteJar: (state, action: PayloadAction<string>) => {
 			state.jars = state.jars.filter((jar) => jar._id !== action.payload);
+		},
+		editJar: (state, action: PayloadAction<IJar>) => {
+			const index = state.jars.findIndex((jar) => jar._id === action.payload._id);
+			if (index !== -1) {
+				state.jars[index] = action.payload;
+			}
 		}
 	}
 });
 
-export const { setJars, addJar, deleteJar } = JarsReducer.actions;
+export const {
+	setJars,
+	addJar,
+	deleteJar,
+	editJar
+} = JarsReducer.actions;
 export default JarsReducer.reducer;
