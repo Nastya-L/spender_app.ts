@@ -7,6 +7,7 @@ import userRouter from './routes/userRoutes.js';
 import authorizationRouters from './routes/authorizationRouters.js';
 import jarRouter from './routes/jarRoutes.js';
 import shareJarRouter from './routes/shareJarRoutes.js';
+import expenseRouter from './routes/expenseRoutes.js';
 
 const app: Express = express();
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/user/register', userRouter);
 app.use('/user/login', authorizationRouters);
 app.use('/jar', jarRouter);
 app.use('/share', shareJarRouter);
+app.use('/', expenseRouter);
 
 const dbHost = process.env.MONGODB_HOST || 'localhost';
 const mongoString = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${dbHost}:${DATABASE_PORT}/`;

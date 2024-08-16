@@ -10,6 +10,7 @@ export interface IJar extends Document {
   created: Date
   users: [mongoose.Types.ObjectId]
   owner: mongoose.Types.ObjectId
+  expensePeriods: [mongoose.Types.ObjectId]
 }
 
 const JarSchema = new Schema<IJar>({
@@ -34,7 +35,11 @@ const JarSchema = new Schema<IJar>({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  expensePeriods: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ExpensePeriod'
+  }]
 });
 
 const Jar: Model<IJar> = mongoose.model('Jar', JarSchema);
