@@ -1,7 +1,7 @@
 import type mongoose from 'mongoose';
 import type { IJar } from '../models/JarSchema';
 
-interface IJarToFE {
+export interface IJarToFE {
   _id: mongoose.Types.ObjectId
   name: string
   color: string
