@@ -7,6 +7,7 @@ import errorFormatter from '../utils/errorFormatter.js';
 import expenseMapper from '../utils/expenseMapper.js';
 import type { IUserRequest } from '../middleware/getUserFromToken.js';
 import getAllExpensesFromJar from '../utils/getAllExpensesFromJar.js';
+import ExpensePeriod from '../models/ExpensePeriodSchema.js';
 
 export interface IExpense {
   value: string
@@ -73,6 +74,36 @@ export const createExpense = (req: IUserRequest, res: Response): void => {
       }
       const expenseResult = expenseMapper(newExpense);
       res.status(200).json(expenseResult);
+    } catch (err) {
+      res.status(500).json({ error: [{ msg: err }] });
+    }
+  })();
+};
+
+export const deleteExpense = (req: IUserRequest, res: Response): void => {
+  (async () => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.jarId) || !mongoose.Types.ObjectId.isValid(req.params.expenseId)) {
+      res.status(400).json({ error: [{ msg: 'ID is not valid' }] });
+      return;
+    }
+
+    const jarId: string = req.params.jarId;
+    const expenseId = new mongoose.Types.ObjectId(req.params.expenseId);
+    const userId = req.user?._id;
+
+    try {
+      const foundJar = await Jar.findOne({ _id: jarId, users: userId });
+      if (!foundJar) {
+        res.status(404).json({ error: [{ msg: 'No jar found' }] });
+        return;
+      }
+
+      const result = await ExpensePeriod.updateOne({ jar: jarId }, { $pull: { expenses: { _id: expenseId, owner: userId } } }).exec();
+      console.log(result);
+      if (result.modifiedCount === 0) {
+        return res.status(503).json({ error: [{ msg: 'Try again later' }] });
+      }
+      res.status(200).json({ result: 'Expenses delete successfully' });
     } catch (err) {
       res.status(500).json({ error: [{ msg: err }] });
     }

@@ -1,6 +1,6 @@
 import express from 'express';
 import getUserFromToken from '../middleware/getUserFromToken.js';
-import { createExpense, getExpense } from '../controllers/expenseController.js';
+import { createExpense, deleteExpense, getExpense } from '../controllers/expenseController.js';
 import expenseValidator from '../validators/expenseValidator.js';
 
 const expenseRouter = express.Router();
@@ -13,6 +13,6 @@ expenseRouter.post('/jar/:id/expense', expenseValidator, createExpense);
 
 expenseRouter.put('/:id');
 
-expenseRouter.delete('/:id');
+expenseRouter.delete('/jar/:jarId/expense/:expenseId', deleteExpense);
 
 export default expenseRouter;
