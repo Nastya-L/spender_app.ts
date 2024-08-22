@@ -6,6 +6,7 @@ import { validationResult } from 'express-validator';
 import errorFormatter from '../utils/errorFormatter.js';
 import jarMapper from '../utils/jarMapper.js';
 import type { IUserRequest } from '../middleware/getUserFromToken.js';
+import ExpensePeriod from '../models/ExpensePeriodSchema.js';
 
 export const getJar = (req: IUserRequest, res: Response): void => {
   (async () => {
@@ -90,18 +91,34 @@ export const updateJar = (req: IUserRequest, res: Response): void => {
 
 export const deleteJar = (req: IUserRequest, res: Response): void => {
   (async () => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(400).json({ error: [{ msg: 'ID is not valid' }] });
+      return;
+    }
+
     const jarId: string = req.params.id;
     const userId = req.user?._id;
 
-    await Jar.findOneAndDelete({ _id: jarId, owner: userId })
-      .then(async (jar) => {
-        if (!jar) {
-          return res.status(404).json({ error: [{ msg: 'No jar found' }] });
+    try {
+      const jar = await Jar.findOne({ _id: jarId, owner: userId });
+      if (!jar) {
+        return res.status(404).json({ error: [{ msg: 'No jar found' }] });
+      }
+
+      if (jar.expensePeriods.length > 0) {
+        const expensePeriods = jar.expensePeriods;
+        const result = await ExpensePeriod.deleteMany({ _id: { $in: expensePeriods } });
+        if (!result.acknowledged) {
+          return res.status(503).json({ error: [{ msg: 'Try again later' }] });
         }
-        return res.status(200).json({ result: 'You have successfully removed the jar' });
-      })
-      .catch((err) => {
-        return res.status(500).json({ error: [{ msg: err }] });
-      });
+      }
+      const result = await Jar.deleteOne({ _id: jarId });
+      if (result.deletedCount === 0) {
+        return res.status(503).json({ error: [{ msg: 'Try again later' }] });
+      }
+      return res.status(200).json({ result: 'You have successfully removed the jar' });
+    } catch (err) {
+      return res.status(500).json({ error: [{ msg: err }] });
+    }
   })();
 };
