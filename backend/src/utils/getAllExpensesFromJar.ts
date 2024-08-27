@@ -22,6 +22,15 @@ const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mon
       { $unwind: '$expensePeriods' },
       { $unwind: '$expensePeriods.expenses' },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'expensePeriods.expenses.owner',
+          foreignField: '_id',
+          as: 'expensePeriods.expenses.owner'
+        }
+      },
+      { $unwind: '$expensePeriods.expenses.owner' },
+      {
         $group: {
           _id: '$_id',
           name: { $first: '$name' },
@@ -38,6 +47,23 @@ const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mon
               input: '$expenses',
               sortBy: { date: -1 }
             }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          color: 1,
+          owner: 1,
+          users: 1,
+          expenses: {
+            _id: 1,
+            value: 1,
+            category: 1,
+            date: 1,
+            'owner._id': 1,
+            'owner.firstName': 1
           }
         }
       }
