@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import Calendar from 'react-calendar';
+import authClient, { IAuthClientError } from '../../services/authClient';
+import { IExpense } from '../../interfaces/Expense';
+import Category from '../UI/Category/Category';
+import { ErrorResponse } from '../../types/Error';
 
 import car from '../../images/icon/car.png';
 import subway from '../../images/icon/subway.png';
@@ -12,12 +18,12 @@ import house from '../../images/icon/house.png';
 import music from '../../images/icon/music.png';
 import payment from '../../images/icon/payment.png';
 import arrow from '../../images/icon/arrow-right.png';
-import Category from '../UI/Category/Category';
 
 type CalendarDate = Date | [Date, Date];
 
 interface INewExpenseProps {
 	close: () => void
+	AddNewExpense: (expense: IExpense) => void
 }
 
 interface ICategoryType {
@@ -25,54 +31,97 @@ interface ICategoryType {
 	path: string
 }
 
-const ExpenseForm: React.FC<INewExpenseProps> = ({ close }) => {
-	const [date, setDate] = useState<CalendarDate>(new Date());
+const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
+	const navigate = useNavigate();
+	const { id } = useParams();
+	const [expenseDate, setExpenseDate] = useState<CalendarDate>(new Date());
+	const [expenseValue, setExpenseValue] = useState('');
+	const [expenseCategory, setExpenseCategory] = useState('');
 
 	const categories: ICategoryType[] = [
 		{
-			name: 'Car',
+			name: 'car',
 			path: car
 		},
 		{
-			name: 'Travel',
+			name: 'travel',
 			path: subway
 		},
 		{
-			name: 'Cafes',
+			name: 'cafes',
 			path: utensils
 		},
 		{
-			name: 'Shopping',
+			name: 'shopping',
 			path: clothes
 		},
 		{
-			name: 'Self-care',
+			name: 'self-care',
 			path: barberShop
 		},
 		{
-			name: 'Products',
+			name: 'products',
 			path: basket
 		},
 		{
-			name: 'Health',
+			name: 'health',
 			path: health
 		},
 		{
-			name: 'House',
+			name: 'house',
 			path: house
 		},
 		{
-			name: 'Rest',
+			name: 'rest',
 			path: music
 		},
 		{
-			name: 'Payments',
+			name: 'payments',
 			path: payment
 		}
 	];
 
 	const CloseForm = () => {
 		close();
+	};
+
+	const ChangeExpenseValue = (e: React.FormEvent<HTMLInputElement>) => {
+		setExpenseValue(e.currentTarget.value);
+	};
+
+	const getUTC = (date: Date) => new Date(date.getTime() - ((date.getTimezoneOffset() * 60 * 1000)))
+		.toISOString();
+
+	const ChangeExpenseCategory = (category: string) => {
+		setExpenseCategory(category);
+	};
+
+	const CreateExpense = () => {
+		const newExpense = {
+			value: expenseValue,
+			category: expenseCategory,
+			date: getUTC(expenseDate as Date)
+		};
+
+		authClient.post<IExpense>(`/jar/${id}/expense`, newExpense)
+			.then((response) => {
+				const responseData = response.data;
+				setExpenseValue('');
+				setExpenseCategory('');
+				setExpenseDate(new Date());
+				AddNewExpense(responseData);
+				close();
+			}).catch((error: IAuthClientError) => {
+				if (error.redirect) {
+					navigate(error.redirect);
+					return;
+				}
+				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
+					if (!error.response) {
+						console.log('Something went wrong');
+					}
+				}
+			});
 	};
 
 	return (
@@ -86,6 +135,8 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close }) => {
 					required
 					placeholder="Value"
 					type="text"
+					onChange={ChangeExpenseValue}
+					value={expenseValue}
 				/>
 			</div>
 			<div className="expense-form__categories">
@@ -95,6 +146,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close }) => {
 							key={category.name}
 							name={category.name}
 							path={category.path}
+							ChangeCategory={ChangeExpenseCategory}
 						/>
 					))
 				}
@@ -102,11 +154,11 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close }) => {
 			<div className="expense-form__date">
 				<Calendar
 					locale="en"
-					onChange={setDate}
-					value={date}
+					onChange={setExpenseDate}
+					value={expenseDate}
 				/>
 			</div>
-			<button className="expense-form__add">Add expense</button>
+			<button onClick={CreateExpense} className="expense-form__add">Add expense</button>
 		</div>
 	);
 };

@@ -84,6 +84,14 @@ const HistoryJar: React.FC = () => {
 		dispatch(openModal('editJar'));
 	};
 
+	const AddNewExpense = (expense: IExpense) => {
+		if (jarExpenses) {
+			setJarExpenses([expense, ...jarExpenses]);
+		} else {
+			setJarExpenses([expense]);
+		}
+	};
+
 	const formatDate = (date: Date) => new Date(date).toLocaleString('en-US', {
 		timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric'
 	});
@@ -119,7 +127,7 @@ const HistoryJar: React.FC = () => {
 			</div>
 			<div className="history-jar__body">
 				<div className={classNames((newExpenseIsOpen === true ? 'new-expense_open' : 'new-expense'))}>
-					<ExpenseForm close={CloseNewExpense} />
+					<ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />
 				</div>
 				{(!jarExpenses)
 					? <h3 className="history-day__not-found">No Expenses</h3>
