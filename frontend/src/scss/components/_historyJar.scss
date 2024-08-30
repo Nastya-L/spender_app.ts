@@ -12,6 +12,7 @@
 .history-jar {
     max-width: $content-max-width;
     height: 100%;
+    overflow: auto;
 
     &__head {
         display: flex;
@@ -60,16 +61,23 @@
     &__name {
         @include title-text(2.4rem, 2.8rem, 400);
         
-        margin-bottom: 0.6667rem;
         padding-right: 0.4667rem;
+        text-transform: capitalize;
     }
 }
 
 .history-day {
-    padding: 0.8rem 0;
-
     &__title {
         @include title-text(1.3333rem, 1.8667rem, 500);
+
+        padding: 1.6rem 0 0.8rem;
+    }
+
+    &__not-found {
+        @include title-text(2.4rem, 2.8rem, 400);
+        
+        margin-top: 50px;
+        text-align: center;
     }
 }
 

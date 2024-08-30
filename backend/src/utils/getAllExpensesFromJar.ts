@@ -7,7 +7,7 @@ interface IResultExpenses extends IJarToFE {
   expenses: IExpenseModel[]
 }
 
-const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId): Promise<IResultExpenses | undefined> => {
+const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId): Promise<IResultExpenses> => {
   try {
     const resultExpenses = await Jar.aggregate([
       { $match: { _id: jarId, users: userId } },
@@ -68,7 +68,7 @@ const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mon
         }
       }
     ]).exec();
-    return resultExpenses.length > 0 ? resultExpenses[0] : undefined;
+    return resultExpenses.length > 0 ? resultExpenses[0] : [];
   } catch (err) {
     return await Promise.reject(err);
   }

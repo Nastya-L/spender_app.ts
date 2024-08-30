@@ -1,25 +1,30 @@
 import React from 'react';
-import categoriesIcon from '../../images/icon/cheese.png';
+import { IExpense } from '../../interfaces/Expense';
+import ImgForExpense from '../UI/ImgForExpense/ImgForExpense';
 
-const Expense: React.FC = () => {
-	console.log();
+interface IExpenseProps {
+	expense: IExpense;
+}
+
+const Expense: React.FC<IExpenseProps> = ({ expense }) => {
+	const categoryImg = ImgForExpense.find((category) => category.name === expense.category);
 
 	return (
 		<div className="expense">
 			<div className="expense__descr">
 				<div className="expense__categories-icon">
-					<img src={categoriesIcon} alt="categories-icon" />
+					<img src={categoryImg.path} alt="categories-icon" />
 				</div>
 				<div className="expense__descr-wrap">
 					<div className="expense__categories">
-						Food
+						{expense.category}
 					</div>
 					<div className="expense__owner">
-						User
+						{expense.owner.firstName}
 					</div>
 				</div>
 			</div>
-			<div className="expense__value">2926.00 ₴</div>
+			<div className="expense__value">{`${expense.value}₴`}</div>
 		</div>
 	);
 };

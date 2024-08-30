@@ -33,10 +33,6 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
       }
 
       const expenses = await getAllExpensesFromJar(jarId, userId);
-      if (!expenses) {
-        res.status(404).json({ error: [{ msg: 'No expenses found' }] });
-        return;
-      }
       res.status(200).json(expenses);
     } catch (err) {
       res.status(500).json({ error: [{ msg: err }] });

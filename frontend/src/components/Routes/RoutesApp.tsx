@@ -11,6 +11,7 @@ const RoutesApp = () => (
 		<Route path="/user/register" element={<SingUp />} />
 		<Route path="/user/login" element={<SingIn />} />
 		<Route path="/home" element={<Home />} />
+		<Route path="/home/jar" element={<Home />} />
 		<Route path="/home/jar/:id" element={<Home />} />
 	</Routes>
 );

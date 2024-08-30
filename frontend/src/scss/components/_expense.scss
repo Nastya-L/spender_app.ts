@@ -26,11 +26,14 @@
     &__categories {
         @include basic-text(0.9333rem, 1rem);
 
-        margin-bottom: 0.3333rem;            
+        margin-bottom: 0.3333rem;     
+        text-transform: capitalize;        
     }
 
     &__owner {
         @include basic-text(0.8rem, 1rem);
+
+        text-transform: capitalize; 
     }
 
     &__value {
