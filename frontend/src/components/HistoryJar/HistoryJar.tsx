@@ -12,6 +12,7 @@ import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
 import ExpenseForm from '../ExpenseForm/ExpenseForm';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IExpensesArray } from '../../interfaces/Expense';
+import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
 
 import addExpense from '../../images/icon/plus.png';
 import addUsers from '../../images/icon/users.png';
@@ -22,6 +23,8 @@ import trash from '../../images/icon/trash.png';
 const HistoryJar: React.FC = () => {
 	const [newExpenseIsOpen, setNewExpenseIsOpen] = useState(false);
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
+	const [selectedExpenseId, setSelectedExpenseId] = useState('');
+	const [editedExpenseId, setEditedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const { id } = useParams();
 	const dispatch = useDispatch();
@@ -46,7 +49,7 @@ const HistoryJar: React.FC = () => {
 		authClient.get<IExpensesArray>(`/jar/${id}/expense`)
 			.then((response) => {
 				const { expenses } = response.data;
-				setJarExpenses(expenses);
+				setJarExpenses(expenses || []);
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -66,6 +69,7 @@ const HistoryJar: React.FC = () => {
 
 	const CloseNewExpense = () => {
 		setNewExpenseIsOpen(false);
+		setEditedExpenseId('');
 	};
 
 	const OpenJarOptions = () => {
@@ -89,6 +93,34 @@ const HistoryJar: React.FC = () => {
 			setJarExpenses([expense, ...jarExpenses]);
 		} else {
 			setJarExpenses([expense]);
+		}
+	};
+
+	const DeleteExpense = (idExp: string) => {
+		const newExpensesJar = jarExpenses.filter((exp) => exp._id !== idExp);
+		setJarExpenses(newExpensesJar);
+	};
+
+	const UpdateExpense = (expense: IExpense) => {
+		const index = jarExpenses.findIndex((exp) => exp._id === expense._id);
+		if (index !== -1) {
+			let newExpensesJar = [...jarExpenses];
+			newExpensesJar[index] = expense;
+			newExpensesJar = newExpensesJar.sort((a, b) => new Date(b.date)
+				.getTime() - new Date(a.date).getTime());
+			setJarExpenses(newExpensesJar);
+		}
+	};
+
+	const ClickToExpenseEdit = (idExp: string) => {
+		setEditedExpenseId(idExp);
+	};
+
+	const ClickToExpense = (idExp: string) => {
+		if (selectedExpenseId === idExp) {
+			setSelectedExpenseId('');
+		} else {
+			setSelectedExpenseId(idExp);
 		}
 	};
 
@@ -126,17 +158,33 @@ const HistoryJar: React.FC = () => {
 				</div>
 			</div>
 			<div className="history-jar__body">
-				<div className={classNames((newExpenseIsOpen === true ? 'new-expense_open' : 'new-expense'))}>
-					<ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />
+				<div className={classNames(((newExpenseIsOpen || editedExpenseId) ? 'new-expense_open' : 'new-expense'))}>
+					{(editedExpenseId)
+						? (
+							<ExpenseFormEdit
+								expense={jarExpenses.find((expense) => expense._id === editedExpenseId)}
+								close={CloseNewExpense}
+								UpdateExpense={UpdateExpense}
+								DeleteExpense={DeleteExpense}
+							/>
+						)
+						: <ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />}
 				</div>
-				{(!jarExpenses)
+				{(jarExpenses.length === 0)
 					? <h3 className="history-day__not-found">No Expenses</h3>
 					: jarExpenses.map((exp, i) => (
 						<div key={exp._id} className="history-day">
 							{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
 							&& <h3 className="history-day__title">{ formatDate(exp.date) }</h3>}
 							{(exp.owner._id === userId)
-								? <Expense expense={exp} />
+								? (
+									<Expense
+										expense={exp}
+										ClickToEdit={ClickToExpenseEdit}
+										ClickToExpense={ClickToExpense}
+										selected={selectedExpenseId === exp._id}
+									/>
+								)
 								: <ExpenseRevers expense={exp} />}
 						</div>
 					))}

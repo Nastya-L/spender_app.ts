@@ -1,14 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 import { IExpense } from '../../interfaces/Expense';
-import ImgForExpense from '../UI/ImgForExpense/ImgForExpense';
+import { GetCategoryImg } from '../../utils/CategoryImg';
 
 interface IExpenseReversProps {
 	expense: IExpense;
 }
 
 const ExpenseRevers: React.FC<IExpenseReversProps> = ({ expense }) => {
-	const categoryImg = ImgForExpense.find((category) => category.name === expense.category);
+	const categoryImg = GetCategoryImg(expense.category);
 
 	return (
 		<div className={classNames('expense', 'expense_revers')}>

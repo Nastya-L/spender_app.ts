@@ -6,10 +6,28 @@
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid #000028;
-    position: relative;
     max-height: 64px;
+    max-width: $content-max-width;
+    width: 100%;
     padding: 0.8rem 1.0667rem;
+    z-index: 2;
+    background-color: $background-main;
+    transition: max-width .4s ease-out;
+    overflow: hidden;
+
+    &__collapse-to-edit {
+        max-width: 76%;
+        overflow: hidden;
+        transition: max-width .5s ease-out;
+        background-color: $selected-color;
+        border-radius: 0.2rem;
+    }
+
+    &__wrap {
+        display: flex;
+        border-bottom: 1px solid #000028;
+        position: relative;
+    }
 
     &__descr {
         @include flex-center;
@@ -39,9 +57,32 @@
     &__value {
         @include basic-text(0.9333rem, 1rem);
     }
+
+    &__none {
+        display: none;
+    }
+
+    &__edit {
+        background-color: #FFFBEB;
+        padding: 0.8rem 0.7333rem 0.8rem 1rem;
+        border-radius: 0 0 0.2667rem 0.2667rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 0;
+        max-height: 4.2667rem;
+
+        &__btn {
+            padding: 0.5rem 0.5rem 0.3667rem;
+            background-color: $background-main;
+            border-radius: 0.2667rem;
+            border: 1px groove rgba(124, 124, 124, 40%);
+            box-shadow: rgba(0, 0, 0, 24%) 0 3px 8px;
+        }
+    }
 }
 
 .expense:hover {
     background-color: $selected-color;
-    border-radius: 0.2667rem 0.2667rem 0 0;
+    border-radius: 0.2rem;
 }
