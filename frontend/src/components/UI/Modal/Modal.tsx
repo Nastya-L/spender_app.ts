@@ -6,6 +6,7 @@ import CreateJarModal from '../../CreateJarModal/CreateJarModal';
 import { closeModal } from '../../../reducers/ModalReducer';
 import DeleteJarModal from '../../DeleteJarModal/DeleteJarModal';
 import EditJarModal from '../../EditJarModal/EditJarModal';
+import ShareJarModal from '../../ShareJarModal/ShareJarModal';
 
 interface IModalContent {
 	[componentName: string]: React.ComponentType
@@ -14,7 +15,8 @@ interface IModalContent {
 const modalContentTable: IModalContent = {
 	createJar: CreateJarModal,
 	deleteJar: DeleteJarModal,
-	editJar: EditJarModal
+	editJar: EditJarModal,
+	shareJar: ShareJarModal
 };
 
 const Modal: React.FC = () => {

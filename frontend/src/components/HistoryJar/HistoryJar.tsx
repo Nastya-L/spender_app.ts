@@ -88,6 +88,10 @@ const HistoryJar: React.FC = () => {
 		dispatch(openModal('editJar'));
 	};
 
+	const ShareJar = () => {
+		dispatch(openModal('shareJar'));
+	};
+
 	const AddNewExpense = (expense: IExpense) => {
 		if (jarExpenses) {
 			setJarExpenses([expense, ...jarExpenses]);
@@ -144,7 +148,7 @@ const HistoryJar: React.FC = () => {
 					</button>
 					<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
 						<div className="history-jar__head__menu__items">
-							<button className="history-jar__head-item">
+							<button onClick={ShareJar} className="history-jar__head-item">
 								<img src={addUsers} alt="addUsers" />
 							</button>
 							<button onClick={EditJar} className="history-jar__head-item">
