@@ -1,10 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
-import { serverHost } from './BackendUrl';
 import store, { RootState } from '../store';
 import { ErrorResponse } from '../types/Error';
 
 const authClient = axios.create({
-	baseURL: serverHost
+	baseURL: process.env.API_URL
 });
 
 interface AdaptAxiosRequestConfig extends AxiosRequestConfig {

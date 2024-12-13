@@ -1,12 +1,13 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  mode: 'development',
   entry: "./src/index.tsx",
   output: {
-    filename: "index.js",
+    filename: 'static/js/[name].[contenthash].js',
     path: path.resolve(__dirname, "build"),
     publicPath: '/',
   },
@@ -23,8 +24,11 @@ module.exports = {
       },
       {
         test: /\.(png|jpeg|gif|svg|jpg)$/i,
-        type: 'asset/resource'
-    },
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/media/[name].[hash][ext]'
+        }
+      },
       {
         test: /\.(s[ac]ss|css)$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
@@ -36,12 +40,22 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/index.html",
+      template: "src/index.html",
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
+      filename: "static/css/[name].css",
       chunkFilename: "[id].css",
-  }),
+    }),
+    new CopyPlugin({
+      patterns: [{ 
+          from: path.resolve(__dirname, "public"), 
+          to: path.resolve(__dirname, "build"),
+      }],
+    }),
+    new Dotenv({
+      systemvars: true,
+      defaults: true,
+    }),
   ],
   devServer: {
     static: {

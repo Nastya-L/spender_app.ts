@@ -1,4 +1,2 @@
-export const serverHost = 'http://localhost:8080';
-
-export const routeUserRegister = `${serverHost}/user/register`;
-export const apiUserAuthorization = `${serverHost}/user/login`;
+export const routeUserRegister = `${process.env.API_URL}/user/register`;
+export const apiUserAuthorization = `${process.env.API_URL}/user/login`;
