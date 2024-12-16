@@ -9,15 +9,10 @@ services:
       - ./src:/app/src
     ports:
       - "${PORT}:${PORT}"
-    environment:
-      MONGODB_HOST: db
   db:
     container_name: spender-db
     image: mongo:latest
     restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - ${DATABASE_PORT}:27017
     volumes:
