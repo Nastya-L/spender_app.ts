@@ -13,10 +13,8 @@ const app: Express = express();
 dotenv.config();
 const {
   PORT,
-  DATABASE_USERNAME,
-  DATABASE_PASSWORD,
-  DATABASE_PORT,
-  DB_NAME
+  DATABASE_NAME,
+  DATABASE_URL
 } = process.env;
 app.use(cors());
 app.use(express.json());
@@ -26,10 +24,9 @@ app.use('/jar', jarRouter);
 app.use('/share', shareJarRouter);
 app.use('/', expenseRouter);
 
-const dbHost = process.env.MONGODB_HOST || 'localhost';
-const mongoString = `mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${dbHost}:${DATABASE_PORT}/`;
+const mongoString = DATABASE_URL || '';
 
-mongoose.connect(mongoString, { dbName: DB_NAME })
+mongoose.connect(mongoString, { dbName: DATABASE_NAME })
   .then(() => {
     console.log('Database Connected');
   })

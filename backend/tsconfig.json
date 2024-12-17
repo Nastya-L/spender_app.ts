@@ -8,7 +8,6 @@
     "allowJs": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "noEmit": true,
     "strict": true
     },
     "include": [".eslintrc.json", "src", "src/routes"],
