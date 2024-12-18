@@ -1,16 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ErrorResponse } from '../../types/Error';
 import authClient, { IAuthClientError } from '../../services/authClient';
-import { closeModal } from '../../reducers/ModalReducer';
+import trash from '../../images/icon/trash.png';
+import { RootState } from '../../store';
+import { IJar } from '../../interfaces/Jar';
+import { editJar } from '../../reducers/JarsReducer';
+
+interface IUsersJar {
+	_id: string
+	firstName: string
+}
 
 const ShareJarModal: React.FC = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [emailValue, setEmailValue] = useState('');
+	const [users, setUsers] = useState<Array<IUsersJar>>([]);
+
+	const jars = useSelector((state: RootState) => state.jars.jars);
+	const editableJar = jars.find((jar) => jar._id === id);
+
+	const getSharedUsers = (usersArray: Array<IUsersJar>) => usersArray
+		.filter((user) => user._id !== editableJar.owner);
+
+	useEffect(() => {
+		setUsers(getSharedUsers(editableJar.users));
+	}, []);
+
+	const ClickDeleteUser = (userId: string) => {
+		authClient.delete<IJar>(`/share/${id}/user/${userId}`)
+			.then((response) => {
+				const responseData = response.data;
+				dispatch(editJar(responseData));
+				setUsers(getSharedUsers(responseData.users));
+			}).catch((error: IAuthClientError) => {
+				if (error.redirect) {
+					navigate(error.redirect);
+					return;
+				}
+				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
+					if (!error.response) {
+						console.log('Something went wrong');
+					}
+				}
+			});
+	};
 
 	const ChangeEmailFriend = (e: React.FormEvent<HTMLInputElement>) => {
 		setEmailValue(e.currentTarget.value);
@@ -20,11 +58,12 @@ const ShareJarModal: React.FC = () => {
 		const email = {
 			email: emailValue
 		};
-		authClient.post<string>(`/share/${id}`, email)
+		authClient.post<IJar>(`/share/${id}`, email)
 			.then((response) => {
 				const responseData = response.data;
-				console.log(responseData);
-				dispatch(closeModal());
+				dispatch(editJar(responseData));
+				setEmailValue('');
+				setUsers(getSharedUsers(responseData.users));
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -41,7 +80,7 @@ const ShareJarModal: React.FC = () => {
 	return (
 		<div className="share-jar">
 			<h3 className="share-jar__title">Invite your friend</h3>
-			<p className="share-jar__descr">
+			<p className="share-jar__desc">
 				Invite your friend to the Jar, and you will be able to manage your shared budget together.
 				<br />
 				Enter the email of a registered user.
@@ -53,9 +92,31 @@ const ShareJarModal: React.FC = () => {
 					required
 					type="text"
 					onChange={ChangeEmailFriend}
+					value={emailValue}
 				/>
 			</form>
-			<button onClick={ClickShareJar} className="create-jar__btn">Invite</button>
+			<p className="share-jar__users__title">Shared Users</p>
+			<div className="share-jar__users">
+				{users.length === 0
+					? (
+						<p className="share-jar__desc share-jar__desc_users">
+							You haven&apos;t shared access to this jar with anyone yet.
+						</p>
+					)
+					: (
+						<div className="share-jar__users__wrap">
+							{users.map((user) => (
+								<div key={user._id} className="share-jar__users__item">
+									<p className="share-jar__users__name">{user.firstName}</p>
+									<button onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
+										<img src={trash} alt="trash" />
+									</button>
+								</div>
+							))}
+						</div>
+					)}
+			</div>
+			<button onClick={ClickShareJar} className="share-jar__btn">Invite</button>
 		</div>
 	);
 };
