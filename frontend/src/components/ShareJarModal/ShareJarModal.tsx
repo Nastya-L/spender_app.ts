@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ErrorResponse } from '../../types/Error';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import trash from '../../images/icon/trash.png';
 import { RootState } from '../../store';
 import { IJar } from '../../interfaces/Jar';
 import { editJar } from '../../reducers/JarsReducer';
+import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
+import useErrorManager from '../../hooks/useErrorManager';
 
 interface IUsersJar {
 	_id: string
@@ -20,6 +23,10 @@ const ShareJarModal: React.FC = () => {
 	const dispatch = useDispatch();
 	const [emailValue, setEmailValue] = useState('');
 	const [users, setUsers] = useState<Array<IUsersJar>>([]);
+
+	const {
+		setErrors, getErrors, clearErrors
+	} = useErrorManager();
 
 	const jars = useSelector((state: RootState) => state.jars.jars);
 	const editableJar = jars.find((jar) => jar._id === id);
@@ -44,7 +51,7 @@ const ShareJarModal: React.FC = () => {
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -64,14 +71,18 @@ const ShareJarModal: React.FC = () => {
 				dispatch(editJar(responseData));
 				setEmailValue('');
 				setUsers(getSharedUsers(responseData.users));
+				clearErrors();
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
 					return;
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						console.log('Something went wrong');
+					if (error.response.data) {
+						const errorResponse = error.response.data;
+						setErrors(errorResponse);
+					} else {
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -87,13 +98,18 @@ const ShareJarModal: React.FC = () => {
 			</p>
 			<form id="share-jar" className="share-jar__form">
 				<input
-					className="share-jar__form__input"
 					placeholder="Email"
 					required
 					type="text"
 					onChange={ChangeEmailFriend}
 					value={emailValue}
+					className={
+						getErrors('email')
+							? 'share-jar__form__input share-jar__form__input_error'
+							: 'share-jar__form__input'
+					}
 				/>
+				<ErrorMessage text={getErrors('email')} />
 			</form>
 			<p className="share-jar__users__title">Shared Users</p>
 			<div className="share-jar__users">

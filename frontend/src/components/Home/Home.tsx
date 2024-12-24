@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ErrorResponse } from '../../types/Error';
 import Sidebar from '../Sidebar/Sidebar';
 import HistoryJar from '../HistoryJar/HistoryJar';
@@ -36,7 +37,7 @@ const Home:React.FC = () => {
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});

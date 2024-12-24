@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import { toast } from 'react-toastify';
 import store, { RootState } from '../store';
 import { ErrorResponse } from '../types/Error';
 
@@ -31,33 +32,30 @@ authClient.interceptors.response.use(
 	(error: IAuthClientError) => {
 		if (axios.isAxiosError(error)) {
 			if (error.response) {
-				const errorRequest = error.response.data as ErrorResponse;
+				const errorResponse = error.response.data as ErrorResponse;
 				const statusCode = error.response.status;
 				/* eslint-disable no-param-reassign */
 				switch (statusCode) {
-				case 400:
-					console.error('Bad Request:', errorRequest.error[0].msg);
-					break;
 				case 401:
 					error.redirect = '/';
-					console.error('Unauthorized user:', errorRequest.error[0].msg);
+					toast.error(`Unauthorized user: ${errorResponse.error[0].msg}`);
 					break;
 				case 403:
 					error.redirect = '/';
-					console.error('Token has expired:', errorRequest.error[0].msg);
+					toast.error(`Token has expired: ${errorResponse.error[0].msg}`);
 					break;
 				case 404:
-					console.error('Not Found:', errorRequest.error[0].msg);
+					toast.error(`Not Found: ${errorResponse.error[0].msg}`);
 					break;
 				case 500:
-					console.error('Internal Server Error:', errorRequest.error[0].msg);
+					toast.error(`Internal Server Error: ${errorResponse.error[0].msg}`);
 					break;
 				default:
-					console.error('Error:', errorRequest.error[0].msg);
+					console.error('Error:', errorResponse.error[0].msg);
 					break;
 				}
 			} else {
-				console.error('Network Error:', error.message);
+				toast.error(`Network Error: ${error.message}`);
 			}
 		}
 		return Promise.reject(error);

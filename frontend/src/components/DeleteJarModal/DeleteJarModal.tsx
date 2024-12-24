@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { ErrorResponse } from '../../types/Error';
 import imgDelete from '../../images/icon/delete.png';
@@ -32,6 +33,7 @@ const DeleteJarModal: React.FC = () => {
 		authClient.delete<string>(`/jar/${id}`)
 			.then(() => {
 				dispatch(deleteJar(id));
+				toast.success('The Jar has been successfully deleted');
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -39,7 +41,7 @@ const DeleteJarModal: React.FC = () => {
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});

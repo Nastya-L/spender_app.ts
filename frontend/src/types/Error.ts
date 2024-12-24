@@ -1,5 +1,8 @@
+export interface Error {
+	msg: string,
+	field: string
+}
+
 export interface ErrorResponse {
-	error: [{
-		msg: string,
-		field: string
-}] }
+	error: [Error]
+}
