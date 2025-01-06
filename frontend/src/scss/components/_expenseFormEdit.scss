@@ -58,6 +58,7 @@
     &__button {
         display: flex;
         gap: 1.8rem;
+        width: 100%;
     }
 
     &__update {
@@ -65,19 +66,47 @@
 
         background-color: $btn-color;
         color: #fff;
-        padding: 0.7667rem 3.9rem;
+        padding: 0.7667rem 0;
         border-radius: 0.5333rem;
+        width: 60%;
     }
 
     &__delete {
         @include basic-text(0.8667rem, 1rem);
+        @include flex-center;
 
+        flex-direction: row;
+        gap: 5px;
         background-color: $error-color;
         color: #fff;
-        padding: 0.7667rem 1.4rem 0.7667rem 2.1333rem;
+        padding: 0.7667rem 0;
         border-radius: 0.5333rem;
-        background-image: url('~/src/images/icon/trash-white.png');
-        background-repeat: no-repeat;
-        background-position: 0.6667rem 0.6667rem;
+        width: 40%;
+
+        svg {
+            stroke: $background-main;
+        }
+    }
+}
+
+@media only screen and (width <= 650px) {
+    .react-calendar {
+        &__navigation {
+            &__label {
+                font-size: 16px !important;
+            }
+        }
+
+        &__month-view {
+            &__weekdays {
+                font-size: 11px !important;
+            }
+
+            &__days {
+                &__day {
+                    font-size: 11px !important; 
+                }
+            }
+        }
     }
 }

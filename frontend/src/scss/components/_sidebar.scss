@@ -56,13 +56,17 @@
 
         &-add {
             @include basic-text(0.9333rem, 1.2rem);
+            @include flex-center;
 
+            flex-direction: row;
+            align-self: flex-start;
             font-weight: 300;
-            background: transparent;
-            background-image: url('~/src/images/icon/add.png');
-            background-repeat: no-repeat;
-            background-position: 0 0;
-            padding-left: 1.6rem;
+            gap: 5px;
+
+            svg {
+                width: 18px;
+                height: 18px;
+            }
         }
     }
 
@@ -72,22 +76,12 @@
         gap: 0.9333rem;
         padding-left: 0.8rem;
 
-        &-settings {
+        &__item {
             @include basic-text(0.9333rem, 1rem);
+            @include flex-center;
 
-            background-image: url('~/src/images/icon/settings.png');
-            background-repeat: no-repeat;
-            background-position: 0 0;
-            padding-left: 1.6rem;
-        }
-
-        &-sign-out {
-            @include basic-text(0.9333rem, 1rem);
-
-            background-image: url('~/src/images/icon/log-out.png');
-            background-repeat: no-repeat;
-            background-position: 0 0;
-            padding-left: 1.6rem;
+            flex-direction: row;
+            gap: 5px;
         }
     }
 
@@ -109,4 +103,10 @@
     gap: 6px;
     border-radius: 0.2667rem;
     background-color: #deb0f6;
+}
+
+@media only screen and (width <= 650px) {
+    .sidebar {
+        padding: 0;
+    }
 }

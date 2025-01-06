@@ -23,7 +23,7 @@ module.exports = {
         loader: "ts-loader",
       },
       {
-        test: /\.(png|jpeg|gif|svg|jpg)$/i,
+        test: /\.(png|jpeg|gif|svg|webp|jpg)$/i,
         type: 'asset/resource',
         generator: {
           filename: 'static/media/[name].[hash][ext]'

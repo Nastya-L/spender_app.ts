@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,13 +13,21 @@ import NoJar from '../NoJar/NoJar';
 import Modal from '../UI/Modal/Modal';
 import { setJars } from '../../reducers/JarsReducer';
 import { RootState } from '../../store';
+import breakpoints from '../../constants/breakpoints';
+import useWidthWindow from '../../hooks/useWidthWindows';
+import MobileMenuButton from '../UI/MobileMenuButton/MobileMenuButton';
+import { SvgIconCross } from '../UI/SvgIcon/SvgIcon';
 
-const Home:React.FC = () => {
+const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { id } = useParams();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const jars = useSelector((state: RootState) => state.jars.jars);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+
+	const { windowWidth } = useWidthWindow();
+	const isMobile = windowWidth <= breakpoints.tablet;
 
 	useEffect(() => {
 		if (!authState) {
@@ -51,10 +59,29 @@ const Home:React.FC = () => {
 		}
 	}, [jars]);
 
+	useEffect(() => {
+		const body = document.getElementById('body');
+		if (isOpen) {
+			body.style.overflow = 'hidden';
+		} else {
+			body.style.overflow = 'visible';
+		}
+	}, [isOpen]);
+
 	return (
 		<main className="home">
-			<Sidebar jars={jars} />
+			{!isMobile && <Sidebar jars={jars} setIsOpen={setIsOpen} />}
+			{(isOpen && isMobile) && (
+				<div className={isOpen && 'home__sidebar'}>
+					<Sidebar jars={jars} setIsOpen={setIsOpen} />
+					<button aria-label="close" className="home__sidebar__close" onClick={() => setIsOpen(false)}>
+						<SvgIconCross />
+					</button>
+				</div>
+			)}
+
 			<div className="home__main">
+				{isMobile && <MobileMenuButton setIsOpen={setIsOpen} />}
 				{(jars.length > 0)
 					? <HistoryJar />
 					: <NoJar />}

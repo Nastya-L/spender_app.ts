@@ -13,11 +13,23 @@
     max-width: $content-max-width;
     height: 100%;
     overflow: auto;
+    position: relative;
+    padding-right: 18px;
+
+    &__mobile-add {
+        position: fixed;
+        bottom: 4px;
+        left: 50%;
+        z-index: 99;
+        transform: translate(-50%, -50%);
+    }
 
     &__head {
         display: flex;
         align-items: center;
         gap: 0.7333rem;
+        margin-left: 5px;
+        position: relative;
         
         &__menu {
             display: flex;
@@ -29,6 +41,7 @@
                 max-width: 125px;
                 overflow: hidden;
                 transition: max-width .5s linear;
+                padding: 5px 0;
             }    
 
             &_active {
@@ -88,7 +101,67 @@
 
     &_open {
         transition: max-height .5s ease-out;
-        max-height: max-content;
+        max-height: 700px;
         overflow: hidden;
+        margin-top: 10px;
+    }
+}
+
+@media only screen and (width <= 650px) {
+    .none {
+        transition: all .5s linear;
+        max-height: 0;
+    }
+
+    .history-jar {
+        padding-right: 0;
+        overflow: hidden;
+
+        &__head {
+            &__menu {
+                flex-direction: column;
+                gap: 0; 
+                position: absolute;
+                right: 0;
+                top: 5px;
+                z-index: 4;
+                background-color: $background-main;
+    
+                &__open {
+                    max-height: 130px;
+                    transition: max-height .5s linear;
+                }    
+    
+                &_active {
+                    flex-direction: column;
+                    background-color: $background-color-grey;
+                }
+    
+                &__items {
+                    flex-direction: column;
+                    padding: 0;
+                }
+            }
+    
+            &-item {
+                &_active {
+                    border-radius: 0.8667rem;
+                }
+            }
+        }
+
+        &__name {
+            font-size: 28px;
+        }
+    }
+
+    .history-day {
+        &__title {
+            font-size: 16px;
+        }
+
+        &__not-found {
+            font-size: 28px;
+        }
     }
 }

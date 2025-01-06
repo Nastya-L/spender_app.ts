@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { ErrorResponse } from '../../types/Error';
-import imgDelete from '../../images/icon/delete.png';
 import { deleteJar } from '../../reducers/JarsReducer';
 import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
+import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 
 const DeleteJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -59,7 +59,7 @@ const DeleteJarModal: React.FC = () => {
 			</p>
 			<div className="delete-jar__confirm">
 				<button onClick={DeleteJar} className="delete-jar__confirm__delete">
-					<img src={imgDelete} alt="DeleteJar" />
+					<SvgIconTrash />
 					{' '}
 					OK
 				</button>

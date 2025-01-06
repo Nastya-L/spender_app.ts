@@ -5,12 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ErrorResponse } from '../../types/Error';
 import authClient, { IAuthClientError } from '../../services/authClient';
-import trash from '../../images/icon/trash.png';
 import { RootState } from '../../store';
 import { IJar } from '../../interfaces/Jar';
 import { editJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
+import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 
 interface IUsersJar {
 	_id: string
@@ -124,8 +124,8 @@ const ShareJarModal: React.FC = () => {
 							{users.map((user) => (
 								<div key={user._id} className="share-jar__users__item">
 									<p className="share-jar__users__name">{user.firstName}</p>
-									<button onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
-										<img src={trash} alt="trash" />
+									<button aria-label="trash" onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
+										<SvgIconTrash />
 									</button>
 								</div>
 							))}

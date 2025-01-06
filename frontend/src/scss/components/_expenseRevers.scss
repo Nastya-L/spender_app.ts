@@ -10,5 +10,14 @@
 
     &_revers {
         flex-direction: row-reverse;
+        width: auto;
+    }
+}
+
+@media (hover: none) {
+    .expense {
+        &_revers:hover {
+            background-color: $background-main;
+        }
     }
 }
