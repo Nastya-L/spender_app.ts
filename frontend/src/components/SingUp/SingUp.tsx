@@ -52,8 +52,8 @@ const SingUp: React.FC = () => {
 				}).catch((error) => {
 					if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 						if (error.response) {
-							const errorRequest = error.response.data.error;
-							DisplayMessage(errorRequest[0].msg, ResultMessageType.error);
+							const errorResponse = error.response.data.error;
+							DisplayMessage(errorResponse[0].msg, ResultMessageType.error);
 						} else {
 							DisplayMessage('Something went wrong', ResultMessageType.error);
 						}

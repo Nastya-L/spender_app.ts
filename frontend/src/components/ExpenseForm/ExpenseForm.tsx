@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Calendar from 'react-calendar';
+import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { IExpense } from '../../interfaces/Expense';
 import Category from '../UI/Category/Category';
 import { ErrorResponse } from '../../types/Error';
 import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
+import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
+import useErrorManager from '../../hooks/useErrorManager';
 
 import arrow from '../../images/icon/arrow-right.png';
 
@@ -25,7 +28,12 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 	const [expenseValue, setExpenseValue] = useState('');
 	const [expenseCategory, setExpenseCategory] = useState('');
 
+	const {
+		setErrors, getErrors, clearErrors
+	} = useErrorManager();
+
 	const CloseForm = () => {
+		clearErrors();
 		close();
 	};
 
@@ -51,6 +59,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 				setExpenseCategory('');
 				setExpenseDate(new Date());
 				AddNewExpense(responseData);
+				clearErrors();
 				close();
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
@@ -58,8 +67,11 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 					return;
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						console.log('Something went wrong');
+					if (error.response.data) {
+						const errorResponse = error.response.data;
+						setErrors(errorResponse);
+					} else {
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -78,20 +90,25 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 					type="text"
 					onChange={ChangeExpenseValue}
 					value={expenseValue}
+					className={
+						getErrors('value')
+							? 'expense-form__input expense-form__input_error'
+							: 'expense-form__input'
+					}
 				/>
+				<ErrorMessage text={getErrors('value')} />
 			</div>
 			<div className="expense-form__categories">
-				{
-					CategoryImgBig.map((category) => (
-						<Category
-							key={category.name}
-							name={category.name}
-							path={category.path}
-							checked={false}
-							ChangeCategory={ChangeExpenseCategory}
-						/>
-					))
-				}
+				{CategoryImgBig.map((category) => (
+					<Category
+						key={category.name}
+						name={category.name}
+						path={category.path}
+						checked={false}
+						ChangeCategory={ChangeExpenseCategory}
+					/>
+				))}
+				<ErrorMessage text={getErrors('category')} />
 			</div>
 			<div className="expense-form__date">
 				<Calendar

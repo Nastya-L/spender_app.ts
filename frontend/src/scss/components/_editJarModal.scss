@@ -23,7 +23,7 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        gap: 2.1333rem;
+        position: relative;
 
         &__input {
             text-align: right;
@@ -31,6 +31,10 @@
             border: 1px solid $calendar-day-color;
             padding: 0.4rem 0.5333rem;
             color: #333;
+
+            &_error {
+                border-color: $error-color;
+            }
         }
 
         &__input::placeholder {

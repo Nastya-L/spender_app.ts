@@ -13,7 +13,7 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
     await User.findOne({ email: userEmail })
       .then(async (foundUser) => {
         if (!foundUser) {
-          return res.status(400).json({ error: [{ msg: 'User with this email not found' }] });
+          return res.status(400).json({ error: [{field: 'email', msg: 'User with this email not found' }] });
         }
 
         const UserId = foundUser._id;
@@ -28,7 +28,7 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
         }
 
         if (foundJar.users.includes(UserId)) {
-          return res.status(400).json({ error: [{ msg: 'The user is already in the jar' }] });
+          return res.status(400).json({ error: [{field: 'email', msg: 'The user is already in the jar' }] });
         }
         await Jar.findOneAndUpdate({ _id: idJar }, { $push: { users: UserId } }, { new: true })
           .populate({ path: 'users', select: { _id: 1, firstName: 1 } })
@@ -61,7 +61,7 @@ export const deleteShareJar = (req: IUserRequest, res: Response): void => {
         }
 
         if (!foundJar.users.includes(idUser)) {
-          return res.status(400).json({ error: [{ msg: 'The user is not in the jar' }] });
+          return res.status(400).json({ error: [{field: 'email', msg: 'The user is not in the jar' }] });
         }
         await Jar.findOneAndUpdate({ _id: idJar }, { $pull: { users: idUser } }, { new: true })
           .populate({ path: 'users', select: { _id: 1, firstName: 1 } })
