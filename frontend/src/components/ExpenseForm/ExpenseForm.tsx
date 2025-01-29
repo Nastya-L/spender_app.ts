@@ -11,8 +11,7 @@ import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
-
-import arrow from '../../images/icon/arrow-right.png';
+import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -80,8 +79,8 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 	return (
 		<div className="expense-form">
 			<h2 className="expense-form__title">New Expense</h2>
-			<button onClick={CloseForm} className="expense-form__close">
-				<img src={arrow} alt="arrow" />
+			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
+				<SvgIconArrow />
 			</button>
 			<div className="expense-form__value">
 				<input

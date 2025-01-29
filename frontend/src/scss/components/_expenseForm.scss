@@ -64,3 +64,25 @@
         border-radius: 0.5333rem;
     }
 }
+
+@media only screen and (width <= 650px) {
+    .react-calendar {
+        &__navigation {
+            &__label {
+                font-size: 16px !important;
+            }
+        }
+
+        &__month-view {
+            &__weekdays {
+                font-size: 11px !important;
+            }
+
+            &__days {
+                &__day {
+                    font-size: 11px !important; 
+                }
+            }
+        }
+    }
+}

@@ -26,12 +26,24 @@
 
     &__add {
         @include basic-text(0.9333rem, 1.0667rem);
+        @include flex-center;
 
-        background-image: url('~/src/images/icon/add.png');
-        background-repeat: no-repeat;
-        background-position: 9px 6px;
+        flex-direction: row;
+        gap: 5px;
         background-color: $grey-medium-color;
-        padding: 0.4rem 0.8rem 0.4rem 2rem;
+        padding: 0.4rem 0.8rem;
         border-radius: 0.5333rem;
     }
+}
+
+@media only screen and (width <= 650px) {
+    .no-jar {
+        &__title {
+            text-align: center;
+        }
+    
+        &__descr {
+            padding: 0;
+        }
+    } 
 }

@@ -1,0 +1,12 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.mobile-menu-button {
+	position: absolute;
+	top: 24px;
+	left: 4px;
+
+	&__btn {
+		padding-top: 5px;
+	}
+}

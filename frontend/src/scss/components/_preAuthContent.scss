@@ -1,10 +1,12 @@
-.prea-auth-content {
+@use '../utils/mixins' as *;
+
+.pre-auth-content {
+    align-self: center;
     width: 50%;
+    height: max-content;
     overflow: auto;
     margin: 0 0 0 3.3333rem;
     background-color: #fff;
-    display: flex;
-    align-items: center;
 
     &__wrap {
         width: 100%;

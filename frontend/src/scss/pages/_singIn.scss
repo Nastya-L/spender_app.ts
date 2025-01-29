@@ -19,26 +19,27 @@
     }
 
     &__content {
-        border-radius: $border-radius;
-        background-color: $background-color-grey;
-        
         @include flex-center;
 
+        border-radius: $border-radius;
+        background-color: $background-color-grey;
         width: 50%;
-        margin: 3rem 3.3333rem 3rem 0;
+        margin: $padding-home 3rem $padding-home 0;
     }
 
     &__title {
         @include title-text(2.4rem, 2.8rem, 700);
 
         align-self: flex-start;
-        margin-bottom: 2.8667rem;
     }
 
     &__form {
         @include flex-center;
 
         gap: 1.5625rem;
+    }
+
+    &__label {
         position: relative;
     }
 
@@ -47,12 +48,12 @@
         @include basic-text(1rem, 1.12rem);
 
         padding: 0.3333rem 0.8rem;
-        width: 18.3333rem;   
+        width: 18.3333rem;
     }
 
     &__img {
         position: absolute;
-        top: 3.7333rem;
+        top: 19%;
         right: 0.3333rem;
         border: none;
         background: none;
@@ -61,6 +62,22 @@
     &__button {
         @include button(1rem, 1.3333rem);
 
-        padding: 0.6667rem 8.45rem;
+        padding: 0.6667rem 0;
+        width: 100%;
+    }
+}
+
+@media only screen and (width <= 650px) {
+    .sing-in {
+        width: 100%;
+
+        &__wrap {
+            width: 100%;
+        }
+    
+        &__content {
+            width: 100%;
+            margin: 15px;
+        }
     }
 }

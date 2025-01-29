@@ -5,16 +5,60 @@
     display: flex;
     justify-content: flex-end;
     background-color: $background-color-grey;
-    height: calc(100vh - 28px);
-    width: calc(100vw - 28px);
-    padding: 0.9333rem;
+    height: calc(100vh - ($padding-home * 2));
+    width: calc(100vw - ($padding-home * 2));
+    padding: $padding-home;
+	position: relative;
+
+	&__sidebar {
+		position: fixed;
+		background: $background-color-grey;
+		z-index: 3;
+		height: 100vh;
+		width: 50%;
+
+		&__close {
+			position: fixed;
+			top: 30px;
+			right: 55%;
+		}
+	}
 
     &__main {
         background-color: $background-main;
         border: 1px solid #BDBDBD;
-        height: calc(100% - 36px);
+        height: calc(100% - ($padding-main * 2));
         width: 55%;
         border-radius: 15px;
-        padding: 1.2rem 1.8667rem;
+        padding: $padding-main 1.8667rem;
+		margin-bottom: $padding-home;
+        position: relative;
+
+        &__mobile-menu {
+            position: absolute;
+            top: 24px;
+            left: 4px;
+
+            &__btn {
+                padding-top: 5px;
+            }
+        }
+    }
+}
+
+@media only screen and (width <= 650px) {
+    .home {
+        flex-direction: column;
+		justify-content: normal;
+        padding: 0;
+        width: 100%;
+        min-height: 100vh;
+        height: auto;
+
+        &__main {
+            width: auto;
+            margin: $padding-home;
+            height: 100%;
+        }
     }
 }

@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IModalState } from '../../../interfaces/Modal';
-import arrow from '../../../images/icon/arrow-right.png';
 import CreateJarModal from '../../CreateJarModal/CreateJarModal';
 import { closeModal } from '../../../reducers/ModalReducer';
 import DeleteJarModal from '../../DeleteJarModal/DeleteJarModal';
 import EditJarModal from '../../EditJarModal/EditJarModal';
 import ShareJarModal from '../../ShareJarModal/ShareJarModal';
+import { SvgIconArrow } from '../SvgIcon/SvgIcon';
 
 interface IModalContent {
 	[componentName: string]: React.ComponentType
@@ -35,8 +35,8 @@ const Modal: React.FC = () => {
 	return (
 		<div className="modal">
 			<div className="modal__container">
-				<button className="modal__close" onClick={CloseModal}>
-					<img src={arrow} alt="arrowClose" />
+				<button aria-label="arrow" className="modal__close" onClick={CloseModal}>
+					<SvgIconArrow />
 				</button>
 				<Component />
 			</div>

@@ -5,6 +5,8 @@ import { User, ValidateUser, ValidateUserField } from '../../validators/Validate
 import { routeUserRegister } from '../../services/BackendUrl';
 import { ErrorResponse } from '../../types/Error';
 import PreAuthContent from '../PreAuthContent/PreAuthContent';
+import breakpoints from '../../constants/breakpoints';
+import useWidthWindow from '../../hooks/useWidthWindows';
 
 enum ResultMessageType {
 	error = 'error',
@@ -25,6 +27,9 @@ const SingUp: React.FC = () => {
 		password: '',
 		repeatPassword: ''
 	});
+
+	const { windowWidth } = useWidthWindow();
+	const isMobile = windowWidth <= breakpoints.tablet;
 
 	const DisplayMessage = (text: string, type: ResultMessageType) => {
 		setMessageStyle(type);
@@ -78,7 +83,7 @@ const SingUp: React.FC = () => {
 	return (
 		<section className="sing-up">
 			<div className="sing-up__container">
-				<PreAuthContent />
+				{!isMobile && <PreAuthContent />}
 				<div className="sing-up__content">
 					<div className="sing-up__wrap">
 						<h2 className="sing-up__title">

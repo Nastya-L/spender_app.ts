@@ -1,0 +1,46 @@
+@use '../utils/variables' as *;
+
+.svg-icon {
+    height: 22px;
+    width: 22px;
+    fill: $basic-color-text;
+
+    &__add-square {
+        height: 50px;
+        width: 50px;
+        stroke: $basic-color-text;
+        fill: $background-main;
+    }
+
+    &__settings {
+        height: 18px;
+        width: 18px;
+        stroke: $basic-color-text;
+    }
+
+    &__log-out,
+    &__eye {
+        height: 18px;
+        width: 18px;
+        fill: $basic-color-text;
+    }
+
+    &__arrow {
+        fill: $calendar-month-color;
+        height: 22px;
+        width: 22px;
+    }
+
+    &__trash {
+        height: 18px;
+        width: 18px;
+        stroke: $error-color;
+    }
+
+    &__pen,
+    &__users {
+        height: 19px;
+        width: 19px;
+        stroke: $basic-color-text;
+    }
+}

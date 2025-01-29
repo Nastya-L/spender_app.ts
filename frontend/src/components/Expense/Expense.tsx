@@ -4,7 +4,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { IExpense } from '../../interfaces/Expense';
 import { GetCategoryImg } from '../../utils/CategoryImg';
-import edit from '../../images/icon/pencil.png';
+import { SvgIconPen } from '../UI/SvgIcon/SvgIcon';
 
 interface IExpenseProps {
 	expense: IExpense
@@ -49,8 +49,8 @@ const Expense: React.FC<IExpenseProps> = ({
 				<div className="expense__value">{`${expense.value}₴`}</div>
 			</div>
 			<div className="expense__edit">
-				<button onClick={onClickEdit} className="expense__edit__btn">
-					<img src={edit} alt="edit" />
+				<button aria-label="edit" onClick={onClickEdit} className="expense__edit__btn">
+					<SvgIconPen />
 				</button>
 			</div>
 		</div>

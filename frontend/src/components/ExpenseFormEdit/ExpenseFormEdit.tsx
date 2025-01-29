@@ -10,9 +10,8 @@ import { ErrorResponse } from '../../types/Error';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
-
-import arrow from '../../images/icon/arrow-right.png';
 import useErrorManager from '../../hooks/useErrorManager';
+import { SvgIconArrow, SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -113,8 +112,8 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	return (
 		<div className="expense-form-edit">
 			<h2 className="expense-form-edit__title">Edit Expense</h2>
-			<button onClick={CloseForm} className="expense-form__close">
-				<img src={arrow} alt="arrow" />
+			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
+				<SvgIconArrow />
 			</button>
 			<div className="expense-form-edit__value">
 				<input
@@ -154,7 +153,10 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 			</div>
 			<div className="expense-form-edit__button">
 				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">Update</button>
-				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">Delete</button>
+				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">
+					<SvgIconTrash />
+					Delete
+				</button>
 			</div>
 		</div>
 	);
