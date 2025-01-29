@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import PreAuthContent from '../PreAuthContent/PreAuthContent';
+import { IAuthState } from '../../interfaces/AuthState';
 
 const Greetings: React.FC = () => {
 	const navigate = useNavigate();
+	const authUser = useSelector((state: IAuthState) => state.auth.user);
 
 	const ClickStarted = () => {
 		navigate('/user/register');
 	};
+
+	useEffect(() => {
+		if (authUser) {
+			navigate('/home');
+		}
+	}, []);
 
 	return (
 		<section className="greetings">

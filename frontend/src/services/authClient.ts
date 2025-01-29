@@ -37,11 +37,11 @@ authClient.interceptors.response.use(
 				/* eslint-disable no-param-reassign */
 				switch (statusCode) {
 				case 401:
-					error.redirect = '/';
+					error.redirect = '/user/login';
 					toast.error(`Unauthorized user: ${errorResponse.error[0].msg}`);
 					break;
 				case 403:
-					error.redirect = '/';
+					error.redirect = '/user/login';
 					toast.error(`Token has expired: ${errorResponse.error[0].msg}`);
 					break;
 				case 404:
