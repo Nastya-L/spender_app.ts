@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Calendar from 'react-calendar';
+import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { IExpense } from '../../interfaces/Expense';
 import Category from '../UI/Category/Category';
 import { ErrorResponse } from '../../types/Error';
+import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
-
-import arrow from '../../images/icon/arrow-right.png';
+import useErrorManager from '../../hooks/useErrorManager';
+import { SvgIconArrow, SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -30,7 +32,12 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	const [expenseCategory, setExpenseCategory] = useState(expense.category);
 	const ref = useRef<HTMLInputElement>(null);
 
+	const {
+		setErrors, getErrors, clearErrors
+	} = useErrorManager();
+
 	const CloseForm = () => {
+		clearErrors();
 		close();
 	};
 
@@ -62,6 +69,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 				setExpenseCategory('');
 				setExpenseDate(new Date());
 				UpdateExpense(responseData);
+				clearErrors();
 				close();
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
@@ -69,8 +77,11 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 					return;
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						console.log('Something went wrong');
+					if (error.response.data) {
+						const errorResponse = error.response.data;
+						setErrors(errorResponse);
+					} else {
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -84,6 +95,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 				setExpenseDate(new Date());
 				DeleteExpense(expense._id);
 				close();
+				toast.success('The expense has been successfully deleted');
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -91,7 +103,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -100,8 +112,8 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	return (
 		<div className="expense-form-edit">
 			<h2 className="expense-form-edit__title">Edit Expense</h2>
-			<button onClick={CloseForm} className="expense-form__close">
-				<img src={arrow} alt="arrow" />
+			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
+				<SvgIconArrow />
 			</button>
 			<div className="expense-form-edit__value">
 				<input
@@ -111,7 +123,13 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 					type="text"
 					onChange={ChangeExpenseValue}
 					value={expenseValue}
+					className={
+						getErrors('value')
+							? 'expense-form-edit__input expense-form-edit__input_error'
+							: 'expense-form-edit__input'
+					}
 				/>
+				<ErrorMessage text={getErrors('value')} />
 			</div>
 			<div className="expense-form-edit__categories">
 				{
@@ -135,7 +153,10 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 			</div>
 			<div className="expense-form-edit__button">
 				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">Update</button>
-				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">Delete</button>
+				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">
+					<SvgIconTrash />
+					Delete
+				</button>
 			</div>
 		</div>
 	);

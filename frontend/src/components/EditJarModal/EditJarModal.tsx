@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ColorOption from '../UI/ColorOption/ColorOption';
 import { defaultColors } from '../CreateJarModal/CreateJarModal';
 import authClient, { IAuthClientError } from '../../services/authClient';
@@ -10,6 +11,8 @@ import { ErrorResponse } from '../../types/Error';
 import { editJar } from '../../reducers/JarsReducer';
 import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
+import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
+import useErrorManager from '../../hooks/useErrorManager';
 
 const EditJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -21,6 +24,10 @@ const EditJarModal: React.FC = () => {
 
 	const [colorValue, setColorValue] = useState(editableJar.color);
 	const [jarName, setJarName] = useState(editableJar.name);
+
+	const {
+		setErrors, getErrors, clearErrors
+	} = useErrorManager();
 
 	const ChooseColor = (color: string) => {
 		setColorValue(color);
@@ -40,14 +47,18 @@ const EditJarModal: React.FC = () => {
 				const responseData = response.data;
 				dispatch(editJar(responseData));
 				dispatch(closeModal());
+				clearErrors();
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
 					return;
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						console.log('Something went wrong');
+					if (error.response) {
+						const errorResponse = error.response.data;
+						setErrors(errorResponse);
+					} else {
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -63,13 +74,18 @@ const EditJarModal: React.FC = () => {
 			</p>
 			<form id="edit-jar" className="edit-jar__form">
 				<input
-					className="edit-jar__form__input"
+					className={
+						getErrors('name')
+							? 'edit-jar__form__input edit-jar__form__input_error'
+							: 'edit-jar__form__input'
+					}
 					placeholder="Jar name"
 					required
 					type="text"
 					onChange={ChangeNameJar}
 					value={jarName}
 				/>
+				<ErrorMessage text={getErrors('name')} />
 			</form>
 			<div className="edit-jar__color">
 				{defaultColors.map((color) => (
@@ -77,6 +93,7 @@ const EditJarModal: React.FC = () => {
 						key={color}
 						colorItem={color}
 						ChooseColor={ChooseColor}
+						isChecked={color === colorValue}
 					/>
 				))}
 			</div>

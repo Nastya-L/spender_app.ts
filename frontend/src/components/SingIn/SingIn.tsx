@@ -7,8 +7,9 @@ import PreAuthContent from '../PreAuthContent/PreAuthContent';
 import { apiUserAuthorization } from '../../services/BackendUrl';
 import { loginSuccess } from '../../reducers/AuthReducer';
 import { IUser } from '../../interfaces/User';
-import openEye from '../../images/icon/open-eye.png';
-import eye from '../../images/icon/eye.png';
+import useWidthWindow from '../../hooks/useWidthWindows';
+import breakpoints from '../../constants/breakpoints';
+import { SvgIconEyeOff, SvgIconEyeShow } from '../UI/SvgIcon/SvgIcon';
 
 enum ResultMessageType {
 	error = 'error',
@@ -25,6 +26,9 @@ const SingIn: React.FC = () => {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const { windowWidth } = useWidthWindow();
+	const isMobile = windowWidth <= breakpoints.tablet;
 
 	const DisplayMessage = (text: string, type: ResultMessageType) => {
 		setMessageStyle(type);
@@ -46,8 +50,8 @@ const SingIn: React.FC = () => {
 			}).catch((error) => {
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (error.response) {
-						const errorRequest = error.response.data.error;
-						DisplayMessage(errorRequest[0].msg, ResultMessageType.error);
+						const errorResponse = error.response.data.error;
+						DisplayMessage(errorResponse[0].msg, ResultMessageType.error);
 					} else {
 						DisplayMessage('Something went wrong', ResultMessageType.error);
 					}
@@ -65,19 +69,19 @@ const SingIn: React.FC = () => {
 	};
 
 	const changeEmail = (e: React.FormEvent<HTMLInputElement>): void => {
-		const EmailValue:string = e.currentTarget.value;
+		const EmailValue: string = e.currentTarget.value;
 		setValueEmail(EmailValue);
 	};
 
 	const changePassword = (e: React.FormEvent<HTMLInputElement>) => {
-		const PasswordValue:string = e.currentTarget.value;
+		const PasswordValue: string = e.currentTarget.value;
 		setValuePassword(PasswordValue);
 	};
 
 	return (
 		<section className="sing-in">
 			<div className="sing-in__container">
-				<PreAuthContent />
+				{!isMobile && <PreAuthContent />}
 				<div className="sing-in__content">
 					<div className="sing-in__wrap">
 						<h2 className="sing-in__title">
@@ -99,22 +103,21 @@ const SingIn: React.FC = () => {
 								type="text"
 								className="sing-in__input"
 							/>
-							<input
-								required
-								onChange={changePassword}
-								minLength={6}
-								maxLength={10}
-								form="sing-in"
-								placeholder="**************"
-								type={passVisible ? 'text' : 'password'}
-								className="sing-in__input password"
-							/>
-							<button className="sing-in__img" aria-label="ShowPassword" onClick={ShowPassword}>
-								<img
-									alt="eye"
-									src={passVisible ? openEye : eye}
+							<label className="sing-in__label" htmlFor="password">
+								<input
+									required
+									onChange={changePassword}
+									minLength={6}
+									maxLength={10}
+									form="sing-in"
+									placeholder="**************"
+									type={passVisible ? 'text' : 'password'}
+									className="sing-in__input password"
 								/>
-							</button>
+								<button type="button" className="sing-in__img" aria-label="ShowPassword" onClick={ShowPassword}>
+									{passVisible ? <SvgIconEyeShow /> : <SvgIconEyeOff />}
+								</button>
+							</label>
 							<button className="sing-in__button" onClick={ClickSingIn}>
 								Sign In
 							</button>

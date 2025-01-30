@@ -2,44 +2,91 @@
 @use '../utils/mixins' as *;
 
 .share-jar {
-    @include flex-center;
+	@include flex-center;
 
-    gap: 2.1333rem;
-    margin: 2.6667rem;
-    position: relative;
-    max-width: 330px;
+	gap: 1.6rem;
+	margin: 2.6667rem;
+	position: relative;
+	max-width: 330px;
 
-    &__title {
-        @include title-text(1.3333rem, 1.6rem, 600);
-    }
+	&__title {
+		@include title-text(1.3333rem, 1.6rem, 600);
+	}
 
-    &__descr {
-        @include basic-text(0.8667rem, 1rem);
+	&__desc {
+		@include basic-text(0.8667rem, 1rem);
 
-        text-align: center;
-    }
+		text-align: center;
+		padding: 6px 0;
 
-    &__form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 2.1333rem;
+		&_users {
+			padding: 0;
+		}
+	}
 
-        &__input {
-            text-align: right;
-            border-radius: 4px;
-            border: 1px solid $calendar-day-color;
-            padding: 0.4rem 0.5333rem;
-            color: #333;
-        }
-    }
+	&__form {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		position: relative;
 
-    &__btn {
-        @include title-text(0.8667rem, 1rem, 600);
+	&__input {
+		text-align: right;
+		border-radius: 4px;
+		border: 1px solid $calendar-day-color;
+		padding: 0.4rem 0.5333rem;
+		color: #333;
 
-        background-color: $btn-color;
-        color: #fff;
-        padding: 0.7667rem 5.5rem;
-        border-radius: 0.5333rem;
-    }
+		&_error {
+			border-color: $error-color;
+		  }
+	
+		  &:-webkit-autofill,
+		  &:-webkit-autofill:hover,
+		  &:-webkit-autofill:focus {
+			-webkit-box-shadow: 0 0 0 50px white inset;
+			-webkit-text-fill-color: #333;
+		  }
+		}
+	}
+
+	&__btn {
+		@include title-text(0.8667rem, 1rem, 600);
+
+		background-color: $btn-color;
+		color: #fff;
+		padding: 0.7667rem 5.5rem;
+		border-radius: 0.5333rem;
+	}
+
+	&__users {
+		display: flex;
+		align-items: flex-end;
+		flex-direction: column;
+		gap: 10px;
+		width: 100%;
+
+		&__wrap {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		&__item {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 10px;
+		}
+	
+		&__name {
+			@include basic-text(1rem, 1rem);
+		}
+
+		&__title {
+			@include title-text(1rem, 1rem, 600);
+
+			align-self: center;
+		}
+	}
 }

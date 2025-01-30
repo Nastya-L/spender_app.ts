@@ -2,20 +2,28 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ColorOption from '../UI/ColorOption/ColorOption';
 import { IJar } from '../../interfaces/Jar';
 import authClient from '../../services/authClient';
 import { ErrorResponse } from '../../types/Error';
 import { closeModal } from '../../reducers/ModalReducer';
 import { addJar } from '../../reducers/JarsReducer';
+import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
+import useErrorManager from '../../hooks/useErrorManager';
 
 export const defaultColors = ['FFE074', 'FF9C64', 'FA7878', 'F881DE', 'B28FFE', '5E90F2', '07A4B9', '5BE8B1', '42AE31', 'B23B98'];
 
 const CreateJarModal: React.FC = () => {
-	const [colorValue, setColorValue] = useState('');
+	const [colorValue, setColorValue] = useState(defaultColors[2]);
 	const [nameJar, setNameJar] = useState('');
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const {
+		setErrors, getErrors, clearErrors
+	} = useErrorManager();
 
 	const ChooseColor = (color: string) => {
 		setColorValue(color);
@@ -36,10 +44,14 @@ const CreateJarModal: React.FC = () => {
 				dispatch(closeModal());
 				dispatch(addJar(responseData));
 				navigate(`/home/jar/${responseData._id}`);
+				clearErrors();
 			}).catch((error) => {
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						console.log('Something went wrong');
+					if (error.response) {
+						const errorResponse = error.response.data;
+						setErrors(errorResponse);
+					} else {
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -54,16 +66,26 @@ const CreateJarModal: React.FC = () => {
 			</p>
 			<form id="create-jar" className="create-jar__form">
 				<input
-					className="create-jar__form__input"
+					className={
+						getErrors('name')
+							? 'create-jar__form__input create-jar__form__input_error'
+							: 'create-jar__form__input'
+					}
 					placeholder="Jar name"
 					required
 					type="text"
 					onChange={ChangeNameJar}
 				/>
+				<ErrorMessage text={getErrors('name')} />
 			</form>
 			<div className="create-jar__color">
 				{defaultColors.map((color) => (
-					<ColorOption key={color} colorItem={color} ChooseColor={ChooseColor} />
+					<ColorOption
+						key={color}
+						colorItem={color}
+						ChooseColor={ChooseColor}
+						isChecked={color === colorValue}
+					/>
 				))}
 			</div>
 			<button onClick={ClickCreateJar} className="create-jar__btn">Create</button>

@@ -1,0 +1,19 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.error-message {
+	@include basic-text(0.8rem, 1rem);
+
+	position: absolute;
+	top: 100%;
+    right: 0;
+	width: 100%;
+	height: 16px;
+	overflow-wrap: anywhere;
+
+	&__text {
+		color: $error-color;
+		text-align: end;
+		padding: 2px 4px 0 0;
+	}
+}

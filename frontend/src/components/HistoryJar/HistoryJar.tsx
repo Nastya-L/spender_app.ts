@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
 import { openModal } from '../../reducers/ModalReducer';
@@ -13,12 +14,12 @@ import ExpenseForm from '../ExpenseForm/ExpenseForm';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IExpensesArray } from '../../interfaces/Expense';
 import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
-
-import addExpense from '../../images/icon/plus.png';
-import addUsers from '../../images/icon/users.png';
-import pencil from '../../images/icon/pencil.png';
-import list from '../../images/icon/list.png';
-import trash from '../../images/icon/trash.png';
+import {
+	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconPen, SvgIconTrash, SvgIconUsers
+} from '../UI/SvgIcon/SvgIcon';
+import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
+import useWidthWindow from '../../hooks/useWidthWindows';
+import breakpoints from '../../constants/breakpoints';
 
 const HistoryJar: React.FC = () => {
 	const [newExpenseIsOpen, setNewExpenseIsOpen] = useState(false);
@@ -35,6 +36,9 @@ const HistoryJar: React.FC = () => {
 
 	const selectedJar = (jars.find((jar) => jar._id === id));
 	const jarName = selectedJar ? selectedJar.name : 'Oops';
+
+	const { windowWidth } = useWidthWindow();
+	const isMobile = windowWidth <= breakpoints.tablet;
 
 	useEffect(() => {
 		if (!authState) {
@@ -57,11 +61,17 @@ const HistoryJar: React.FC = () => {
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});
 	}, [id]);
+
+	useEffect(() => {
+		if (newExpenseIsOpen) {
+			window.scrollTo(0, 0);
+		}
+	}, [newExpenseIsOpen]);
 
 	const OpenNewExpense = () => {
 		setNewExpenseIsOpen(true);
@@ -134,28 +144,32 @@ const HistoryJar: React.FC = () => {
 
 	return (
 		<div className="history-jar">
+			{isMobile && (
+				<div className="history-jar__mobile-add">
+					<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
+				</div>
+			)}
 			<div className="history-jar__head">
 				<h2 className="history-jar__name">{jarName}</h2>
-				<button className="history-jar__head-item" onClick={OpenNewExpense}>
-					<img src={addExpense} alt="addExpense" />
-				</button>
-				<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen === true ? 'history-jar__head__menu_active' : ''))}>
+				{!isMobile && <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
+				<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
 					<button
 						onClick={OpenJarOptions}
-						className={classNames('history-jar__head-item_more', (jarOptionsIsOpen === true ? 'history-jar__head-item_active' : ''))}
+						aria-label="list"
+						className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
 					>
-						<img src={list} alt="list" />
+						<SvgIconDots />
 					</button>
 					<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
 						<div className="history-jar__head__menu__items">
-							<button onClick={ShareJar} className="history-jar__head-item">
-								<img src={addUsers} alt="addUsers" />
+							<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+								<SvgIconUsers />
 							</button>
-							<button onClick={EditJar} className="history-jar__head-item">
-								<img src={pencil} alt="pencil" />
+							<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+								<SvgIconPen />
 							</button>
-							<button onClick={DeleteJar} className="history-jar__head-item">
-								<img src={trash} alt="trash" />
+							<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+								<SvgIconTrash />
 							</button>
 						</div>
 					</div>
@@ -179,7 +193,7 @@ const HistoryJar: React.FC = () => {
 					: jarExpenses.map((exp, i) => (
 						<div key={exp._id} className="history-day">
 							{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-							&& <h3 className="history-day__title">{ formatDate(exp.date) }</h3>}
+								&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
 							{(exp.owner._id === userId)
 								? (
 									<Expense

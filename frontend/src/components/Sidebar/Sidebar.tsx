@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { NavLink } from 'react-router-dom';
 import { IJar } from '../../interfaces/Jar';
 import ButtonNewJar from '../UI/ButtonNewJar/ButtonNewJar';
+import { SvgIconLogOut, SvgIconSettings } from '../UI/SvgIcon/SvgIcon';
 
 interface SidebarProps {
 	jars: IJar[];
+	setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
-	const onChange = (_id: string) => {
-		console.log(_id);
+const Sidebar: React.FC<SidebarProps> = ({ jars, setIsOpen }) => {
+	const onChange = () => {
+		setIsOpen(false);
 	};
 
 	return (
@@ -29,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
 									key={jar._id}
 									to={`/home/jar/${jar._id}`}
 									id={jar._id}
-									onClick={() => onChange(jar._id)}
+									onClick={onChange}
 									className={({ isActive }) => (isActive ? 'is-active' : 'sidebar__jars-jar')}
 								>
 									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" style={{ fill: `#${jar.color}`, stroke: jar.color }}>
@@ -45,10 +47,12 @@ const Sidebar: React.FC<SidebarProps> = ({ jars }) => {
 						</div>
 					</div>
 					<div className="sidebar__menu">
-						<NavLink className="sidebar__menu-settings" to="/">
+						<NavLink className="sidebar__menu__item" to="/">
+							<SvgIconSettings />
 							Settings
 						</NavLink>
-						<NavLink className="sidebar__menu-sign-out" to="/user/login">
+						<NavLink className="sidebar__menu__item" to="/user/login">
+							<SvgIconLogOut />
 							Sign Out
 						</NavLink>
 					</div>

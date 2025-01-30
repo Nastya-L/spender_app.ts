@@ -2,12 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { ErrorResponse } from '../../types/Error';
-import imgDelete from '../../images/icon/delete.png';
 import { deleteJar } from '../../reducers/JarsReducer';
 import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
+import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 
 const DeleteJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -32,6 +33,7 @@ const DeleteJarModal: React.FC = () => {
 		authClient.delete<string>(`/jar/${id}`)
 			.then(() => {
 				dispatch(deleteJar(id));
+				toast.success('The Jar has been successfully deleted');
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -39,7 +41,7 @@ const DeleteJarModal: React.FC = () => {
 				}
 				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 					if (!error.response) {
-						console.log('Something went wrong');
+						toast.error('Something went wrong');
 					}
 				}
 			});
@@ -57,7 +59,7 @@ const DeleteJarModal: React.FC = () => {
 			</p>
 			<div className="delete-jar__confirm">
 				<button onClick={DeleteJar} className="delete-jar__confirm__delete">
-					<img src={imgDelete} alt="DeleteJar" />
+					<SvgIconTrash />
 					{' '}
 					OK
 				</button>

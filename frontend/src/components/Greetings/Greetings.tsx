@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import PreAuthContent from '../PreAuthContent/PreAuthContent';
+import { IAuthState } from '../../interfaces/AuthState';
+import breakpoints from '../../constants/breakpoints';
+import useWidthWindow from '../../hooks/useWidthWindows';
 
 const Greetings: React.FC = () => {
 	const navigate = useNavigate();
+	const authUser = useSelector((state: IAuthState) => state.auth.user);
+
+	const { windowWidth } = useWidthWindow();
+	const isMobile = windowWidth <= breakpoints.tablet;
 
 	const ClickStarted = () => {
 		navigate('/user/register');
 	};
 
+	useEffect(() => {
+		if (authUser) {
+			navigate('/home');
+		}
+	}, []);
+
 	return (
 		<section className="greetings">
 			<div className="greetings__container">
-				<PreAuthContent />
+				{!isMobile && <PreAuthContent />}
 				<div className="greetings__content">
 					<div className="greetings__content-wrap">
 						<h1 className="greetings__content-title">

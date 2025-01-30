@@ -44,10 +44,6 @@ module.exports = {
 		'react/prop-types': 'off',
 		"react/jsx-indent": ["error", "tab"],
 		"react/jsx-indent-props": ["error", "tab"],
-		'linebreak-style': [
-			'error',
-			'windows'
-		],
 		'semi': [
 			'error',
 			'always'
@@ -76,6 +72,7 @@ module.exports = {
 		"no-shadow": "off",
     	"@typescript-eslint/no-shadow": "warn",
 		'no-underscore-dangle': 'off',
+		"react/jsx-no-constructed-context-values": "off",
 		'no-param-reassign': ['error', { props: false }]
 	}
 };

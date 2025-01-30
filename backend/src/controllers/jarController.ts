@@ -12,7 +12,7 @@ export const getJar = (req: IUserRequest, res: Response): void => {
   (async () => {
     const userId = req.user?._id;
 
-    await Jar.find({ users: userId })
+    await Jar.find({ users: userId }).populate({ path: 'users', select: { _id: 1, firstName: 1 } })
       .then(async (existingJars) => {
         if (!existingJars) {
           return res.status(404).json({ error: [{ msg: 'No jar found' }] });
@@ -75,7 +75,7 @@ export const updateJar = (req: IUserRequest, res: Response): void => {
     await Jar.findOneAndUpdate(
       { _id: jarId, owner: userId },
       { $set: { name: jarName, color: jarColor } },
-      { returnDocument: 'after' })
+      { returnDocument: 'after' }).populate({ path: 'users', select: { _id: 1, firstName: 1 } })
       .then((updatedJar) => {
         if (!updatedJar) {
           return res.status(404).json({ error: [{ msg: 'No jar found' }] });
