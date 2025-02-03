@@ -8,6 +8,7 @@ import authorizationRouters from './routes/authorizationRouters.js';
 import jarRouter from './routes/jarRoutes.js';
 import shareJarRouter from './routes/shareJarRoutes.js';
 import expenseRouter from './routes/expenseRoutes.js';
+import statisticRouter from './routes/statisticRouters.js';
 
 const app: Express = express();
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/user/login', authorizationRouters);
 app.use('/jar', jarRouter);
 app.use('/share', shareJarRouter);
 app.use('/', expenseRouter);
+app.use('/', statisticRouter);
 
 const mongoString = DATABASE_URL || '';
 
