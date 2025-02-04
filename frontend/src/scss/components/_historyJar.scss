@@ -107,6 +107,18 @@
     }
 }
 
+.statistics {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .5s ease-out;
+
+    &_open {
+        transition: max-height .5s ease-out;
+        max-height: 800px;
+        overflow: hidden;
+    }
+}
+
 @media only screen and (width <= 650px) {
     .none {
         transition: all .5s linear;

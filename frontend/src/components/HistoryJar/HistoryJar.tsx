@@ -15,15 +15,17 @@ import { ErrorResponse } from '../../types/Error';
 import { IExpense, IExpensesArray } from '../../interfaces/Expense';
 import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
 import {
-	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconPen, SvgIconTrash, SvgIconUsers
+	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
 } from '../UI/SvgIcon/SvgIcon';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
+import JarStatistics from '../JarStatistics/JarStatistics';
 
 const HistoryJar: React.FC = () => {
 	const [newExpenseIsOpen, setNewExpenseIsOpen] = useState(false);
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
+	const [statisticsIsOpen, setStatisticsIsOpen] = useState(false);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [editedExpenseId, setEditedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
@@ -75,6 +77,11 @@ const HistoryJar: React.FC = () => {
 
 	const OpenNewExpense = () => {
 		setNewExpenseIsOpen(true);
+		setStatisticsIsOpen(false);
+	};
+
+	const CloseStatistics = () => {
+		setStatisticsIsOpen(false);
 	};
 
 	const CloseNewExpense = () => {
@@ -127,6 +134,7 @@ const HistoryJar: React.FC = () => {
 	};
 
 	const ClickToExpenseEdit = (idExp: string) => {
+		setStatisticsIsOpen(false);
 		setEditedExpenseId(idExp);
 	};
 
@@ -171,6 +179,18 @@ const HistoryJar: React.FC = () => {
 							<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
 								<SvgIconTrash />
 							</button>
+							{jarExpenses.length !== 0
+								&& (
+									<button
+										aria-label="info"
+										onClick={() => {
+											setStatisticsIsOpen(true); setNewExpenseIsOpen(false);
+										}}
+										className="history-jar__head-item"
+									>
+										<SvgIconInfo />
+									</button>
+								)}
 						</div>
 					</div>
 				</div>
@@ -188,6 +208,15 @@ const HistoryJar: React.FC = () => {
 						)
 						: <ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />}
 				</div>
+				{selectedJar && (
+					<div className={statisticsIsOpen ? 'statistics_open' : 'statistics'}>
+						{statisticsIsOpen && (
+							<JarStatistics
+								close={CloseStatistics}
+							/>
+						)}
+					</div>
+				)}
 				{(jarExpenses.length === 0)
 					? <h3 className="history-day__not-found">No Expenses</h3>
 					: jarExpenses.map((exp, i) => (
