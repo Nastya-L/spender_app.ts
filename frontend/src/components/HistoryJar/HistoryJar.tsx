@@ -21,6 +21,7 @@ import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import JarStatistics from '../JarStatistics/JarStatistics';
+import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 
 const HistoryJar: React.FC = () => {
 	const [newExpenseIsOpen, setNewExpenseIsOpen] = useState(false);
@@ -29,6 +30,7 @@ const HistoryJar: React.FC = () => {
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [editedExpenseId, setEditedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
+	const [isPreloader, setIsPreloader] = useState<boolean>(true);
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -52,6 +54,7 @@ const HistoryJar: React.FC = () => {
 			navigate('/home');
 			return;
 		}
+		setIsPreloader(true);
 		authClient.get<IExpensesArray>(`/jar/${id}/expense`)
 			.then((response) => {
 				const { expenses } = response.data;
@@ -66,6 +69,8 @@ const HistoryJar: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsPreloader(false);
 			});
 	}, [id]);
 
@@ -154,91 +159,98 @@ const HistoryJar: React.FC = () => {
 	});
 
 	return (
-		<div className="history-jar">
-			{isMobile && (
-				<div className="history-jar__mobile-add">
-					<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
-				</div>
-			)}
-			<div className="history-jar__head">
-				<h2 className="history-jar__name">{jarName}</h2>
-				{!isMobile && <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
-				<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-					<button
-						onClick={OpenJarOptions}
-						aria-label="list"
-						className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
-					>
-						<SvgIconDots />
-					</button>
-					<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
-						<div className="history-jar__head__menu__items">
-							<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
-								<SvgIconUsers />
-							</button>
-							<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
-								<SvgIconPen />
-							</button>
-							<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
-								<SvgIconTrash />
-							</button>
-							{jarExpenses.length !== 0
-								&& (
-									<button
-										aria-label="info"
-										onClick={() => {
-											setStatisticsIsOpen(true); setNewExpenseIsOpen(false);
-										}}
-										className="history-jar__head-item"
-									>
-										<SvgIconInfo />
-									</button>
-								)}
-						</div>
-					</div>
-				</div>
-			</div>
-			<div className="history-jar__body">
-				<div className={classNames(((newExpenseIsOpen || editedExpenseId) ? 'new-expense_open' : 'new-expense'))}>
-					{(editedExpenseId)
-						? (
-							<ExpenseFormEdit
-								expense={jarExpenses.find((expense) => expense._id === editedExpenseId)}
-								close={CloseNewExpense}
-								UpdateExpense={UpdateExpense}
-								DeleteExpense={DeleteExpense}
-							/>
-						)
-						: <ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />}
-				</div>
-				{selectedJar && (
-					<div className={statisticsIsOpen ? 'statistics_open' : 'statistics'}>
-						{statisticsIsOpen && (
-							<JarStatistics
-								close={CloseStatistics}
-							/>
+		<div className="history-jar__wrapper">
+			{isPreloader
+				? <HistoryJarPreloader />
+				: (
+					<div className="history-jar">
+						{isMobile && (
+							<div className="history-jar__mobile-add">
+								<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
+							</div>
 						)}
+						<div className="history-jar__head">
+							<h2 className="history-jar__name">{jarName}</h2>
+							{!isMobile
+								&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
+							<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
+								<button
+									onClick={OpenJarOptions}
+									aria-label="list"
+									className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
+								>
+									<SvgIconDots />
+								</button>
+								<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
+									<div className="history-jar__head__menu__items">
+										<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+											<SvgIconUsers />
+										</button>
+										<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+											<SvgIconPen />
+										</button>
+										<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+											<SvgIconTrash />
+										</button>
+										{jarExpenses.length !== 0
+										&& (
+											<button
+												aria-label="info"
+												onClick={() => {
+													setStatisticsIsOpen(true); setNewExpenseIsOpen(false);
+												}}
+												className="history-jar__head-item"
+											>
+												<SvgIconInfo />
+											</button>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="history-jar__body">
+							<div className={classNames(((newExpenseIsOpen || editedExpenseId) ? 'new-expense_open' : 'new-expense'))}>
+								{(editedExpenseId)
+									? (
+										<ExpenseFormEdit
+											expense={jarExpenses.find((expense) => expense._id === editedExpenseId)}
+											close={CloseNewExpense}
+											UpdateExpense={UpdateExpense}
+											DeleteExpense={DeleteExpense}
+										/>
+									)
+									: <ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />}
+							</div>
+							{selectedJar && (
+								<div className={statisticsIsOpen ? 'statistics_open' : 'statistics'}>
+									{statisticsIsOpen && (
+										<JarStatistics
+											close={CloseStatistics}
+										/>
+									)}
+								</div>
+							)}
+							{(jarExpenses.length === 0)
+								? <h3 className="history-day__not-found">No Expenses</h3>
+								: jarExpenses.map((exp, i) => (
+									<div key={exp._id} className="history-day">
+										{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
+										&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
+										{(exp.owner._id === userId)
+											? (
+												<Expense
+													expense={exp}
+													ClickToEdit={ClickToExpenseEdit}
+													ClickToExpense={ClickToExpense}
+													selected={selectedExpenseId === exp._id}
+												/>
+											)
+											: <ExpenseRevers expense={exp} />}
+									</div>
+								))}
+						</div>
 					</div>
 				)}
-				{(jarExpenses.length === 0)
-					? <h3 className="history-day__not-found">No Expenses</h3>
-					: jarExpenses.map((exp, i) => (
-						<div key={exp._id} className="history-day">
-							{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-								&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
-							{(exp.owner._id === userId)
-								? (
-									<Expense
-										expense={exp}
-										ClickToEdit={ClickToExpenseEdit}
-										ClickToExpense={ClickToExpense}
-										selected={selectedExpenseId === exp._id}
-									/>
-								)
-								: <ExpenseRevers expense={exp} />}
-						</div>
-					))}
-			</div>
 		</div>
 	);
 };

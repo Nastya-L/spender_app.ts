@@ -16,6 +16,10 @@
     position: relative;
     padding-right: 18px;
 
+    &__wrapper {
+        height: 100%;
+    }
+
     &__mobile-add {
         position: fixed;
         bottom: 4px;
