@@ -12,6 +12,7 @@ import { CategoryImgBig } from '../../utils/CategoryImg';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
+import Spinner from '../UI/Spinner/Spinner';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -26,6 +27,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(new Date());
 	const [expenseValue, setExpenseValue] = useState('');
 	const [expenseCategory, setExpenseCategory] = useState('');
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const {
 		setErrors, getErrors, clearErrors
@@ -50,7 +52,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 			category: expenseCategory,
 			date: GetUTC(expenseDate as Date)
 		};
-
+		setIsLoading(true);
 		authClient.post<IExpense>(`/jar/${id}/expense`, newExpense)
 			.then((response) => {
 				const responseData = response.data;
@@ -73,11 +75,21 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	return (
-		<div className="expense-form">
+		<div className={isLoading
+			? 'expense-form expense-form_background'
+			: 'expense-form'}
+		>
+			{isLoading && (
+				<div className="expense-form__loading">
+					<Spinner />
+				</div>
+			)}
 			<h2 className="expense-form__title">New Expense</h2>
 			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
 				<SvgIconArrow />
@@ -116,7 +128,9 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 					value={expenseDate}
 				/>
 			</div>
-			<button onClick={CreateExpense} className="expense-form__add">Add expense</button>
+			<button onClick={CreateExpense} className="expense-form__add">
+				Add expense
+			</button>
 		</div>
 	);
 };
