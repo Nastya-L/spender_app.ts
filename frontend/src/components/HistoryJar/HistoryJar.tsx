@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ const HistoryJar: React.FC = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const refExpense = useRef<HTMLDivElement>(null);
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 	const jars = useSelector((state: RootState) => state.jars.jars);
@@ -75,6 +76,12 @@ const HistoryJar: React.FC = () => {
 		}
 	}, [newExpenseIsOpen]);
 
+	const scrollToEditExpense = () => {
+		if (refExpense.current) {
+			refExpense.current.scrollIntoView();
+		}
+	};
+
 	const OpenNewExpense = () => {
 		setNewExpenseIsOpen(true);
 		setStatisticsIsOpen(false);
@@ -87,6 +94,7 @@ const HistoryJar: React.FC = () => {
 	const CloseNewExpense = () => {
 		setNewExpenseIsOpen(false);
 		setEditedExpenseId('');
+		scrollToEditExpense();
 	};
 
 	const OpenJarOptions = () => {
@@ -230,6 +238,7 @@ const HistoryJar: React.FC = () => {
 										ClickToEdit={ClickToExpenseEdit}
 										ClickToExpense={ClickToExpense}
 										selected={selectedExpenseId === exp._id}
+										refExpense={refExpense}
 									/>
 								)
 								: <ExpenseRevers expense={exp} />}
