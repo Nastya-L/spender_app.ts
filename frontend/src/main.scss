@@ -22,6 +22,11 @@
 @use './scss/components/mobileMenuButton';
 @use './scss/components/svgIcon';
 @use './scss/components/jarStatistics';
+@use './scss/components/preloaderItem';
+@use './scss/components/historyJarPreloader';
+@use './scss/components/sidebarPreloader';
+@use './scss/components/spinner';
+@use './scss/components/jarStatisticsPreloader';
 
 // pages
 @use './scss/pages/greetings';

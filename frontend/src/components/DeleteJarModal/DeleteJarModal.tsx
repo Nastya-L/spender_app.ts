@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { deleteJar } from '../../reducers/JarsReducer';
 import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
+import Spinner from '../UI/Spinner/Spinner';
 
 const DeleteJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -16,6 +17,7 @@ const DeleteJarModal: React.FC = () => {
 	const navigate = useNavigate();
 	const jars = useSelector((state: RootState) => state.jars.jars);
 	const jarsRef = useRef(jars);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (jarsRef.current.length !== jars.length) {
@@ -30,6 +32,7 @@ const DeleteJarModal: React.FC = () => {
 	}, [jars]);
 
 	const DeleteJar = () => {
+		setIsLoading(true);
 		authClient.delete<string>(`/jar/${id}`)
 			.then(() => {
 				dispatch(deleteJar(id));
@@ -44,6 +47,8 @@ const DeleteJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -59,8 +64,9 @@ const DeleteJarModal: React.FC = () => {
 			</p>
 			<div className="delete-jar__confirm">
 				<button onClick={DeleteJar} className="delete-jar__confirm__delete">
-					<SvgIconTrash />
-					{' '}
+					{isLoading
+						? <div className="delete-jar__loading"><Spinner /></div>
+						: <SvgIconTrash />}
 					OK
 				</button>
 				<button onClick={Cancel} className="delete-jar__confirm__cancel">Cancel</button>

@@ -1,0 +1,9 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.history-jar-preloader {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: $content-max-width;
+}

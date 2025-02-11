@@ -64,6 +64,10 @@
 
         padding: 0.6667rem 0;
         width: 100%;
+
+        .spinner__animation {
+            background: $title-color-text;
+        }
     }
 }
 

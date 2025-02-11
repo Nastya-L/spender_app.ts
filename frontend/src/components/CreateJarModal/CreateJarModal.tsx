@@ -11,12 +11,14 @@ import { closeModal } from '../../reducers/ModalReducer';
 import { addJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
+import Spinner from '../UI/Spinner/Spinner';
 
 export const defaultColors = ['FFE074', 'FF9C64', 'FA7878', 'F881DE', 'B28FFE', '5E90F2', '07A4B9', '5BE8B1', '42AE31', 'B23B98'];
 
 const CreateJarModal: React.FC = () => {
 	const [colorValue, setColorValue] = useState(defaultColors[2]);
 	const [nameJar, setNameJar] = useState('');
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -38,6 +40,7 @@ const CreateJarModal: React.FC = () => {
 			name: nameJar,
 			color: colorValue
 		};
+		setIsLoading(true);
 		authClient.post<IJar>('/jar', newJar)
 			.then((response) => {
 				const responseData = response.data;
@@ -54,6 +57,8 @@ const CreateJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -88,7 +93,12 @@ const CreateJarModal: React.FC = () => {
 					/>
 				))}
 			</div>
-			<button onClick={ClickCreateJar} className="create-jar__btn">Create</button>
+			<button onClick={ClickCreateJar} className="create-jar__btn">
+				<span className="spinner__wrapper">
+					{isLoading && <Spinner />}
+					Create
+				</span>
+			</button>
 		</div>
 	);
 };

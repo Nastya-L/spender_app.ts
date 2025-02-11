@@ -8,6 +8,7 @@ import { IAuthState } from '../../interfaces/AuthState';
 import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
 import { IStatistics, ITotalAmounts } from '../../interfaces/Statistics';
 import { GetCategoryImg } from '../../utils/CategoryImg';
+import JarStatisticsPreloader from '../UI/JarStatisticsPreloader/JarStatisticsPreloader';
 
 interface JarStatisticsProps {
 	close: () => void;
@@ -18,6 +19,7 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [statistics, setStatistics] = useState<Array<ITotalAmounts>>(null);
+	const [isPreloader, setIsPreloader] = useState<boolean>(true);
 
 	const SortArrayStatistic = (a: ITotalAmounts, b: ITotalAmounts) => {
 		if (a.userId === userId) {
@@ -31,7 +33,7 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 
 	useEffect(() => {
 		setStatistics(null);
-
+		setIsPreloader(true);
 		authClient.get<IStatistics>(`/statistic/${id}`)
 			.then((response) => {
 				const { totalAmounts } = response.data;
@@ -50,6 +52,8 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsPreloader(false);
 			});
 	}, [id]);
 
@@ -59,37 +63,39 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 			<button aria-label="arrow" onClick={() => (close())} className="statistics-jar__close">
 				<SvgIconArrow />
 			</button>
-			{statistics && (statistics.map((amount) => (
-				<div key={amount.userId} className="statistics-jar__wrapper">
-					<div className="statistics-jar__user">
-						<p className="statistics-jar__user__name">{amount.firstName}</p>
-						<p className="statistics-jar__user__sum">
-							{amount.totalAmount}
-							₴
-						</p>
-					</div>
-					<div className="statistics-jar__categories">
-						{amount.categories
-							&& amount.categories.map((category) => {
-								const categoryImg = GetCategoryImg(category.category);
-								return (
-									<div key={category.category} className="statistics-jar__categories__item">
-										<div className="statistics-jar__categories__icon">
-											<img src={categoryImg.path} alt={categoryImg.name} />
+			{isPreloader
+				? <JarStatisticsPreloader />
+				: (statistics && (statistics.map((amount) => (
+					<div key={amount.userId} className="statistics-jar__wrapper">
+						<div className="statistics-jar__user">
+							<p className="statistics-jar__user__name">{amount.firstName}</p>
+							<p className="statistics-jar__user__sum">
+								{amount.totalAmount}
+								₴
+							</p>
+						</div>
+						<div className="statistics-jar__categories">
+							{amount.categories
+								&& amount.categories.map((category) => {
+									const categoryImg = GetCategoryImg(category.category);
+									return (
+										<div key={category.category} className="statistics-jar__categories__item">
+											<div className="statistics-jar__categories__icon">
+												<img src={categoryImg.path} alt={categoryImg.name} />
+											</div>
+											<div>
+												<p className="statistics-jar__categories__sum">
+													{category.categoryAmount}
+													₴
+												</p>
+												<p className="statistics-jar__categories__category">{category.category}</p>
+											</div>
 										</div>
-										<div>
-											<p className="statistics-jar__categories__sum">
-												{category.categoryAmount}
-												₴
-											</p>
-											<p className="statistics-jar__categories__category">{category.category}</p>
-										</div>
-									</div>
-								);
-							})}
+									);
+								})}
+						</div>
 					</div>
-				</div>
-			)))}
+				))))}
 		</div>
 	);
 };

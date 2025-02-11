@@ -17,6 +17,7 @@ import breakpoints from '../../constants/breakpoints';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import MobileMenuButton from '../UI/MobileMenuButton/MobileMenuButton';
 import { SvgIconCross } from '../UI/SvgIcon/SvgIcon';
+import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 
 const Home: React.FC = () => {
 	const navigate = useNavigate();
@@ -25,6 +26,7 @@ const Home: React.FC = () => {
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const jars = useSelector((state: RootState) => state.jars.jars);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isPreloader, setIsPreloader] = useState<boolean>(true);
 
 	const { windowWidth } = useWidthWindow();
 	const isMobile = windowWidth <= breakpoints.tablet;
@@ -34,6 +36,7 @@ const Home: React.FC = () => {
 			navigate('/');
 			return;
 		}
+		setIsPreloader(true);
 		authClient.get<Array<IJar>>('/jar')
 			.then((response) => {
 				const responseData = response.data;
@@ -48,6 +51,8 @@ const Home: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsPreloader(false);
 			});
 	}, []);
 
@@ -68,12 +73,14 @@ const Home: React.FC = () => {
 		}
 	}, [isOpen]);
 
+	const jarPlaceholder = (jars.length > 0) ? <HistoryJar /> : <NoJar />;
+
 	return (
 		<main className="home">
-			{!isMobile && <Sidebar jars={jars} setIsOpen={setIsOpen} />}
+			{!isMobile && <Sidebar isPreloader={isPreloader} jars={jars} setIsOpen={setIsOpen} />}
 			{(isOpen && isMobile) && (
 				<div className={isOpen && 'home__sidebar'}>
-					<Sidebar jars={jars} setIsOpen={setIsOpen} />
+					<Sidebar isPreloader={isPreloader} jars={jars} setIsOpen={setIsOpen} />
 					<button aria-label="close" className="home__sidebar__close" onClick={() => setIsOpen(false)}>
 						<SvgIconCross />
 					</button>
@@ -82,9 +89,9 @@ const Home: React.FC = () => {
 
 			<div className="home__main">
 				{isMobile && <MobileMenuButton setIsOpen={setIsOpen} />}
-				{(jars.length > 0)
-					? <HistoryJar />
-					: <NoJar />}
+				{isPreloader
+					? <HistoryJarPreloader />
+					: jarPlaceholder }
 				<Modal />
 			</div>
 		</main>

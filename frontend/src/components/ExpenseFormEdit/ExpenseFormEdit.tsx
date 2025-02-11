@@ -12,6 +12,7 @@ import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconArrow, SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
+import Spinner from '../UI/Spinner/Spinner';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -30,6 +31,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(expense.date);
 	const [expenseValue, setExpenseValue] = useState(expense.value);
 	const [expenseCategory, setExpenseCategory] = useState(expense.category);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
 
 	const {
@@ -61,7 +63,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 			category: expenseCategory,
 			date: GetUTC(new Date(expenseDate as Date))
 		};
-
+		setIsLoading(true);
 		authClient.put<IExpense>(`/jar/${id}/expense/${expense._id}`, updateExpense)
 			.then((response) => {
 				const responseData = response.data;
@@ -84,10 +86,13 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	const ClickDeleteExpense = () => {
+		setIsLoading(true);
 		authClient.delete(`/jar/${id}/expense/${expense._id}`)
 			.then(() => {
 				setExpenseValue('');
@@ -106,11 +111,21 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	return (
-		<div className="expense-form-edit">
+		<div className={isLoading
+			? 'expense-form-edit expense-form-edit_background'
+			: 'expense-form-edit'}
+		>
+			{isLoading && (
+				<div className="expense-form-edit__loading">
+					<Spinner />
+				</div>
+			)}
 			<h2 className="expense-form-edit__title">Edit Expense</h2>
 			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
 				<SvgIconArrow />
@@ -152,7 +167,9 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 				/>
 			</div>
 			<div className="expense-form-edit__button">
-				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">Update</button>
+				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">
+					Update
+				</button>
 				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">
 					<SvgIconTrash />
 					Delete
