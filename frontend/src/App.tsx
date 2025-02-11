@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bounce, ToastContainer } from 'react-toastify';
 import { disableReactDevTools } from '@fvilers/disable-react-devtools';
-import RoutesApp from './components/Routes/RoutesApp';
+import RoutesApp from './Routes/RoutesApp';
 import 'react-toastify/dist/ReactToastify.css';
 import './main.scss';
 
