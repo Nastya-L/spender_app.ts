@@ -109,9 +109,14 @@ const HistoryJar: React.FC = () => {
 		dispatch(openModal('shareJar'));
 	};
 
+	const getSortExpenses = (
+		expenses: IExpense[]
+	) => expenses.sort((a, b) => new Date(b.date)
+		.getTime() - new Date(a.date).getTime());
+
 	const AddNewExpense = (expense: IExpense) => {
 		if (jarExpenses) {
-			setJarExpenses([expense, ...jarExpenses]);
+			setJarExpenses(getSortExpenses([expense, ...jarExpenses]));
 		} else {
 			setJarExpenses([expense]);
 		}
@@ -125,11 +130,9 @@ const HistoryJar: React.FC = () => {
 	const UpdateExpense = (expense: IExpense) => {
 		const index = jarExpenses.findIndex((exp) => exp._id === expense._id);
 		if (index !== -1) {
-			let newExpensesJar = [...jarExpenses];
+			const newExpensesJar = [...jarExpenses];
 			newExpensesJar[index] = expense;
-			newExpensesJar = newExpensesJar.sort((a, b) => new Date(b.date)
-				.getTime() - new Date(a.date).getTime());
-			setJarExpenses(newExpensesJar);
+			setJarExpenses(getSortExpenses(newExpensesJar));
 		}
 	};
 
