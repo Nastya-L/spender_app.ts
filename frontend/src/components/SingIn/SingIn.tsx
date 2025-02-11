@@ -10,6 +10,7 @@ import { IUser } from '../../interfaces/User';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import { SvgIconEyeOff, SvgIconEyeShow } from '../UI/SvgIcon/SvgIcon';
+import Spinner from '../UI/Spinner/Spinner';
 
 enum ResultMessageType {
 	error = 'error',
@@ -23,6 +24,7 @@ const SingIn: React.FC = () => {
 
 	const [messageServer, setMessageServer] = useState('');
 	const [messageStyle, setMessageStyle] = useState(ResultMessageType.error);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -41,6 +43,7 @@ const SingIn: React.FC = () => {
 			email: valueEmail,
 			password: valuePassword
 		};
+		setIsLoading(true);
 		axios
 			.post<IUser>(apiUserAuthorization, message)
 			.then((response) => {
@@ -56,6 +59,8 @@ const SingIn: React.FC = () => {
 						DisplayMessage('Something went wrong', ResultMessageType.error);
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -119,7 +124,10 @@ const SingIn: React.FC = () => {
 								</button>
 							</label>
 							<button className="sing-in__button" onClick={ClickSingIn}>
-								Sign In
+								<span className="spinner__wrapper">
+									{isLoading && <Spinner />}
+									Sign In
+								</span>
 							</button>
 						</form>
 						<NavLink to="/user/register" className="greetings__button-signin">Don&lsquo;t have an account? Sign up</NavLink>

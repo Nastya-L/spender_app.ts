@@ -7,6 +7,7 @@ import { ErrorResponse } from '../../types/Error';
 import PreAuthContent from '../PreAuthContent/PreAuthContent';
 import breakpoints from '../../constants/breakpoints';
 import useWidthWindow from '../../hooks/useWidthWindows';
+import Spinner from '../UI/Spinner/Spinner';
 
 enum ResultMessageType {
 	error = 'error',
@@ -27,6 +28,7 @@ const SingUp: React.FC = () => {
 		password: '',
 		repeatPassword: ''
 	});
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const { windowWidth } = useWidthWindow();
 	const isMobile = windowWidth <= breakpoints.tablet;
@@ -49,6 +51,7 @@ const SingUp: React.FC = () => {
 				email: regUser.email,
 				password: regUser.password,
 			};
+			setIsLoading(true);
 			axios
 				.post<ResultResponse>(routeUserRegister, user)
 				.then((response) => {
@@ -63,6 +66,8 @@ const SingUp: React.FC = () => {
 							DisplayMessage('Something went wrong', ResultMessageType.error);
 						}
 					}
+				}).finally(() => {
+					setIsLoading(false);
 				});
 		}
 	};
@@ -152,7 +157,10 @@ const SingUp: React.FC = () => {
 								onBlur={OutFocus}
 							/>
 							<button className="sing-up__button" onClick={SingUpClick}>
-								Sign Up
+								<span className="spinner__wrapper">
+									{isLoading && <Spinner />}
+									Sign Up
+								</span>
 							</button>
 						</form>
 						<NavLink to="/user/login" className="greetings__button-signin">Already have an account? Sign In</NavLink>
