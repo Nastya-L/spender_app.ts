@@ -53,6 +53,7 @@ const HistoryJar: React.FC = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const refExpense = useRef<HTMLDivElement>(null);
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 	const jars = useSelector((state: RootState) => state.jars.jars);
@@ -122,6 +123,12 @@ const HistoryJar: React.FC = () => {
 		}
 	}, [isOpenDialogueSection]);
 
+	const scrollToEditExpense = () => {
+		if (refExpense.current) {
+			refExpense.current.scrollIntoView();
+		}
+	};
+
 	const OpenJarOptions = () => {
 		if (jarOptionsIsOpen) {
 			setJarOptionsIsOpen(false);
@@ -176,6 +183,7 @@ const HistoryJar: React.FC = () => {
 
 	const CloseDialogueSection = () => {
 		setIsOpenDialogueSection(false);
+		scrollToEditExpense();
 	};
 
 	const OpenStatistics = () => {
@@ -324,6 +332,7 @@ const HistoryJar: React.FC = () => {
 														ClickToEdit={ClickToExpenseEdit}
 														ClickToExpense={ClickToExpense}
 														selected={selectedExpenseId === exp._id}
+														refExpense={refExpense}
 													/>
 												)
 												: <ExpenseRevers expense={exp} />}
