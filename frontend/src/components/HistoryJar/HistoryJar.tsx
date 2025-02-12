@@ -24,13 +24,12 @@ import JarStatistics from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 
 const HistoryJar: React.FC = () => {
-	const [newExpenseIsOpen, setNewExpenseIsOpen] = useState(false);
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
-	const [statisticsIsOpen, setStatisticsIsOpen] = useState(false);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
-	const [editedExpenseId, setEditedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
+	const [dialogueSection, setDialogueSection] = useState<React.ReactNode>();
+	const [isOpenDialogueSection, setIsOpenDialogueSection] = useState<boolean>(false);
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -75,24 +74,10 @@ const HistoryJar: React.FC = () => {
 	}, [id]);
 
 	useEffect(() => {
-		if (newExpenseIsOpen) {
+		if (isOpenDialogueSection) {
 			window.scrollTo(0, 0);
 		}
-	}, [newExpenseIsOpen]);
-
-	const OpenNewExpense = () => {
-		setNewExpenseIsOpen(true);
-		setStatisticsIsOpen(false);
-	};
-
-	const CloseStatistics = () => {
-		setStatisticsIsOpen(false);
-	};
-
-	const CloseNewExpense = () => {
-		setNewExpenseIsOpen(false);
-		setEditedExpenseId('');
-	};
+	}, [isOpenDialogueSection]);
 
 	const OpenJarOptions = () => {
 		if (jarOptionsIsOpen) {
@@ -141,9 +126,30 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
+	const OpenDialogueSection = (component: React.ReactNode) => {
+		setDialogueSection(component);
+		setIsOpenDialogueSection(true);
+	};
+
+	const CloseDialogueSection = () => {
+		setIsOpenDialogueSection(false);
+	};
+
+	const OpenStatistics = () => {
+		OpenDialogueSection(<JarStatistics close={CloseDialogueSection} />);
+	};
+
+	const OpenNewExpense = () => {
+		OpenDialogueSection(<ExpenseForm close={CloseDialogueSection} AddNewExpense={AddNewExpense} />);
+	};
+
 	const ClickToExpenseEdit = (idExp: string) => {
-		setStatisticsIsOpen(false);
-		setEditedExpenseId(idExp);
+		OpenDialogueSection(<ExpenseFormEdit
+			expense={jarExpenses.find((expense) => expense._id === idExp)}
+			close={CloseDialogueSection}
+			UpdateExpense={UpdateExpense}
+			DeleteExpense={DeleteExpense}
+		/>);
 	};
 
 	const ClickToExpense = (idExp: string) => {
@@ -193,41 +199,25 @@ const HistoryJar: React.FC = () => {
 											<SvgIconTrash />
 										</button>
 										{jarExpenses.length !== 0
-										&& (
-											<button
-												aria-label="info"
-												onClick={() => {
-													setStatisticsIsOpen(true); setNewExpenseIsOpen(false);
-												}}
-												className="history-jar__head-item"
-											>
-												<SvgIconInfo />
-											</button>
-										)}
+											&& (
+												<button
+													aria-label="info"
+													onClick={OpenStatistics}
+													className="history-jar__head-item"
+												>
+													<SvgIconInfo />
+												</button>
+											)}
 									</div>
 								</div>
 							</div>
 						</div>
 						<div className="history-jar__body">
-							<div className={classNames(((newExpenseIsOpen || editedExpenseId) ? 'new-expense_open' : 'new-expense'))}>
-								{(editedExpenseId)
-									? (
-										<ExpenseFormEdit
-											expense={jarExpenses.find((expense) => expense._id === editedExpenseId)}
-											close={CloseNewExpense}
-											UpdateExpense={UpdateExpense}
-											DeleteExpense={DeleteExpense}
-										/>
-									)
-									: <ExpenseForm close={CloseNewExpense} AddNewExpense={AddNewExpense} />}
-							</div>
 							{selectedJar && (
-								<div className={statisticsIsOpen ? 'statistics_open' : 'statistics'}>
-									{statisticsIsOpen && (
-										<JarStatistics
-											close={CloseStatistics}
-										/>
-									)}
+								<div className={classNames(((
+									isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
+								>
+									{dialogueSection}
 								</div>
 							)}
 							{(jarExpenses.length === 0)
@@ -235,7 +225,7 @@ const HistoryJar: React.FC = () => {
 								: jarExpenses.map((exp, i) => (
 									<div key={exp._id} className="history-day">
 										{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-										&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
+											&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
 										{(exp.owner._id === userId)
 											? (
 												<Expense
