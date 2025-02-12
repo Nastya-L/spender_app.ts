@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import SingUp from '../SingUp/SingUp';
-import SingIn from '../SingIn/SingIn';
-import Greetings from '../Greetings/Greetings';
-import Home from '../Home/Home';
+import SingUp from '../components/SingUp/SingUp';
+import SingIn from '../components/SingIn/SingIn';
+import Greetings from '../components/Greetings/Greetings';
+import Home from '../components/Home/Home';
 
 const RoutesApp = () => (
 	<Routes>
@@ -13,6 +13,8 @@ const RoutesApp = () => (
 		<Route path="/home" element={<Home />} />
 		<Route path="/home/jar" element={<Home />} />
 		<Route path="/home/jar/:id" element={<Home />} />
+
+		<Route path="*" element={<Greetings />} />
 	</Routes>
 );
 

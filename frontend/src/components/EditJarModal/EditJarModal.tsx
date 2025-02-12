@@ -13,6 +13,7 @@ import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
+import Spinner from '../UI/Spinner/Spinner';
 
 const EditJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -24,6 +25,7 @@ const EditJarModal: React.FC = () => {
 
 	const [colorValue, setColorValue] = useState(editableJar.color);
 	const [jarName, setJarName] = useState(editableJar.name);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const {
 		setErrors, getErrors, clearErrors
@@ -42,6 +44,7 @@ const EditJarModal: React.FC = () => {
 			name: jarName,
 			color: colorValue
 		};
+		setIsLoading(true);
 		authClient.put<IJar>(`/jar/${id}`, updatedJar)
 			.then((response) => {
 				const responseData = response.data;
@@ -61,6 +64,8 @@ const EditJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -97,7 +102,12 @@ const EditJarModal: React.FC = () => {
 					/>
 				))}
 			</div>
-			<button onClick={ClickEditJar} className="edit-jar__btn">Edit</button>
+			<button onClick={ClickEditJar} className="edit-jar__btn">
+				<span className="spinner__wrapper">
+					{isLoading && <Spinner />}
+					Edit
+				</span>
+			</button>
 		</div>
 	);
 };

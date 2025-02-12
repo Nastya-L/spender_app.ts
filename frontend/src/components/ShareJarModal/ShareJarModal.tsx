@@ -11,6 +11,7 @@ import { editJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
+import Spinner from '../UI/Spinner/Spinner';
 
 interface IUsersJar {
 	_id: string
@@ -23,6 +24,7 @@ const ShareJarModal: React.FC = () => {
 	const dispatch = useDispatch();
 	const [emailValue, setEmailValue] = useState('');
 	const [users, setUsers] = useState<Array<IUsersJar>>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const {
 		setErrors, getErrors, clearErrors
@@ -39,6 +41,7 @@ const ShareJarModal: React.FC = () => {
 	}, []);
 
 	const ClickDeleteUser = (userId: string) => {
+		setIsLoading(true);
 		authClient.delete<IJar>(`/share/${id}/user/${userId}`)
 			.then((response) => {
 				const responseData = response.data;
@@ -54,6 +57,8 @@ const ShareJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -132,7 +137,12 @@ const ShareJarModal: React.FC = () => {
 						</div>
 					)}
 			</div>
-			<button onClick={ClickShareJar} className="share-jar__btn">Invite</button>
+			<button onClick={ClickShareJar} className="share-jar__btn">
+				<span className="spinner__wrapper">
+					{isLoading && <Spinner />}
+					Invite
+				</span>
+			</button>
 		</div>
 	);
 };

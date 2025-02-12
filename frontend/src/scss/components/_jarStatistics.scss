@@ -1,0 +1,96 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.statistics-jar {
+	@include flex-center;
+
+    gap: 1.1rem;
+    border: 1px solid #BDBDBD;
+    border-radius: 15px;
+    padding: 1.1333rem 1.8667rem;
+    position: relative;
+
+	&__wrapper {
+		@include flex-center;
+
+		align-items: stretch;
+		gap: 1.1rem;
+		width: 100%;
+	}
+
+	&__title {
+        @include title-text(1rem, 1rem, 600);
+
+		color: $title-color-text;
+	}
+
+	&__close {
+		position: absolute;
+        top: 1.0667rem;
+        left: 0.2667rem;
+	}
+
+	&__user {
+		@include flex-center;
+
+		justify-content: space-between;
+		flex-direction: row;
+		width: 100%;
+		border-bottom: 1px solid $basic-color-text;
+		padding: 0 5px 2px;
+
+		&__name {
+			@include basic-text(14px, 16px);
+		}
+
+		&__sum {
+			@include title-text(1rem, 1rem, 500);
+		}
+	}
+
+	&__categories {
+		display: flex;
+		justify-content: center;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 12px;
+		flex: 1 1 auto;
+		width: 100%;
+
+		&__item {
+			@include flex-center;
+
+			justify-content: space-between;
+			flex-direction: row;
+			max-width: 132px;
+			width: 100%;
+			background-color: #D0E0FF;
+			border-radius: 5px;
+			padding: 10px;
+		}
+
+		&__category {
+			@include basic-text(11px, 12px);
+
+			text-transform: capitalize;
+			text-align: end;
+		}
+
+		&__sum {
+			@include title-text(12px, 16px, 500);
+
+			margin-bottom: 2px;
+			text-align: end;
+		}
+	}
+}
+
+@media only screen and (width <= 650px) {
+	.statistics-jar {
+		&__categories {
+			&__item {
+				max-width: 100%;
+			}
+		}
+	}
+}

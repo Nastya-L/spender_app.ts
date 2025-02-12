@@ -27,6 +27,8 @@
     }
 
     &__jars {
+        width: 100%;
+
         &-title {
             @include title-text(1rem, 1rem, 600);
 
@@ -38,7 +40,6 @@
             flex-direction: column;
             gap: 0.8rem;
             padding-left: 1.6rem;
-            
         }
 
         &-jar {
@@ -108,5 +109,12 @@
 @media only screen and (width <= 650px) {
     .sidebar {
         padding: 0;
+
+        &__jars {
+            &-container {
+              width: 55%;
+            }
+        }
+    
     }
 }
