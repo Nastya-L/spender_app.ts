@@ -12,6 +12,7 @@ import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 import Spinner from '../UI/Spinner/Spinner';
+import { IAuthState } from '../../interfaces/AuthState';
 
 interface IUsersJar {
 	_id: string
@@ -25,6 +26,7 @@ const ShareJarModal: React.FC = () => {
 	const [emailValue, setEmailValue] = useState('');
 	const [users, setUsers] = useState<Array<IUsersJar>>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 
 	const {
 		setErrors, getErrors, clearErrors
@@ -40,9 +42,9 @@ const ShareJarModal: React.FC = () => {
 		setUsers(getSharedUsers(editableJar.users));
 	}, []);
 
-	const ClickDeleteUser = (userId: string) => {
+	const ClickDeleteUser = (user: string) => {
 		setIsLoading(true);
-		authClient.delete<IJar>(`/share/${id}/user/${userId}`)
+		authClient.delete<IJar>(`/share/${id}/user/${user}`)
 			.then((response) => {
 				const responseData = response.data;
 				dispatch(editJar(responseData));
@@ -70,6 +72,11 @@ const ShareJarModal: React.FC = () => {
 		const email = {
 			email: emailValue
 		};
+
+		if (userId !== editableJar.owner) {
+			toast.warning('Only the owner can modify this jar');
+			return;
+		}
 		authClient.post<IJar>(`/share/${id}`, email)
 			.then((response) => {
 				const responseData = response.data;
@@ -103,6 +110,7 @@ const ShareJarModal: React.FC = () => {
 			</p>
 			<form id="share-jar" className="share-jar__form">
 				<input
+					disabled={userId !== editableJar.owner}
 					placeholder="Email"
 					required
 					type="text"
@@ -129,9 +137,11 @@ const ShareJarModal: React.FC = () => {
 							{users.map((user) => (
 								<div key={user._id} className="share-jar__users__item">
 									<p className="share-jar__users__name">{user.firstName}</p>
-									<button aria-label="trash" onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
-										<SvgIconTrash />
-									</button>
+									{userId === editableJar.owner && (
+										<button aria-label="trash" onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
+											<SvgIconTrash />
+										</button>
+									)}
 								</div>
 							))}
 						</div>
