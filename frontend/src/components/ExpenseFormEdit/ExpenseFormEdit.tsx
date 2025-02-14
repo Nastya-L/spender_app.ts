@@ -11,8 +11,9 @@ import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import GetUTC from '../../utils/GetUTC';
 import { CategoryImgBig } from '../../utils/CategoryImg';
 import useErrorManager from '../../hooks/useErrorManager';
-import { SvgIconArrow, SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
+import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
 import Spinner from '../UI/Spinner/Spinner';
+import { ActionRemoveButton, ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -173,13 +174,16 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 				/>
 			</div>
 			<div className="expense-form-edit__button">
-				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">
-					Update
-				</button>
-				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">
-					<SvgIconTrash />
-					Delete
-				</button>
+				<ActionSubmitButton
+					text="Update"
+					isLoading={false}
+					onClick={ClickUpdateExpense}
+				/>
+				<ActionRemoveButton
+					text="Delete"
+					isLoading={false}
+					onClick={ClickDeleteExpense}
+				/>
 			</div>
 		</div>
 	);

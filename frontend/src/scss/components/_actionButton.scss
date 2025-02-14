@@ -1,0 +1,42 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.action-button {
+	@include title-text(0.8667rem, 1rem, 600);
+
+	background-color: $btn-color;
+	color: #fff;
+	width: 100%;
+	max-width: 62%;
+	height: 38px;
+	border-radius: 0.5333rem;
+
+	&-delete {
+		@include title-text(0.8667rem, 1rem, 600);
+		@include flex-center;
+
+		flex-direction: row;
+		gap: 0.3333rem;
+		background-color: $error-color;
+		color: #fff;
+		max-width: 60%;
+		width: 100%;
+		height: 38px;
+		border-radius: 0.5333rem;
+
+		svg {
+			stroke: $background-main;
+		}
+		
+		&__loading {
+			width: 18px;
+			height: 18px;
+			align-content: center;
+			position: relative;
+
+			.spinner {
+				left: 0;
+			}
+		}
+	}
+}

@@ -13,7 +13,7 @@ import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
-import Spinner from '../UI/Spinner/Spinner';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 const EditJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -102,12 +102,11 @@ const EditJarModal: React.FC = () => {
 					/>
 				))}
 			</div>
-			<button onClick={ClickEditJar} className="edit-jar__btn">
-				<span className="spinner__wrapper">
-					{isLoading && <Spinner />}
-					Edit
-				</span>
-			</button>
+			<ActionSubmitButton
+				text="Edit"
+				isLoading={isLoading}
+				onClick={ClickEditJar}
+			/>
 		</div>
 	);
 };

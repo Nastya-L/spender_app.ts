@@ -18,41 +18,10 @@
         text-align: center;
     }
 
-    &__loading {
-        width: 18px;
-        height: 18px;
-        align-content: center;
-        position: relative;
-    }
-
     &__confirm {
         display: flex;
         align-items: center;
         gap: 1rem;
-
-        &__delete {
-            @include title-text(0.8667rem, 1rem, 600);
-
-            display: flex;
-            align-items: flex-end;
-            gap: 0.3333rem;
-            background-color: $error-color;
-            color: #fff;
-            padding: 0.7rem 1.4rem;
-            border-radius: 0.5333rem;
-
-            svg {
-                stroke: $background-main;
-            }
-        }
-
-        &__cancel {
-            @include title-text(0.8667rem, 1rem, 600);
-
-            background-color: $btn-color;
-            color: #fff;
-            padding: 0.8rem 1.4rem;
-            border-radius: 0.5333rem;
-        }
+        width: 100%;
     }
 }

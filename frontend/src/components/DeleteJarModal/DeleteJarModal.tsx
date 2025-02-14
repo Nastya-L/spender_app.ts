@@ -8,8 +8,7 @@ import { ErrorResponse } from '../../types/Error';
 import { deleteJar } from '../../reducers/JarsReducer';
 import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
-import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
-import Spinner from '../UI/Spinner/Spinner';
+import { ActionRemoveButton, ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 const DeleteJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -63,13 +62,16 @@ const DeleteJarModal: React.FC = () => {
 				Are you sure you want to delete the Jar?
 			</p>
 			<div className="delete-jar__confirm">
-				<button onClick={DeleteJar} className="delete-jar__confirm__delete">
-					{isLoading
-						? <div className="delete-jar__loading"><Spinner /></div>
-						: <SvgIconTrash />}
-					OK
-				</button>
-				<button onClick={Cancel} className="delete-jar__confirm__cancel">Cancel</button>
+				<ActionRemoveButton
+					text="OK"
+					isLoading={isLoading}
+					onClick={DeleteJar}
+				/>
+				<ActionSubmitButton
+					text="Cancel"
+					isLoading={false}
+					onClick={Cancel}
+				/>
 			</div>
 		</div>
 	);

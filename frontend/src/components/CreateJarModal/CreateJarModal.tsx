@@ -11,7 +11,7 @@ import { closeModal } from '../../reducers/ModalReducer';
 import { addJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
-import Spinner from '../UI/Spinner/Spinner';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 export const defaultColors = ['FFE074', 'FF9C64', 'FA7878', 'F881DE', 'B28FFE', '5E90F2', '07A4B9', '5BE8B1', '42AE31', 'B23B98'];
 
@@ -93,12 +93,11 @@ const CreateJarModal: React.FC = () => {
 					/>
 				))}
 			</div>
-			<button onClick={ClickCreateJar} className="create-jar__btn">
-				<span className="spinner__wrapper">
-					{isLoading && <Spinner />}
-					Create
-				</span>
-			</button>
+			<ActionSubmitButton
+				text="Create"
+				isLoading={isLoading}
+				onClick={ClickCreateJar}
+			/>
 		</div>
 	);
 };
