@@ -34,6 +34,12 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
 
+	useEffect(() => {
+		setExpenseDate(expense.date);
+		setExpenseValue(expense.value);
+		setExpenseCategory(expense.category);
+	}, [expense]);
+
 	const {
 		setErrors, getErrors, clearErrors
 	} = useErrorManager();

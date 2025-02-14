@@ -4,11 +4,12 @@
 .statistics-jar {
 	@include flex-center;
 
-    gap: 1.1rem;
-    border: 1px solid #BDBDBD;
-    border-radius: 15px;
-    padding: 1.1333rem 1.8667rem;
-    position: relative;
+	gap: 1.1rem;
+	border: 1px solid #BDBDBD;
+	border-radius: 15px;
+	padding: 1.1333rem 1.8667rem;
+	position: relative;
+	margin-top: 10px;
 
 	&__wrapper {
 		@include flex-center;

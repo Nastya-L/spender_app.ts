@@ -98,20 +98,7 @@
     }
 }
 
-.new-expense {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .5s ease-out;
-
-    &_open {
-        transition: max-height .5s ease-out;
-        max-height: 700px;
-        overflow: hidden;
-        margin-top: 10px;
-    }
-}
-
-.statistics {
+.dialogue-section {
     max-height: 0;
     overflow: hidden;
     transition: max-height .5s ease-out;

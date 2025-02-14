@@ -9,6 +9,7 @@
     border-radius: 1rem;
     padding: 1.1333rem 1.8667rem;
     position: relative;
+    margin-top: 10px;
 
     &_background::after {
         content: ('');
@@ -28,10 +29,14 @@
         left: 50%;
         z-index: 99;
 
-        .spinner__animation {
-            background: #8aaff9;
-            width: 65px;
-            padding: 8px;
+        .spinner {
+            left: 0;
+
+            &__animation {
+                background: #8aaff9;
+                width: 65px;
+                padding: 8px;
+            }
         }
     }
 
