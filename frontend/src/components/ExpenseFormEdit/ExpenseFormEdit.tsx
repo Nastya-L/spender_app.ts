@@ -141,7 +141,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 					ref={ref}
 					required
 					placeholder="Value"
-					type="text"
+					type="number"
 					onChange={ChangeExpenseValue}
 					value={expenseValue}
 					className={
@@ -159,7 +159,7 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 							key={category.name}
 							name={category.name}
 							path={category.path}
-							checked={(category.name === expense.category)}
+							checked={(category.name === expenseCategory)}
 							ChangeCategory={ChangeExpenseCategory}
 						/>
 					))

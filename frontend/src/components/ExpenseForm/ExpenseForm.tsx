@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus */
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -36,6 +37,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 	const CloseForm = () => {
 		clearErrors();
 		close();
+		setExpenseCategory('');
 	};
 
 	const ChangeExpenseValue = (e: React.FormEvent<HTMLInputElement>) => {
@@ -98,7 +100,8 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 				<input
 					required
 					placeholder="Value"
-					type="text"
+					type="number"
+					autoFocus
 					onChange={ChangeExpenseValue}
 					value={expenseValue}
 					className={
@@ -115,7 +118,7 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 						key={category.name}
 						name={category.name}
 						path={category.path}
-						checked={false}
+						checked={(category.name === expenseCategory)}
 						ChangeCategory={ChangeExpenseCategory}
 					/>
 				))}

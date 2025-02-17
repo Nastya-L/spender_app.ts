@@ -16,7 +16,7 @@ const Category: React.FC<ICategoryProps> = ({
 
 	return (
 		<>
-			<input defaultChecked={checked} onChange={onChange} type="radio" id={`category-${name}`} name="category" value={name} className="category__input" />
+			<input checked={checked} onChange={onChange} type="radio" id={`category-${name}`} name="category" value={name} className="category__input" />
 			<label className="category__label" htmlFor={`category-${name}`}>
 				<img src={path} alt={name} />
 				{name}
