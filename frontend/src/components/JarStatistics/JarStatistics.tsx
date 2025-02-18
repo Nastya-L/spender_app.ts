@@ -70,7 +70,7 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 						<div className="statistics-jar__user">
 							<p className="statistics-jar__user__name">{amount.firstName}</p>
 							<p className="statistics-jar__user__sum">
-								{amount.totalAmount}
+								{(amount.totalAmount).toFixed(2)}
 								₴
 							</p>
 						</div>
@@ -85,7 +85,7 @@ const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
 											</div>
 											<div>
 												<p className="statistics-jar__categories__sum">
-													{category.categoryAmount}
+													{(category.categoryAmount).toFixed(2)}
 													₴
 												</p>
 												<p className="statistics-jar__categories__category">{category.category}</p>
