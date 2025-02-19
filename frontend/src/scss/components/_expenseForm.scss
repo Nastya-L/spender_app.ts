@@ -85,6 +85,12 @@
     &__date {
         width: 85%;
     }
+
+    &__button {
+        display: flex;
+        gap: 1.8rem;
+        width: 100%;
+    }
 }
 
 @media only screen and (width <= 650px) {

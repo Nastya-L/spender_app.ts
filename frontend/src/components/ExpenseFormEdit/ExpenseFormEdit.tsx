@@ -1,21 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Calendar from 'react-calendar';
 import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { IExpense } from '../../interfaces/Expense';
-import Category from '../UI/Category/Category';
 import { ErrorResponse } from '../../types/Error';
-import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import GetUTC from '../../utils/GetUTC';
-import { CategoryImgBig } from '../../utils/CategoryImg';
 import useErrorManager from '../../hooks/useErrorManager';
-import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
-import Spinner from '../UI/Spinner/Spinner';
-import { ActionRemoveButton, ActionSubmitButton } from '../UI/ActionButton/ActionButton';
-
-type CalendarDate = Date | [Date, Date];
+import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import { ActionSubmitButton, ActionRemoveButton } from '../UI/ActionButton/ActionButton';
+import { CalendarDate } from '../../types/CalendarDate';
 
 interface INewExpenseProps {
 	expense: IExpense
@@ -33,7 +27,6 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	const [expenseValue, setExpenseValue] = useState(expense.value);
 	const [expenseCategory, setExpenseCategory] = useState(expense.category);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const ref = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		setExpenseDate(expense.date);
@@ -42,26 +35,12 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 	}, [expense]);
 
 	const {
-		setErrors, getErrors, clearErrors
+		setErrors, clearErrors
 	} = useErrorManager();
 
 	const CloseForm = () => {
 		clearErrors();
 		close();
-	};
-
-	useEffect(() => {
-		if (ref.current) {
-			ref.current.focus();
-		}
-	}, []);
-
-	const ChangeExpenseValue = (e: React.FormEvent<HTMLInputElement>) => {
-		setExpenseValue(e.currentTarget.value);
-	};
-
-	const ChangeExpenseCategory = (category: string) => {
-		setExpenseCategory(category);
 	};
 
 	const ClickUpdateExpense = () => {
@@ -123,69 +102,34 @@ const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
 			});
 	};
 
-	return (
-		<div className={isLoading
-			? 'expense-form-edit expense-form-edit_background'
-			: 'expense-form-edit'}
-		>
-			{isLoading && (
-				<div className="expense-form-edit__loading">
-					<Spinner />
-				</div>
-			)}
-			<h2 className="expense-form-edit__title">Edit Expense</h2>
-			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
-				<SvgIconArrow />
-			</button>
-			<div className="expense-form-edit__value">
-				<input
-					ref={ref}
-					required
-					placeholder="Value"
-					type="number"
-					onChange={ChangeExpenseValue}
-					value={expenseValue}
-					className={
-						getErrors('value')
-							? 'expense-form-edit__input expense-form-edit__input_error'
-							: 'expense-form-edit__input'
-					}
-				/>
-				<ErrorMessage text={getErrors('value')} />
-			</div>
-			<div className="expense-form-edit__categories">
-				{
-					CategoryImgBig.map((category) => (
-						<Category
-							key={category.name}
-							name={category.name}
-							path={category.path}
-							checked={(category.name === expenseCategory)}
-							ChangeCategory={ChangeExpenseCategory}
-						/>
-					))
-				}
-			</div>
-			<div className="expense-form-edit__date">
-				<Calendar
-					locale="en"
-					onChange={setExpenseDate}
-					value={expenseDate}
-				/>
-			</div>
-			<div className="expense-form-edit__button">
-				<ActionSubmitButton
-					text="Update"
-					isLoading={false}
-					onClick={ClickUpdateExpense}
-				/>
-				<ActionRemoveButton
-					text="Delete"
-					isLoading={false}
-					onClick={ClickDeleteExpense}
-				/>
-			</div>
+	const footerForm = (
+		<div className="expense-form__button">
+			<ActionSubmitButton
+				text="Update"
+				isLoading={false}
+				onClick={ClickUpdateExpense}
+			/>
+			<ActionRemoveButton
+				text="Delete"
+				isLoading={false}
+				onClick={ClickDeleteExpense}
+			/>
 		</div>
+	);
+
+	return (
+		<ExpenseForm
+			type="edit"
+			isLoading={isLoading}
+			expenseValue={expenseValue}
+			expenseCategory={expenseCategory}
+			expenseDate={expenseDate}
+			setExpenseDate={setExpenseDate}
+			setExpenseValue={setExpenseValue}
+			setExpenseCategory={setExpenseCategory}
+			CloseForm={CloseForm}
+			footerForm={footerForm}
+		/>
 	);
 };
 
