@@ -11,8 +11,8 @@ import { editJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
-import Spinner from '../UI/Spinner/Spinner';
 import { IAuthState } from '../../interfaces/AuthState';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 interface IUsersJar {
 	_id: string
@@ -77,6 +77,7 @@ const ShareJarModal: React.FC = () => {
 			toast.warning('Only the owner can modify this jar');
 			return;
 		}
+		setIsLoading(true);
 		authClient.post<IJar>(`/share/${id}`, email)
 			.then((response) => {
 				const responseData = response.data;
@@ -97,6 +98,8 @@ const ShareJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -147,12 +150,11 @@ const ShareJarModal: React.FC = () => {
 						</div>
 					)}
 			</div>
-			<button onClick={ClickShareJar} className="share-jar__btn">
-				<span className="spinner__wrapper">
-					{isLoading && <Spinner />}
-					Invite
-				</span>
-			</button>
+			<ActionSubmitButton
+				text="Invite"
+				isLoading={isLoading}
+				onClick={ClickShareJar}
+			/>
 		</div>
 	);
 };

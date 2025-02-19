@@ -85,15 +85,6 @@
     &__date {
         width: 85%;
     }
-
-    &__add {
-        @include basic-text(0.8667rem, 1rem);
-
-        background-color: #333;
-        color: #fff;
-        padding: 0.7667rem 4.2rem;
-        border-radius: 0.5333rem;
-    }
 }
 
 @media only screen and (width <= 650px) {

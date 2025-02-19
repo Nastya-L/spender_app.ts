@@ -50,15 +50,6 @@
 		}
 	}
 
-	&__btn {
-		@include title-text(0.8667rem, 1rem, 600);
-
-		background-color: $btn-color;
-		color: #fff;
-		padding: 0.7667rem 5.5rem;
-		border-radius: 0.5333rem;
-	}
-
 	&__users {
 		display: flex;
 		align-items: flex-end;

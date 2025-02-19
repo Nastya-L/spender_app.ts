@@ -14,6 +14,7 @@ import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
 import Spinner from '../UI/Spinner/Spinner';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
 
 type CalendarDate = Date | [Date, Date];
 
@@ -131,9 +132,11 @@ const ExpenseForm: React.FC<INewExpenseProps> = ({ close, AddNewExpense }) => {
 					value={expenseDate}
 				/>
 			</div>
-			<button onClick={CreateExpense} className="expense-form__add">
-				Add expense
-			</button>
+			<ActionSubmitButton
+				text="Add expense"
+				isLoading={false}
+				onClick={CreateExpense}
+			/>
 		</div>
 	);
 };
