@@ -3,11 +3,26 @@ import type mongoose from 'mongoose';
 import type { IJarToFE } from './jarMapper.js';
 import type { IExpenseModel } from '../models/ExpenseSchema.js';
 
-interface IResultExpenses extends IJarToFE {
-  expenses: IExpenseModel[]
+interface Pagination {
+  page: number
+  limit: number | undefined
+  totalExpenses: number
+  totalPages: number
 }
 
-const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId): Promise<IResultExpenses> => {
+interface IJar extends IJarToFE {
+  expenses: IExpenseModel[]
+  totalExpenses: number
+}
+
+interface GetJarWithPaginatedExpensesResponse {
+  jar: IJar | null
+  pagination: Pagination
+}
+
+const getAllExpensesFromJar = async (
+  page: number, limit: number | undefined, skip: number, jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId
+): Promise<GetJarWithPaginatedExpensesResponse> => {
   try {
     const resultExpenses = await Jar.aggregate([
       { $match: { _id: jarId, users: userId } },
@@ -37,7 +52,19 @@ const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mon
           color: { $first: '$color' },
           owner: { $first: '$owner' },
           users: { $first: '$users' },
-          expenses: { $push: '$expensePeriods.expenses' }
+          totalExpenses: { $sum: 1 },
+          expenses: {
+            $push: {
+              _id: '$expensePeriods.expenses._id',
+              value: '$expensePeriods.expenses.value',
+              category: '$expensePeriods.expenses.category',
+              date: '$expensePeriods.expenses.date',
+              owner: {
+                _id: '$expensePeriods.expenses.owner._id',
+                firstName: '$expensePeriods.expenses.owner.firstName'
+              }
+            }
+          }
         }
       },
       {
@@ -57,18 +84,25 @@ const getAllExpensesFromJar = async (jarId: mongoose.Types.ObjectId, userId: mon
           color: 1,
           owner: 1,
           users: 1,
-          expenses: {
-            _id: 1,
-            value: 1,
-            category: 1,
-            date: 1,
-            'owner._id': 1,
-            'owner.firstName': 1
-          }
+          totalExpenses: 1,
+          expenses: limit ? { $slice: ['$expenses', skip, limit] } : '$expenses'
         }
       }
     ]).exec();
-    return resultExpenses.length > 0 ? resultExpenses[0] : [];
+    const totalPages = limit ? Math.ceil((resultExpenses[0]?.totalExpenses || 0) / limit) : 1;
+    const resultExpensesWithPagination = resultExpenses.length > 0
+      ? {
+          jar: resultExpenses[0],
+          pagination: {
+            page,
+            limit,
+            totalExpenses: resultExpenses[0]?.totalExpenses || 0,
+            totalPages: totalPages
+          }
+        }
+      : { jar: null, pagination: { page, limit, totalExpenses: 0, totalPages: 0 } };
+
+    return resultExpensesWithPagination;
   } catch (err) {
     return await Promise.reject(err);
   }
