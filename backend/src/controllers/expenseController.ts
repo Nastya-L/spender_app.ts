@@ -25,6 +25,10 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
 
     const userId = new mongoose.Types.ObjectId(req.user?._id);
     const jarId = new mongoose.Types.ObjectId(req.params.id);
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = req.query.limit !== undefined ? parseInt(req.query.limit as string, 10) : undefined;
+    const skip = limit ? (page - 1) * limit : 0;
+
     try {
       const foundJar = await Jar.findOne({ _id: jarId, users: userId });
       if (!foundJar) {
@@ -32,7 +36,7 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
         return;
       }
 
-      const expenses = await getAllExpensesFromJar(jarId, userId);
+      const expenses = await getAllExpensesFromJar(page, limit, skip, jarId, userId);
       res.status(200).json(expenses);
     } catch (err) {
       res.status(500).json({ error: [{ msg: err }] });
