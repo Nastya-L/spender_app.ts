@@ -192,7 +192,7 @@ const HistoryJar: React.FC = () => {
 										<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
 											<SvgIconUsers />
 										</button>
-										{selectedJar.owner === userId && (
+										{selectedJar && selectedJar.owner === userId && (
 											<>
 												<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
 													<SvgIconPen />

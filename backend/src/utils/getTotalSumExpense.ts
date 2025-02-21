@@ -63,7 +63,7 @@ const getTotalSumExpense = async (
           categories: {
             $push: {
               category: '$_id.category',
-              categoryAmount: '$categoryAmount'
+              categoryAmount: { $round: ['$categoryAmount', 2] }
             }
           }
         }
@@ -75,7 +75,7 @@ const getTotalSumExpense = async (
             $push: {
               userId: '$_id.userId',
               firstName: '$_id.firstName',
-              totalAmount: '$totalAmount',
+              totalAmount: { $round: ['$totalAmount', 2] },
               categories: {
                 $cond: {
                   if: { $eq: ['$_id.userId', userId] },
