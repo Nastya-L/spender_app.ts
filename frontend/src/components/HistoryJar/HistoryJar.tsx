@@ -10,7 +10,7 @@ import { openModal } from '../../reducers/ModalReducer';
 import { IAuthState } from '../../interfaces/AuthState';
 import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
-import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import ExpenseFormNew from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IExpensesArray } from '../../interfaces/Expense';
 import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
@@ -140,7 +140,9 @@ const HistoryJar: React.FC = () => {
 	};
 
 	const OpenNewExpense = () => {
-		OpenDialogueSection(<ExpenseForm close={CloseDialogueSection} AddNewExpense={AddNewExpense} />);
+		OpenDialogueSection(
+			<ExpenseFormNew close={CloseDialogueSection} AddNewExpense={AddNewExpense} />
+		);
 	};
 
 	const ClickToExpenseEdit = (idExp: string) => {
