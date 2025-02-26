@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+	ComponentType, useEffect, useRef, useState
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,32 +12,47 @@ import { openModal } from '../../reducers/ModalReducer';
 import { IAuthState } from '../../interfaces/AuthState';
 import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
-import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import ExpenseFormNew, { INewExpenseNewProps } from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IExpensesArray } from '../../interfaces/Expense';
-import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
+import ExpenseFormEdit, { IExpenseFormEditProps } from '../ExpenseFormEdit/ExpenseFormEdit';
 import {
 	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
 } from '../UI/SvgIcon/SvgIcon';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
-import JarStatistics from '../JarStatistics/JarStatistics';
+import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
+
+type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
+
+type DialogueSectionType<T> = {
+	component: ComponentType<T> | null;
+	props: T | null;
+}
 
 const HistoryJar: React.FC = () => {
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
-	const [dialogueSection, setDialogueSection] = useState<React.ReactNode>();
+	const [
+		dialogueSection,
+		setDialogueSection
+	] = useState<DialogueSectionType<DialogueSectionPropsType>>({
+		component: null,
+		props: null
+	});
 	const [isOpenDialogueSection, setIsOpenDialogueSection] = useState<boolean>(false);
+	const [isDialogueAnimationEnd, setIsDialogueAnimationEnd] = useState<boolean>(false);
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 	const jars = useSelector((state: RootState) => state.jars.jars);
+	const refDialogueSection = useRef<HTMLDivElement>(null);
 
 	const selectedJar = (jars.find((jar) => jar._id === id));
 	const jarName = selectedJar ? selectedJar.name : 'Oops';
@@ -75,7 +92,11 @@ const HistoryJar: React.FC = () => {
 
 	useEffect(() => {
 		if (isOpenDialogueSection) {
-			window.scrollTo(0, 0);
+			if (refDialogueSection.current && !isMobile) {
+				refDialogueSection.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+			} else {
+				window.scrollTo(0, 0);
+			}
 		}
 	}, [isOpenDialogueSection]);
 
@@ -126,7 +147,7 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
-	const OpenDialogueSection = (component: React.ReactNode) => {
+	const OpenDialogueSection = (component: DialogueSectionType<DialogueSectionPropsType>) => {
 		setDialogueSection(component);
 		setIsOpenDialogueSection(true);
 	};
@@ -136,20 +157,36 @@ const HistoryJar: React.FC = () => {
 	};
 
 	const OpenStatistics = () => {
-		OpenDialogueSection(<JarStatistics close={CloseDialogueSection} />);
+		OpenDialogueSection({
+			component: JarStatistics,
+			props: {
+				close: CloseDialogueSection
+			}
+		});
 	};
 
 	const OpenNewExpense = () => {
-		OpenDialogueSection(<ExpenseForm close={CloseDialogueSection} AddNewExpense={AddNewExpense} />);
+		OpenDialogueSection({
+			component: ExpenseFormNew,
+			props: {
+				isAnimationEnd: isDialogueAnimationEnd,
+				close: CloseDialogueSection,
+				AddNewExpense
+			}
+		});
 	};
 
 	const ClickToExpenseEdit = (idExp: string) => {
-		OpenDialogueSection(<ExpenseFormEdit
-			expense={jarExpenses.find((expense) => expense._id === idExp)}
-			close={CloseDialogueSection}
-			UpdateExpense={UpdateExpense}
-			DeleteExpense={DeleteExpense}
-		/>);
+		OpenDialogueSection({
+			component: ExpenseFormEdit,
+			props: {
+				isAnimationEnd: isDialogueAnimationEnd,
+				expense: jarExpenses.find((expense) => expense._id === idExp),
+				close: CloseDialogueSection,
+				UpdateExpense,
+				DeleteExpense
+			}
+		});
 	};
 
 	const ClickToExpense = (idExp: string) => {
@@ -165,7 +202,7 @@ const HistoryJar: React.FC = () => {
 	});
 
 	return (
-		<div className="history-jar__wrapper">
+		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isPreloader
 				? <HistoryJarPreloader />
 				: (
@@ -218,10 +255,26 @@ const HistoryJar: React.FC = () => {
 						</div>
 						<div className="history-jar__body">
 							{selectedJar && (
-								<div className={classNames(((
-									isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
+								<div
+									className={classNames(((
+										isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
+									onTransitionEnd={() => {
+										if (!isOpenDialogueSection) {
+											setDialogueSection(undefined);
+											setIsDialogueAnimationEnd(false);
+										} else {
+											setIsDialogueAnimationEnd(true);
+										}
+									}}
 								>
-									{dialogueSection}
+									{(dialogueSection && dialogueSection.props)
+										&& (
+											<dialogueSection.component
+												// eslint-disable-next-line react/jsx-props-no-spreading
+												{...dialogueSection.props}
+												isAnimationEnd={isDialogueAnimationEnd}
+											/>
+										)}
 								</div>
 							)}
 							{(jarExpenses.length === 0)
