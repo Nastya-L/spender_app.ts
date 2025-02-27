@@ -14,7 +14,7 @@ import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
 import ExpenseFormNew, { INewExpenseNewProps } from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
-import { IExpense, IExpensesArray } from '../../interfaces/Expense';
+import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
 import ExpenseFormEdit, { IExpenseFormEditProps } from '../ExpenseFormEdit/ExpenseFormEdit';
 import {
 	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
@@ -71,9 +71,9 @@ const HistoryJar: React.FC = () => {
 			return;
 		}
 		setIsPreloader(true);
-		authClient.get<IExpensesArray>(`/jar/${id}/expense`)
+		authClient.get<IGetJarWithPaginatedExpenses>(`/jar/${id}/expense`)
 			.then((response) => {
-				const { expenses } = response.data;
+				const { expenses } = response.data.jar;
 				setJarExpenses(expenses || []);
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
