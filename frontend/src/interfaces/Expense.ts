@@ -9,11 +9,23 @@ export interface IExpense {
     date: Date
 }
 
-export interface IExpensesArray {
+export interface IPagination {
+    page: number
+    limit: number | undefined
+    totalExpenses: number
+    totalPages: number
+}
+
+export interface IJarExpensesArray {
     _id: string
     name: string
     color: string
     users: [string]
     owner: string
     expenses: [IExpense]
+}
+
+export interface IGetJarWithPaginatedExpenses {
+    jar: IJarExpensesArray
+    pagination: IPagination
 }
