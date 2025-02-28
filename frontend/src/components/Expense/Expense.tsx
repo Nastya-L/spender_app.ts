@@ -11,10 +11,11 @@ interface IExpenseProps {
 	ClickToEdit: (id: string) => void
 	ClickToExpense: (id: string) => void
 	selected: boolean
+	refExpense: React.MutableRefObject<HTMLDivElement>
 }
 
 const Expense: React.FC<IExpenseProps> = ({
-	expense, ClickToEdit, ClickToExpense, selected
+	expense, ClickToEdit, ClickToExpense, selected, refExpense
 }) => {
 	const categoryImg = GetCategoryImg(expense.category);
 
@@ -32,6 +33,7 @@ const Expense: React.FC<IExpenseProps> = ({
 				id={expense._id}
 				className={classNames('expense', ((selected) && 'expense__collapse-to-edit'))}
 				onClick={onClickExpense}
+				ref={selected ? refExpense : null}
 			>
 				<div className="expense__descr">
 					<div className="expense__categories-icon">
