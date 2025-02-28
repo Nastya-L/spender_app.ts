@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { toast } from 'react-toastify';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
 import { openModal } from '../../reducers/ModalReducer';
@@ -24,6 +25,7 @@ import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
+import Spinner from '../UI/Spinner/Spinner';
 
 type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
 
@@ -46,6 +48,8 @@ const HistoryJar: React.FC = () => {
 	});
 	const [isOpenDialogueSection, setIsOpenDialogueSection] = useState<boolean>(false);
 	const [isDialogueAnimationEnd, setIsDialogueAnimationEnd] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -60,21 +64,17 @@ const HistoryJar: React.FC = () => {
 	const { windowWidth } = useWidthWindow();
 	const isMobile = windowWidth <= breakpoints.tablet;
 
-	useEffect(() => {
-		if (!authState) {
-			navigate('/');
-			return;
-		}
+	const limit: number = 10;
+	const startPage: number = 1;
 
-		if (!id) {
-			navigate('/home');
-			return;
-		}
+	const getJarExpenses = (requestPage: number) => {
 		setIsPreloader(true);
-		authClient.get<IGetJarWithPaginatedExpenses>(`/jar/${id}/expense`)
+		authClient.get<IGetJarWithPaginatedExpenses>(`/jar/${id}/expense?page=${requestPage}&limit=${limit}`)
 			.then((response) => {
-				const { expenses } = response.data.jar;
-				setJarExpenses(expenses || []);
+				const { jar } = response.data;
+				const { page, totalPages } = response.data.pagination;
+				setHasMore(page < totalPages);
+				setJarExpenses((prev) => [...prev, ...jar.expenses]);
 			}).catch((error: IAuthClientError) => {
 				if (error.redirect) {
 					navigate(error.redirect);
@@ -88,7 +88,29 @@ const HistoryJar: React.FC = () => {
 			}).finally(() => {
 				setIsPreloader(false);
 			});
+	};
+
+	const nextPage = () => {
+		setCurrentPage((prev) => prev + 1);
+	};
+
+	useEffect(() => {
+		setJarExpenses([]);
+		setCurrentPage(startPage);
 	}, [id]);
+
+	useEffect(() => {
+		if (!authState) {
+			navigate('/');
+			return;
+		}
+
+		if (!id) {
+			navigate('/home');
+			return;
+		}
+		getJarExpenses(currentPage);
+	}, [id, currentPage]);
 
 	useEffect(() => {
 		if (isOpenDialogueSection) {
@@ -203,99 +225,112 @@ const HistoryJar: React.FC = () => {
 
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
-			{isPreloader
+			{isPreloader && jarExpenses.length === 0
 				? <HistoryJarPreloader />
 				: (
-					<div className="history-jar">
+					<div className="history-jar" id="scrollableDiv">
 						{isMobile && (
 							<div className="history-jar__mobile-add">
 								<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
 							</div>
 						)}
-						<div className="history-jar__head">
-							<h2 className="history-jar__name">{jarName}</h2>
-							{!isMobile
-								&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
-							<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-								<button
-									onClick={OpenJarOptions}
-									aria-label="list"
-									className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
-								>
-									<SvgIconDots />
-								</button>
-								<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
-									<div className="history-jar__head__menu__items">
-										<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
-											<SvgIconUsers />
-										</button>
-										{selectedJar && selectedJar.owner === userId && (
-											<>
-												<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
-													<SvgIconPen />
-												</button>
-												<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
-													<SvgIconTrash />
-												</button>
-											</>
-										)}
-										{jarExpenses.length !== 0
-											&& (
-												<button
-													aria-label="info"
-													onClick={OpenStatistics}
-													className="history-jar__head-item"
-												>
-													<SvgIconInfo />
-												</button>
+						<InfiniteScroll
+							dataLength={jarExpenses.length}
+							next={nextPage}
+							hasMore={hasMore}
+							loader={(
+								<div className="infinite-scroll">
+									<Spinner />
+								</div>
+							)}
+							scrollableTarget={!isMobile && 'scrollableDiv'}
+							style={{ overflow: 'hidden' }}
+						>
+							<div className="history-jar__head">
+								<h2 className="history-jar__name">{jarName}</h2>
+								{!isMobile
+									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
+								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
+									<button
+										onClick={OpenJarOptions}
+										aria-label="list"
+										className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
+									>
+										<SvgIconDots />
+									</button>
+									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
+										<div className="history-jar__head__menu__items">
+											<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+												<SvgIconUsers />
+											</button>
+											{selectedJar && selectedJar.owner === userId && (
+												<>
+													<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+														<SvgIconPen />
+													</button>
+													<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+														<SvgIconTrash />
+													</button>
+												</>
 											)}
+											{jarExpenses.length !== 0
+												&& (
+													<button
+														aria-label="info"
+														onClick={OpenStatistics}
+														className="history-jar__head-item"
+													>
+														<SvgIconInfo />
+													</button>
+												)}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div className="history-jar__body">
-							{selectedJar && (
-								<div
-									className={classNames(((
-										isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
-									onTransitionEnd={() => {
-										if (!isOpenDialogueSection) {
-											setDialogueSection(undefined);
-											setIsDialogueAnimationEnd(false);
-										} else {
-											setIsDialogueAnimationEnd(true);
-										}
-									}}
-								>
-									{(dialogueSection && dialogueSection.props)
-										&& (
-											<dialogueSection.component
-												// eslint-disable-next-line react/jsx-props-no-spreading
-												{...dialogueSection.props}
-												isAnimationEnd={isDialogueAnimationEnd}
-											/>
-										)}
-								</div>
-							)}
-							{(jarExpenses.length === 0)
-								? <h3 className="history-day__not-found">No Expenses</h3>
-								: jarExpenses.map((exp, i) => (
-									<div key={exp._id} className="history-day">
-										{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-											&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
-										{(exp.owner._id === userId)
-											? (
-												<Expense
-													expense={exp}
-													ClickToEdit={ClickToExpenseEdit}
-													ClickToExpense={ClickToExpense}
-													selected={selectedExpenseId === exp._id}
+							<div className="history-jar__body">
+								{selectedJar && (
+									<div
+										className={classNames(((
+											isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
+										onTransitionEnd={() => {
+											if (!isOpenDialogueSection) {
+												setDialogueSection(undefined);
+												setIsDialogueAnimationEnd(false);
+											} else {
+												setIsDialogueAnimationEnd(true);
+											}
+										}}
+									>
+										{(dialogueSection && dialogueSection.props)
+											&& (
+												<dialogueSection.component
+													// eslint-disable-next-line react/jsx-props-no-spreading
+													{...dialogueSection.props}
+													isAnimationEnd={isDialogueAnimationEnd}
 												/>
-											)
-											: <ExpenseRevers expense={exp} />}
+											)}
 									</div>
-								))}
-						</div>
+								)}
+								{(jarExpenses.length === 0)
+									? <h3 className="history-day__not-found">No Expenses</h3>
+									: jarExpenses.map((exp, i) => (
+										<div key={exp._id} className="history-day">
+											{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
+												&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
+											{(exp.owner._id === userId)
+												? (
+													<Expense
+														expense={exp}
+														ClickToEdit={ClickToExpenseEdit}
+														ClickToExpense={ClickToExpense}
+														selected={selectedExpenseId === exp._id}
+													/>
+												)
+												: <ExpenseRevers expense={exp} />}
+										</div>
+									))}
+							</div>
+						</InfiniteScroll>
 					</div>
 				)}
 		</div>

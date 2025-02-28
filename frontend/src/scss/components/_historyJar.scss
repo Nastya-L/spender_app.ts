@@ -9,12 +9,27 @@
     display: inherit;
 }
 
+.infinite-scroll {
+    @include flex-center;
+
+    height: 30px;
+    position: relative;
+
+        .spinner {
+            left: 50%;
+
+            &__animation {
+                background: #8aaff9;
+            }
+    }
+}
+
 .history-jar {
     max-width: $content-max-width;
-    height: 100%;
-    overflow: auto;
     position: relative;
     padding-right: 18px;
+    overflow: auto;
+    height: 100%;
 
     &__wrapper {
         height: 100%;
