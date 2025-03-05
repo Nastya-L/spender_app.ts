@@ -26,6 +26,8 @@ import breakpoints from '../../constants/breakpoints';
 import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import Spinner from '../UI/Spinner/Spinner';
+import HistoryJarButton from './HistoryJarButton/HistoryJarButton';
+import HistoryDay from './HistoryDay/HistoryDay';
 
 type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
 
@@ -219,10 +221,6 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
-	const formatDate = (date: Date) => new Date(date).toLocaleString('en-US', {
-		timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric'
-	});
-
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isPreloader && jarExpenses.length === 0
@@ -251,37 +249,34 @@ const HistoryJar: React.FC = () => {
 								{!isMobile
 									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
 								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-									<button
+									<HistoryJarButton
+										ariaLabel="list"
 										onClick={OpenJarOptions}
-										aria-label="list"
-										className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
+										isActive={jarOptionsIsOpen}
+										className="history-jar__head-item_more"
 									>
 										<SvgIconDots />
-									</button>
+									</HistoryJarButton>
 									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
 										<div className="history-jar__head__menu__items">
-											<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+											<HistoryJarButton ariaLabel="addUsers" onClick={ShareJar}>
 												<SvgIconUsers />
-											</button>
+											</HistoryJarButton>
 											{selectedJar && selectedJar.owner === userId && (
 												<>
-													<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+													<HistoryJarButton ariaLabel="pen" onClick={EditJar}>
 														<SvgIconPen />
-													</button>
-													<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+													</HistoryJarButton>
+													<HistoryJarButton ariaLabel="trash" onClick={DeleteJar}>
 														<SvgIconTrash />
-													</button>
+													</HistoryJarButton>
 												</>
 											)}
 											{jarExpenses.length !== 0
 												&& (
-													<button
-														aria-label="info"
-														onClick={OpenStatistics}
-														className="history-jar__head-item"
-													>
+													<HistoryJarButton ariaLabel="info" onClick={OpenStatistics}>
 														<SvgIconInfo />
-													</button>
+													</HistoryJarButton>
 												)}
 										</div>
 									</div>
@@ -314,9 +309,12 @@ const HistoryJar: React.FC = () => {
 								{(jarExpenses.length === 0)
 									? <h3 className="history-day__not-found">No Expenses</h3>
 									: jarExpenses.map((exp, i) => (
-										<div key={exp._id} className="history-day">
-											{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-												&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
+										<HistoryDay
+											key={exp._id}
+											expense={exp}
+											index={i}
+											jarExpenses={jarExpenses}
+										>
 											{(exp.owner._id === userId)
 												? (
 													<Expense
@@ -327,7 +325,7 @@ const HistoryJar: React.FC = () => {
 													/>
 												)
 												: <ExpenseRevers expense={exp} />}
-										</div>
+										</HistoryDay>
 									))}
 							</div>
 						</InfiniteScroll>
