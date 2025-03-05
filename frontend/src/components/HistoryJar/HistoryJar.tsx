@@ -3,13 +3,12 @@ import React, {
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
-import { openModal } from '../../reducers/ModalReducer';
 import { IAuthState } from '../../interfaces/AuthState';
 import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
@@ -17,17 +16,16 @@ import ExpenseFormNew, { INewExpenseNewProps } from '../ExpenseFormNew/ExpenseFo
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
 import ExpenseFormEdit, { IExpenseFormEditProps } from '../ExpenseFormEdit/ExpenseFormEdit';
-import {
-	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
-} from '../UI/SvgIcon/SvgIcon';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import Spinner from '../UI/Spinner/Spinner';
-import HistoryJarButton from './HistoryJarButton/HistoryJarButton';
 import HistoryDay from './HistoryDay/HistoryDay';
+import HistoryJarHeader from './HistoryJarHeader/HistoryJarHeader';
+import { SvgIconAddSquare } from '../UI/SvgIcon/SvgIcon';
+import getSortExpenses from './Utils/getSortExpenses';
 
 type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
 
@@ -37,7 +35,6 @@ type DialogueSectionType<T> = {
 }
 
 const HistoryJar: React.FC = () => {
-	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
@@ -53,7 +50,6 @@ const HistoryJar: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const { id } = useParams();
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
 	const userId = useSelector((state: IAuthState) => state.auth.user.id);
@@ -61,7 +57,6 @@ const HistoryJar: React.FC = () => {
 	const refDialogueSection = useRef<HTMLDivElement>(null);
 
 	const selectedJar = (jars.find((jar) => jar._id === id));
-	const jarName = selectedJar ? selectedJar.name : 'Oops';
 
 	const { windowWidth } = useWidthWindow();
 	const isMobile = windowWidth <= breakpoints.tablet;
@@ -123,31 +118,6 @@ const HistoryJar: React.FC = () => {
 			}
 		}
 	}, [isOpenDialogueSection]);
-
-	const OpenJarOptions = () => {
-		if (jarOptionsIsOpen) {
-			setJarOptionsIsOpen(false);
-		} else {
-			setJarOptionsIsOpen(true);
-		}
-	};
-
-	const DeleteJar = () => {
-		dispatch(openModal('deleteJar'));
-	};
-
-	const EditJar = () => {
-		dispatch(openModal('editJar'));
-	};
-
-	const ShareJar = () => {
-		dispatch(openModal('shareJar'));
-	};
-
-	const getSortExpenses = (
-		expenses: IExpense[]
-	) => expenses.sort((a, b) => new Date(b.date)
-		.getTime() - new Date(a.date).getTime());
 
 	const AddNewExpense = (expense: IExpense) => {
 		if (jarExpenses) {
@@ -244,44 +214,11 @@ const HistoryJar: React.FC = () => {
 							scrollableTarget={!isMobile && 'scrollableDiv'}
 							style={{ overflow: 'hidden' }}
 						>
-							<div className="history-jar__head">
-								<h2 className="history-jar__name">{jarName}</h2>
-								{!isMobile
-									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
-								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-									<HistoryJarButton
-										ariaLabel="list"
-										onClick={OpenJarOptions}
-										isActive={jarOptionsIsOpen}
-										className="history-jar__head-item_more"
-									>
-										<SvgIconDots />
-									</HistoryJarButton>
-									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
-										<div className="history-jar__head__menu__items">
-											<HistoryJarButton ariaLabel="addUsers" onClick={ShareJar}>
-												<SvgIconUsers />
-											</HistoryJarButton>
-											{selectedJar && selectedJar.owner === userId && (
-												<>
-													<HistoryJarButton ariaLabel="pen" onClick={EditJar}>
-														<SvgIconPen />
-													</HistoryJarButton>
-													<HistoryJarButton ariaLabel="trash" onClick={DeleteJar}>
-														<SvgIconTrash />
-													</HistoryJarButton>
-												</>
-											)}
-											{jarExpenses.length !== 0
-												&& (
-													<HistoryJarButton ariaLabel="info" onClick={OpenStatistics}>
-														<SvgIconInfo />
-													</HistoryJarButton>
-												)}
-										</div>
-									</div>
-								</div>
-							</div>
+							<HistoryJarHeader
+								jarExpenses={jarExpenses}
+								OpenNewExpense={OpenNewExpense}
+								OpenStatistics={OpenStatistics}
+							/>
 							<div className="history-jar__body">
 								{selectedJar && (
 									<div
