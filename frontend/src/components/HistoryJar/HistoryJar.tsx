@@ -26,6 +26,8 @@ import breakpoints from '../../constants/breakpoints';
 import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import Spinner from '../UI/Spinner/Spinner';
+import JarMenuButton from './JarMenuButton/JarMenuButton';
+import formatDate from './utils/formatDate';
 
 type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
 
@@ -219,10 +221,6 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
-	const formatDate = (date: Date) => new Date(date).toLocaleString('en-US', {
-		timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric'
-	});
-
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isPreloader && jarExpenses.length === 0
@@ -251,37 +249,34 @@ const HistoryJar: React.FC = () => {
 								{!isMobile
 									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
 								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-									<button
+									<JarMenuButton
+										ariaLabel="list"
 										onClick={OpenJarOptions}
-										aria-label="list"
-										className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
+										isActive={jarOptionsIsOpen}
+										className="history-jar__head-item_more"
 									>
 										<SvgIconDots />
-									</button>
+									</JarMenuButton>
 									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
 										<div className="history-jar__head__menu__items">
-											<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+											<JarMenuButton ariaLabel="addUsers" onClick={ShareJar}>
 												<SvgIconUsers />
-											</button>
+											</JarMenuButton>
 											{selectedJar && selectedJar.owner === userId && (
 												<>
-													<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+													<JarMenuButton ariaLabel="pen" onClick={EditJar}>
 														<SvgIconPen />
-													</button>
-													<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+													</JarMenuButton>
+													<JarMenuButton ariaLabel="trash" onClick={DeleteJar}>
 														<SvgIconTrash />
-													</button>
+													</JarMenuButton>
 												</>
 											)}
 											{jarExpenses.length !== 0
 												&& (
-													<button
-														aria-label="info"
-														onClick={OpenStatistics}
-														className="history-jar__head-item"
-													>
+													<JarMenuButton ariaLabel="info" onClick={OpenStatistics}>
 														<SvgIconInfo />
-													</button>
+													</JarMenuButton>
 												)}
 										</div>
 									</div>
