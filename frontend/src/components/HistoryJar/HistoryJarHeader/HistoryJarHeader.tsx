@@ -62,7 +62,12 @@ const HistoryJarHeader: React.FC<HistoryJarHeaderProps> = ({
 			{!isMobile
 				&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
 			<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-				<HistoryJarButton ariaLabel="list" onClick={OpenJarOptions} isActive={jarOptionsIsOpen}>
+				<HistoryJarButton
+					ariaLabel="list"
+					onClick={OpenJarOptions}
+					isActive={jarOptionsIsOpen}
+					className="history-jar__head-item_more"
+				>
 					<SvgIconDots />
 				</HistoryJarButton>
 				<JarOptions jarOptionsIsOpen={jarOptionsIsOpen}>

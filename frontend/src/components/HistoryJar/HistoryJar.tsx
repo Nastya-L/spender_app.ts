@@ -1,51 +1,37 @@
 import React, {
-	ComponentType, useEffect, useRef, useState
+	useEffect, useRef, useState
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
 import { toast } from 'react-toastify';
+import classNames from 'classnames';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
 import { IAuthState } from '../../interfaces/AuthState';
 import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
-import ExpenseFormNew, { INewExpenseNewProps } from '../ExpenseFormNew/ExpenseFormNew';
+import ExpenseFormNew from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
-import ExpenseFormEdit, { IExpenseFormEditProps } from '../ExpenseFormEdit/ExpenseFormEdit';
+import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
-import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
+import JarStatistics from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import Spinner from '../UI/Spinner/Spinner';
 import HistoryDay from './HistoryDay/HistoryDay';
 import HistoryJarHeader from './HistoryJarHeader/HistoryJarHeader';
 import { SvgIconAddSquare } from '../UI/SvgIcon/SvgIcon';
 import getSortExpenses from './Utils/getSortExpenses';
-
-type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
-
-type DialogueSectionType<T> = {
-	component: ComponentType<T> | null;
-	props: T | null;
-}
+import useDialogueSection from '../../hooks/useDialogueSection';
 
 const HistoryJar: React.FC = () => {
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
-	const [
-		dialogueSection,
-		setDialogueSection
-	] = useState<DialogueSectionType<DialogueSectionPropsType>>({
-		component: null,
-		props: null
-	});
-	const [isOpenDialogueSection, setIsOpenDialogueSection] = useState<boolean>(false);
 	const [isDialogueAnimationEnd, setIsDialogueAnimationEnd] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
@@ -63,6 +49,10 @@ const HistoryJar: React.FC = () => {
 
 	const limit: number = 10;
 	const startPage: number = 1;
+
+	const {
+		CloseDialogueSection, OpenDialogueSection, isOpenDialogueSection, dialogueSection,
+	} = useDialogueSection();
 
 	const getJarExpenses = (requestPage: number) => {
 		setIsPreloader(true);
@@ -141,15 +131,6 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
-	const OpenDialogueSection = (component: DialogueSectionType<DialogueSectionPropsType>) => {
-		setDialogueSection(component);
-		setIsOpenDialogueSection(true);
-	};
-
-	const CloseDialogueSection = () => {
-		setIsOpenDialogueSection(false);
-	};
-
 	const OpenStatistics = () => {
 		OpenDialogueSection({
 			component: JarStatistics,
@@ -226,7 +207,7 @@ const HistoryJar: React.FC = () => {
 											isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
 										onTransitionEnd={() => {
 											if (!isOpenDialogueSection) {
-												setDialogueSection(undefined);
+												OpenDialogueSection(undefined);
 												setIsDialogueAnimationEnd(false);
 											} else {
 												setIsDialogueAnimationEnd(true);
