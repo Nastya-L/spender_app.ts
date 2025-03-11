@@ -73,6 +73,8 @@ module.exports = {
     	"@typescript-eslint/no-shadow": "warn",
 		'no-underscore-dangle': 'off',
 		"react/jsx-no-constructed-context-values": "off",
-		'no-param-reassign': ['error', { props: false }]
+		'no-param-reassign': ['error', { props: false }],
+		'@typescript-eslint/no-misused-promises': 'off',
+		'@typescript-eslint/no-floating-promises': 'off'
 	}
 };

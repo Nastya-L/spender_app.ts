@@ -1,9 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import authClient, { IAuthClientError } from '../../services/authClient';
-import { IExpense } from '../../interfaces/Expense';
+import React, { useEffect, useState } from 'react';
+import { NewExpense } from '../../interfaces/Expense';
 import { ErrorResponse } from '../../types/Error';
 import GetUTC from '../../utils/GetUTC';
 import useErrorManager from '../../hooks/useErrorManager';
@@ -14,18 +10,18 @@ import { CalendarDate } from '../../types/CalendarDate';
 export interface INewExpenseNewProps {
 	isAnimationEnd: boolean
 	close: () => void
-	AddNewExpense: (expense: IExpense) => void
+	AddNewExpense: (expense: NewExpense) => void
+	errors: ErrorResponse
+	isLoading: boolean
 }
 
 const ExpenseFormNew: React.FC<INewExpenseNewProps> = ({
-	isAnimationEnd, close, AddNewExpense
+	isAnimationEnd, close, AddNewExpense, errors, isLoading
 }) => {
-	const navigate = useNavigate();
-	const { id } = useParams();
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(new Date());
 	const [expenseValue, setExpenseValue] = useState('');
 	const [expenseCategory, setExpenseCategory] = useState('');
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [localLoading, setLocalLoading] = useState(false);
 
 	const {
 		setErrors, clearErrors, getErrors
@@ -37,38 +33,28 @@ const ExpenseFormNew: React.FC<INewExpenseNewProps> = ({
 		setExpenseCategory('');
 	};
 
+	useEffect(() => {
+		if (errors) {
+			setErrors(errors);
+		}
+		if (!isLoading && localLoading && !errors) {
+			close();
+			clearErrors();
+			setExpenseValue('');
+			setExpenseCategory('');
+			setExpenseDate(new Date());
+		}
+		setLocalLoading(isLoading);
+	}, [isLoading, errors]);
+
 	const CreateExpense = () => {
+		setLocalLoading(true);
 		const newExpense = {
 			value: expenseValue,
 			category: expenseCategory,
 			date: GetUTC(expenseDate as Date)
 		};
-		setIsLoading(true);
-		authClient.post<IExpense>(`/jar/${id}/expense`, newExpense)
-			.then((response) => {
-				const responseData = response.data;
-				setExpenseValue('');
-				setExpenseCategory('');
-				setExpenseDate(new Date());
-				AddNewExpense(responseData);
-				clearErrors();
-				close();
-			}).catch((error: IAuthClientError) => {
-				if (error.redirect) {
-					navigate(error.redirect);
-					return;
-				}
-				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (error.response.data) {
-						const errorResponse = error.response.data;
-						setErrors(errorResponse);
-					} else {
-						toast.error('Something went wrong');
-					}
-				}
-			}).finally(() => {
-				setIsLoading(false);
-			});
+		AddNewExpense(newExpense);
 	};
 
 	const footerForm = (

@@ -9,6 +9,19 @@ export interface IExpense {
     date: Date
 }
 
+export interface UpdatedExpense {
+	id: string;
+	value: string;
+	category: string;
+	date: string;
+}
+
+export interface NewExpense {
+	value: string;
+	category: string;
+	date: string;
+}
+
 export interface IPagination {
     page: number
     limit: number | undefined
