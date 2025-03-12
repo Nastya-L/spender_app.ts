@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
 import { IAuthState } from '../../interfaces/AuthState';
@@ -20,13 +19,13 @@ import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import JarStatistics from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
-import Spinner from '../UI/Spinner/Spinner';
 import HistoryJarHead from './HistoryJarHead/HistoryJarHead';
 import { SvgIconAddSquare } from '../UI/SvgIcon/SvgIcon';
 import getSortExpenses from './helpers/getSortExpenses';
 import formatDate from './helpers/formatDate';
 import useDialogueSection from '../../hooks/useDialogueSection';
 import DialogueSectionWrapper from './DialogueSection/DialogueSection';
+import InfiniteScrollWrapper from './InfiniteScrollWrapper/InfiniteScrollWrapper';
 
 const HistoryJar: React.FC = () => {
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
@@ -74,10 +73,6 @@ const HistoryJar: React.FC = () => {
 			}).finally(() => {
 				setIsPreloader(false);
 			});
-	};
-
-	const nextPage = () => {
-		setCurrentPage((prev) => prev + 1);
 	};
 
 	useEffect(() => {
@@ -180,17 +175,10 @@ const HistoryJar: React.FC = () => {
 								<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
 							</div>
 						)}
-						<InfiniteScroll
+						<InfiniteScrollWrapper
 							dataLength={jarExpenses.length}
-							next={nextPage}
 							hasMore={hasMore}
-							loader={(
-								<div className="infinite-scroll">
-									<Spinner />
-								</div>
-							)}
-							scrollableTarget={!isMobile && 'scrollableDiv'}
-							style={{ overflow: 'hidden' }}
+							setCurrentPage={setCurrentPage}
 						>
 							<HistoryJarHead
 								enableStatistics={jarExpenses.length !== 0}
@@ -225,7 +213,7 @@ const HistoryJar: React.FC = () => {
 										</div>
 									))}
 							</div>
-						</InfiniteScroll>
+						</InfiniteScrollWrapper>
 					</div>
 				)}
 		</div>
