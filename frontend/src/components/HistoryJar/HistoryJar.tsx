@@ -1,5 +1,5 @@
 import React, {
-	ComponentType, useEffect, useRef, useState
+	useEffect, useRef, useState
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -13,41 +13,29 @@ import { openModal } from '../../reducers/ModalReducer';
 import { IAuthState } from '../../interfaces/AuthState';
 import Expense from '../Expense/Expense';
 import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
-import ExpenseFormNew, { INewExpenseNewProps } from '../ExpenseFormNew/ExpenseFormNew';
+import ExpenseFormNew from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
-import ExpenseFormEdit, { IExpenseFormEditProps } from '../ExpenseFormEdit/ExpenseFormEdit';
+import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
 import {
 	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
 } from '../UI/SvgIcon/SvgIcon';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
-import JarStatistics, { JarStatisticsProps } from '../JarStatistics/JarStatistics';
+import JarStatistics from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import Spinner from '../UI/Spinner/Spinner';
-
-type DialogueSectionPropsType = JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
-
-type DialogueSectionType<T> = {
-	component: ComponentType<T> | null;
-	props: T | null;
-}
+import JarMenuButton from './JarMenuButton/JarMenuButton';
+import formatDate from './utils/formatDate';
+import useDialogueSection from '../../hooks/useDialogueSection';
+import DialogueSectionWrapper from './DialogueSection/DialogueSection';
 
 const HistoryJar: React.FC = () => {
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
-	const [
-		dialogueSection,
-		setDialogueSection
-	] = useState<DialogueSectionType<DialogueSectionPropsType>>({
-		component: null,
-		props: null
-	});
-	const [isOpenDialogueSection, setIsOpenDialogueSection] = useState<boolean>(false);
-	const [isDialogueAnimationEnd, setIsDialogueAnimationEnd] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const { id } = useParams();
@@ -66,6 +54,10 @@ const HistoryJar: React.FC = () => {
 
 	const limit: number = 10;
 	const startPage: number = 1;
+
+	const {
+		CloseDialogueSection, OpenDialogueSection, isOpenDialogueSection, dialogueSection,
+	} = useDialogueSection();
 
 	const getJarExpenses = (requestPage: number) => {
 		setIsPreloader(true);
@@ -169,15 +161,6 @@ const HistoryJar: React.FC = () => {
 		}
 	};
 
-	const OpenDialogueSection = (component: DialogueSectionType<DialogueSectionPropsType>) => {
-		setDialogueSection(component);
-		setIsOpenDialogueSection(true);
-	};
-
-	const CloseDialogueSection = () => {
-		setIsOpenDialogueSection(false);
-	};
-
 	const OpenStatistics = () => {
 		OpenDialogueSection({
 			component: JarStatistics,
@@ -191,7 +174,6 @@ const HistoryJar: React.FC = () => {
 		OpenDialogueSection({
 			component: ExpenseFormNew,
 			props: {
-				isAnimationEnd: isDialogueAnimationEnd,
 				close: CloseDialogueSection,
 				AddNewExpense
 			}
@@ -202,7 +184,6 @@ const HistoryJar: React.FC = () => {
 		OpenDialogueSection({
 			component: ExpenseFormEdit,
 			props: {
-				isAnimationEnd: isDialogueAnimationEnd,
 				expense: jarExpenses.find((expense) => expense._id === idExp),
 				close: CloseDialogueSection,
 				UpdateExpense,
@@ -218,10 +199,6 @@ const HistoryJar: React.FC = () => {
 			setSelectedExpenseId(idExp);
 		}
 	};
-
-	const formatDate = (date: Date) => new Date(date).toLocaleString('en-US', {
-		timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric'
-	});
 
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
@@ -251,37 +228,34 @@ const HistoryJar: React.FC = () => {
 								{!isMobile
 									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
 								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-									<button
+									<JarMenuButton
+										ariaLabel="list"
 										onClick={OpenJarOptions}
-										aria-label="list"
-										className={classNames('history-jar__head-item_more', (jarOptionsIsOpen && 'history-jar__head-item_active'))}
+										isActive={jarOptionsIsOpen}
+										className="history-jar__head-item_more"
 									>
 										<SvgIconDots />
-									</button>
+									</JarMenuButton>
 									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
 										<div className="history-jar__head__menu__items">
-											<button aria-label="addUsers" onClick={ShareJar} className="history-jar__head-item">
+											<JarMenuButton ariaLabel="addUsers" onClick={ShareJar}>
 												<SvgIconUsers />
-											</button>
+											</JarMenuButton>
 											{selectedJar && selectedJar.owner === userId && (
 												<>
-													<button aria-label="pen" onClick={EditJar} className="history-jar__head-item">
+													<JarMenuButton ariaLabel="pen" onClick={EditJar}>
 														<SvgIconPen />
-													</button>
-													<button aria-label="trash" onClick={DeleteJar} className="history-jar__head-item">
+													</JarMenuButton>
+													<JarMenuButton ariaLabel="trash" onClick={DeleteJar}>
 														<SvgIconTrash />
-													</button>
+													</JarMenuButton>
 												</>
 											)}
 											{jarExpenses.length !== 0
 												&& (
-													<button
-														aria-label="info"
-														onClick={OpenStatistics}
-														className="history-jar__head-item"
-													>
+													<JarMenuButton ariaLabel="info" onClick={OpenStatistics}>
 														<SvgIconInfo />
-													</button>
+													</JarMenuButton>
 												)}
 										</div>
 									</div>
@@ -289,27 +263,11 @@ const HistoryJar: React.FC = () => {
 							</div>
 							<div className="history-jar__body">
 								{selectedJar && (
-									<div
-										className={classNames(((
-											isOpenDialogueSection) ? 'dialogue-section_open' : 'dialogue-section'))}
-										onTransitionEnd={() => {
-											if (!isOpenDialogueSection) {
-												setDialogueSection(undefined);
-												setIsDialogueAnimationEnd(false);
-											} else {
-												setIsDialogueAnimationEnd(true);
-											}
-										}}
-									>
-										{(dialogueSection && dialogueSection.props)
-											&& (
-												<dialogueSection.component
-													// eslint-disable-next-line react/jsx-props-no-spreading
-													{...dialogueSection.props}
-													isAnimationEnd={isDialogueAnimationEnd}
-												/>
-											)}
-									</div>
+									<DialogueSectionWrapper
+										dialogueSection={dialogueSection}
+										isOpenDialogueSection={isOpenDialogueSection}
+										OpenDialogueSection={OpenDialogueSection}
+									/>
 								)}
 								{(jarExpenses.length === 0)
 									? <h3 className="history-day__not-found">No Expenses</h3>
