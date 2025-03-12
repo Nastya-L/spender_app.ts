@@ -8,8 +8,6 @@ import { toast } from 'react-toastify';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
 import { IAuthState } from '../../interfaces/AuthState';
-import Expense from '../Expense/Expense';
-import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
 import ExpenseFormNew from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
@@ -22,13 +20,12 @@ import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
 import HistoryJarHead from './HistoryJarHead/HistoryJarHead';
 import { SvgIconAddSquare } from '../UI/SvgIcon/SvgIcon';
 import getSortExpenses from './helpers/getSortExpenses';
-import formatDate from './helpers/formatDate';
 import useDialogueSection from '../../hooks/useDialogueSection';
 import DialogueSectionWrapper from './DialogueSection/DialogueSection';
 import InfiniteScrollWrapper from './InfiniteScrollWrapper/InfiniteScrollWrapper';
+import ExpensesList from './ExpensesList/ExpensesList';
 
 const HistoryJar: React.FC = () => {
-	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +33,6 @@ const HistoryJar: React.FC = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 	const jars = useSelector((state: RootState) => state.jars.jars);
 	const refDialogueSection = useRef<HTMLDivElement>(null);
 
@@ -156,14 +152,6 @@ const HistoryJar: React.FC = () => {
 		});
 	};
 
-	const ClickToExpense = (idExp: string) => {
-		if (selectedExpenseId === idExp) {
-			setSelectedExpenseId('');
-		} else {
-			setSelectedExpenseId(idExp);
-		}
-	};
-
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isPreloader && jarExpenses.length === 0
@@ -194,24 +182,7 @@ const HistoryJar: React.FC = () => {
 										OpenDialogueSection={OpenDialogueSection}
 									/>
 								)}
-								{(jarExpenses.length === 0)
-									? <h3 className="history-day__not-found">No Expenses</h3>
-									: jarExpenses.map((exp, i) => (
-										<div key={exp._id} className="history-day">
-											{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-												&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
-											{(exp.owner._id === userId)
-												? (
-													<Expense
-														expense={exp}
-														ClickToEdit={ClickToExpenseEdit}
-														ClickToExpense={ClickToExpense}
-														selected={selectedExpenseId === exp._id}
-													/>
-												)
-												: <ExpenseRevers expense={exp} />}
-										</div>
-									))}
+								<ExpensesList expenses={jarExpenses} ClickToExpenseEdit={ClickToExpenseEdit} />
 							</div>
 						</InfiniteScrollWrapper>
 					</div>
