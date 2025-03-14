@@ -1,53 +1,42 @@
 import React, {
-	useEffect, useRef, useState
+	useEffect, useMemo, useRef, useState
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import authClient, { IAuthClientError } from '../../services/authClient';
 import { RootState } from '../../store';
-import { openModal } from '../../reducers/ModalReducer';
 import { IAuthState } from '../../interfaces/AuthState';
-import Expense from '../Expense/Expense';
-import ExpenseRevers from '../ExpenseRevers/ExpenseRevers';
 import ExpenseFormNew from '../ExpenseFormNew/ExpenseFormNew';
 import { ErrorResponse } from '../../types/Error';
 import { IExpense, IGetJarWithPaginatedExpenses } from '../../interfaces/Expense';
 import ExpenseFormEdit from '../ExpenseFormEdit/ExpenseFormEdit';
-import {
-	SvgIconAdd, SvgIconAddSquare, SvgIconDots, SvgIconInfo, SvgIconPen, SvgIconTrash, SvgIconUsers
-} from '../UI/SvgIcon/SvgIcon';
 import AddExpenseButton from '../UI/AddExpenseButton/AddExpenseButton';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import breakpoints from '../../constants/breakpoints';
 import JarStatistics from '../JarStatistics/JarStatistics';
 import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
-import Spinner from '../UI/Spinner/Spinner';
-import JarMenuButton from './JarMenuButton/JarMenuButton';
-import formatDate from './utils/formatDate';
+import HistoryJarHead from './HistoryJarHead/HistoryJarHead';
+import { SvgIconAddSquare } from '../UI/SvgIcon/SvgIcon';
+import getSortExpenses from './helpers/getSortExpenses';
 import useDialogueSection from '../../hooks/useDialogueSection';
 import DialogueSectionWrapper from './DialogueSection/DialogueSection';
+import InfiniteScrollWrapper from './InfiniteScrollWrapper/InfiniteScrollWrapper';
+import ExpensesList from './ExpensesList/ExpensesList';
 
 const HistoryJar: React.FC = () => {
-	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
-	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 	const [jarExpenses, setJarExpenses] = useState<Array<IExpense>>([]);
 	const [isPreloader, setIsPreloader] = useState<boolean>(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const { id } = useParams();
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 	const jars = useSelector((state: RootState) => state.jars.jars);
 	const refDialogueSection = useRef<HTMLDivElement>(null);
 
-	const selectedJar = (jars.find((jar) => jar._id === id));
-	const jarName = selectedJar ? selectedJar.name : 'Oops';
+	const selectedJar = useMemo(() => jars.find((jar) => jar._id === id), [jars, id]);
 
 	const { windowWidth } = useWidthWindow();
 	const isMobile = windowWidth <= breakpoints.tablet;
@@ -82,10 +71,6 @@ const HistoryJar: React.FC = () => {
 			});
 	};
 
-	const nextPage = () => {
-		setCurrentPage((prev) => prev + 1);
-	};
-
 	useEffect(() => {
 		setJarExpenses([]);
 		setCurrentPage(startPage);
@@ -113,31 +98,6 @@ const HistoryJar: React.FC = () => {
 			}
 		}
 	}, [isOpenDialogueSection]);
-
-	const OpenJarOptions = () => {
-		if (jarOptionsIsOpen) {
-			setJarOptionsIsOpen(false);
-		} else {
-			setJarOptionsIsOpen(true);
-		}
-	};
-
-	const DeleteJar = () => {
-		dispatch(openModal('deleteJar'));
-	};
-
-	const EditJar = () => {
-		dispatch(openModal('editJar'));
-	};
-
-	const ShareJar = () => {
-		dispatch(openModal('shareJar'));
-	};
-
-	const getSortExpenses = (
-		expenses: IExpense[]
-	) => expenses.sort((a, b) => new Date(b.date)
-		.getTime() - new Date(a.date).getTime());
 
 	const AddNewExpense = (expense: IExpense) => {
 		if (jarExpenses) {
@@ -192,14 +152,6 @@ const HistoryJar: React.FC = () => {
 		});
 	};
 
-	const ClickToExpense = (idExp: string) => {
-		if (selectedExpenseId === idExp) {
-			setSelectedExpenseId('');
-		} else {
-			setSelectedExpenseId(idExp);
-		}
-	};
-
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isPreloader && jarExpenses.length === 0
@@ -211,56 +163,17 @@ const HistoryJar: React.FC = () => {
 								<AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAddSquare />} />
 							</div>
 						)}
-						<InfiniteScroll
+						<InfiniteScrollWrapper
 							dataLength={jarExpenses.length}
-							next={nextPage}
 							hasMore={hasMore}
-							loader={(
-								<div className="infinite-scroll">
-									<Spinner />
-								</div>
-							)}
-							scrollableTarget={!isMobile && 'scrollableDiv'}
-							style={{ overflow: 'hidden' }}
+							setCurrentPage={setCurrentPage}
 						>
-							<div className="history-jar__head">
-								<h2 className="history-jar__name">{jarName}</h2>
-								{!isMobile
-									&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
-								<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
-									<JarMenuButton
-										ariaLabel="list"
-										onClick={OpenJarOptions}
-										isActive={jarOptionsIsOpen}
-										className="history-jar__head-item_more"
-									>
-										<SvgIconDots />
-									</JarMenuButton>
-									<div className={classNames((jarOptionsIsOpen === true ? 'history-jar__head__menu__open' : 'none'))}>
-										<div className="history-jar__head__menu__items">
-											<JarMenuButton ariaLabel="addUsers" onClick={ShareJar}>
-												<SvgIconUsers />
-											</JarMenuButton>
-											{selectedJar && selectedJar.owner === userId && (
-												<>
-													<JarMenuButton ariaLabel="pen" onClick={EditJar}>
-														<SvgIconPen />
-													</JarMenuButton>
-													<JarMenuButton ariaLabel="trash" onClick={DeleteJar}>
-														<SvgIconTrash />
-													</JarMenuButton>
-												</>
-											)}
-											{jarExpenses.length !== 0
-												&& (
-													<JarMenuButton ariaLabel="info" onClick={OpenStatistics}>
-														<SvgIconInfo />
-													</JarMenuButton>
-												)}
-										</div>
-									</div>
-								</div>
-							</div>
+							<HistoryJarHead
+								enableStatistics={jarExpenses.length !== 0}
+								OpenNewExpense={OpenNewExpense}
+								OpenStatistics={OpenStatistics}
+								jar={selectedJar}
+							/>
 							<div className="history-jar__body">
 								{selectedJar && (
 									<DialogueSectionWrapper
@@ -269,26 +182,9 @@ const HistoryJar: React.FC = () => {
 										OpenDialogueSection={OpenDialogueSection}
 									/>
 								)}
-								{(jarExpenses.length === 0)
-									? <h3 className="history-day__not-found">No Expenses</h3>
-									: jarExpenses.map((exp, i) => (
-										<div key={exp._id} className="history-day">
-											{((i === 0) || formatDate(exp.date) !== formatDate(jarExpenses[i - 1].date))
-												&& <h3 className="history-day__title">{formatDate(exp.date)}</h3>}
-											{(exp.owner._id === userId)
-												? (
-													<Expense
-														expense={exp}
-														ClickToEdit={ClickToExpenseEdit}
-														ClickToExpense={ClickToExpense}
-														selected={selectedExpenseId === exp._id}
-													/>
-												)
-												: <ExpenseRevers expense={exp} />}
-										</div>
-									))}
+								<ExpensesList expenses={jarExpenses} ClickToExpenseEdit={ClickToExpenseEdit} />
 							</div>
-						</InfiniteScroll>
+						</InfiniteScrollWrapper>
 					</div>
 				)}
 		</div>
