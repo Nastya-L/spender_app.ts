@@ -203,7 +203,7 @@ export const deleteExpense = (req: IUserRequest, res: Response): void => {
         return;
       }
 
-      const result = await ExpensePeriod.updateOne({ jar: jarId }, { $pull: { expenses: { _id: expenseId, owner: user._id } } }).exec();
+      const result = await ExpensePeriod.updateMany({ jar: jarId }, { $pull: { expenses: { _id: expenseId, owner: user._id } } }).exec();
 
       if (result.modifiedCount === 0) {
         return res.status(503).json({ error: [{ msg: 'Try again later' }] });
