@@ -73,6 +73,7 @@ module.exports = {
     	"@typescript-eslint/no-shadow": "warn",
 		'no-underscore-dangle': 'off',
 		"react/jsx-no-constructed-context-values": "off",
-		'no-param-reassign': ['error', { props: false }]
+		'no-param-reassign': ['error', { props: false }],
+		'jsx-a11y/no-autofocus': 'off'
 	}
 };

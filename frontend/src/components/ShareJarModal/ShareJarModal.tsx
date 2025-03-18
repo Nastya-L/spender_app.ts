@@ -13,6 +13,7 @@ import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
 import { IAuthState } from '../../interfaces/AuthState';
 import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
+import InputModal from '../UI/InputModal/InputModal';
 
 interface IUsersJar {
 	_id: string
@@ -112,18 +113,13 @@ const ShareJarModal: React.FC = () => {
 				Enter the email of a registered user.
 			</p>
 			<form id="share-jar" className="share-jar__form">
-				<input
-					disabled={userId !== editableJar.owner}
+				<InputModal
 					placeholder="Email"
-					required
 					type="text"
 					onChange={ChangeEmailFriend}
 					value={emailValue}
-					className={
-						getErrors('email')
-							? 'share-jar__form__input share-jar__form__input_error'
-							: 'share-jar__form__input'
-					}
+					error={getErrors('email')}
+					disabled={userId !== editableJar.owner}
 				/>
 				<ErrorMessage text={getErrors('email')} />
 			</form>

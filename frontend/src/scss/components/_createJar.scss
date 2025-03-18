@@ -24,29 +24,6 @@
         flex-direction: column;
         width: 100%;
         position: relative;
-
-        &__input {
-            text-align: right;
-            border-radius: 4px;
-            border: 1px solid $calendar-day-color;
-            padding: 0.4rem 0.5333rem;
-            color: #333;
-
-            &_error {
-                border-color: $error-color;
-            }
-
-            &:-webkit-autofill,
-            &:-webkit-autofill:hover,
-            &:-webkit-autofill:focus {
-              -webkit-box-shadow: 0 0 0 50px white inset;
-              -webkit-text-fill-color: #333;
-            }
-        }
-
-        &__input::placeholder {
-            color: $calendar-day-color;
-        }
     }
 
     &__color {

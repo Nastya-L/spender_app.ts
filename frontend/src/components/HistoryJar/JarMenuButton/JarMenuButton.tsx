@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React, { ReactNode } from 'react';
 import classNames from 'classnames';
 
@@ -11,7 +10,7 @@ interface JarMenuButtonProps {
 }
 
 const JarMenuButton: React.FC<JarMenuButtonProps> = ({
-	children, onClick, ariaLabel, isActive = false, className = ''
+	children, onClick, ariaLabel, isActive, className
 }) => (
 	<button
 		className={classNames('history-jar__head-item', className, (isActive && 'history-jar__head-item_active'))}
@@ -21,5 +20,10 @@ const JarMenuButton: React.FC<JarMenuButtonProps> = ({
 		{children}
 	</button>
 );
+
+JarMenuButton.defaultProps = {
+	isActive: false,
+	className: ''
+};
 
 export default JarMenuButton;
