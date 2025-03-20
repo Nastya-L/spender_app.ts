@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express';
 import User from '../models/UserSchema.js';
 import { createHash } from 'crypto';
-import createToken from '../utils/creatToken.js';
 import { validationResult } from 'express-validator';
 import errorFormatter from '../utils/errorFormatter.js';
+import { generateToken } from '../utils/generateToken.js';
+import { type ITokenPayload } from '../interface/ITokenPayload.js';
+import { userMapper } from '../utils/userMapper.js';
 
 /**
  *
@@ -26,17 +28,10 @@ const authorizationController = (req: Request, res: Response): void => {
         if (!existingUser) {
           return res.status(400).json({ error: [{ msg: 'Incorrect login or password' }] });
         }
-        const token = createToken();
-        await User.updateOne({ _id: existingUser.id }, { $set: { token: token } });
+        const tokenPayload: ITokenPayload = { id: existingUser.id };
+        const token = generateToken(tokenPayload);
 
-        const user = {
-          id: existingUser.id,
-          lastName: existingUser.lastName,
-          firstName: existingUser.firstName,
-          email: existingUser.email,
-          token: token.token,
-          time: existingUser.time
-        };
+        const user = userMapper(existingUser, token);
 
         return res.status(200).json(user);
       })

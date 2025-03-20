@@ -1,38 +1,44 @@
 import type { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { authUserMapper, type IAuthUser } from '../utils/userMapper.js';
 import User from '../models/UserSchema.js';
-import { userMapper } from '../utils/userMapper.js';
-import type { IUserToFE } from '../utils/userMapper.js';
-import isTokenExpired from '../utils/isTokenExpired.js';
+import { type ITokenPayload } from '../interface/ITokenPayload.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export interface IUserRequest extends Request {
-  user?: IUserToFE
+  user?: IAuthUser
 }
 
 const getUserFromToken = (req: IUserRequest, res: Response, next: NextFunction): void => {
   (async () => {
+    const secretKey = String(process.env.JWT_SECRET);
     const bearer = req.headers.authorization?.split(' ');
-    const userToken = bearer?.[1];
-    const tokenExpiresInDays: number = Number(process.env.TOKEN_EXPIRES_IN_DAYS) || 1;
 
-    if (!userToken) {
-      return res.status(401).json({ error: [{ msg: 'Unauthorized user' }] });
+    try {
+      const userToken = bearer?.[1];
+
+      if (!userToken) {
+        return res.status(401).json({ error: [{ msg: 'Unauthorized user' }] });
+      }
+
+      const decoded = jwt.verify(userToken, secretKey) as ITokenPayload;
+
+      if (!decoded?.id) {
+        return res.status(401).json({ error: [{ msg: 'Invalid token: No user ID' }] });
+      }
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(401).json({ error: [{ msg: 'User not found' }] });
+      }
+
+      req.user = authUserMapper(user);
+      next();
+    } catch (error) {
+      return res.status(403).json({ error: [{ msg: 'Invalid or expired token' }] });
     }
-    await User.findOne({ 'token.token': userToken })
-      .then(async (userFind) => {
-        if (userFind) {
-          const tokenExpired = isTokenExpired(userFind.token, tokenExpiresInDays);
-
-          if (tokenExpired) {
-            return res.status(401).json({ error: [{ msg: 'Token has expired' }] });
-          }
-          req.user = userMapper(userFind);
-          next();
-        } else {
-          res.status(401).json({ error: [{ msg: 'Unauthorized user' }] });
-        }
-      }).catch((err) => {
-        return res.status(500).json({ error: [{ msg: err }] });
-      });
   })();
 };
 
