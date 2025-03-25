@@ -6,11 +6,12 @@ interface DialogueSectionWrapperProps {
 	dialogueSection: DialogueSectionType<DialogueSectionPropsType>;
 	isOpenDialogueSection: boolean;
 	OpenDialogueSection: (component: DialogueSectionType<DialogueSectionPropsType>) => void;
+	isLoading: boolean
 }
 
 const DialogueSectionWrapper: React.FC<DialogueSectionWrapperProps> = ({
 	dialogueSection, isOpenDialogueSection,
-	OpenDialogueSection,
+	OpenDialogueSection, isLoading
 }) => {
 	const [isDialogueAnimationEnd, setIsDialogueAnimationEnd] = useState<boolean>(false);
 
@@ -35,6 +36,7 @@ const DialogueSectionWrapper: React.FC<DialogueSectionWrapperProps> = ({
 						// eslint-disable-next-line react/jsx-props-no-spreading
 						{...dialogueSection.props}
 						isAnimationEnd={isDialogueAnimationEnd}
+						isLoading={isLoading}
 					/>
 				)}
 		</div>
