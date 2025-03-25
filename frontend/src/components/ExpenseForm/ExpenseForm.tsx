@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-autofocus */
 import React, {
 	ReactElement, useEffect, useRef,
 } from 'react';

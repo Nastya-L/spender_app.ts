@@ -1,0 +1,25 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.input-modal {
+	text-align: right;
+	border-radius: 6px;
+	border: 1px solid $calendar-day-color;
+	padding: 0.4rem 0.5333rem;
+	color: #333;
+
+	&_error {
+		border-color: $error-color;
+	}
+
+	&:-webkit-autofill,
+	&:-webkit-autofill:hover,
+	&:-webkit-autofill:focus {
+	  -webkit-box-shadow: 0 0 0 50px white inset;
+	  -webkit-text-fill-color: $basic-color-text;
+	}
+}
+
+.input-modal::placeholder {
+	color: $calendar-day-color;
+}
