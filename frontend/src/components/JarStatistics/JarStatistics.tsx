@@ -10,7 +10,7 @@ import { IStatistics, ITotalAmounts } from '../../interfaces/Statistics';
 import { GetCategoryImg } from '../../utils/CategoryImg';
 import JarStatisticsPreloader from '../UI/JarStatisticsPreloader/JarStatisticsPreloader';
 
-interface JarStatisticsProps {
+export interface JarStatisticsProps {
 	close: () => void;
 }
 

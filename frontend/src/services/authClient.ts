@@ -50,6 +50,9 @@ authClient.interceptors.response.use(
 				case 500:
 					toast.error(`Internal Server Error: ${errorResponse.error[0].msg}`);
 					break;
+				case 503:
+					toast.error(`Internal Server Error: ${errorResponse.error[0].msg}`);
+					break;
 				default:
 					console.error('Error:', errorResponse.error[0].msg);
 					break;

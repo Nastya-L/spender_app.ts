@@ -11,7 +11,9 @@ import { editJar } from '../../reducers/JarsReducer';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
 import { SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
-import Spinner from '../UI/Spinner/Spinner';
+import { IAuthState } from '../../interfaces/AuthState';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
+import InputModal from '../UI/InputModal/InputModal';
 
 interface IUsersJar {
 	_id: string
@@ -25,6 +27,7 @@ const ShareJarModal: React.FC = () => {
 	const [emailValue, setEmailValue] = useState('');
 	const [users, setUsers] = useState<Array<IUsersJar>>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const userId = useSelector((state: IAuthState) => state.auth.user.id);
 
 	const {
 		setErrors, getErrors, clearErrors
@@ -40,9 +43,9 @@ const ShareJarModal: React.FC = () => {
 		setUsers(getSharedUsers(editableJar.users));
 	}, []);
 
-	const ClickDeleteUser = (userId: string) => {
+	const ClickDeleteUser = (user: string) => {
 		setIsLoading(true);
-		authClient.delete<IJar>(`/share/${id}/user/${userId}`)
+		authClient.delete<IJar>(`/share/${id}/user/${user}`)
 			.then((response) => {
 				const responseData = response.data;
 				dispatch(editJar(responseData));
@@ -70,6 +73,12 @@ const ShareJarModal: React.FC = () => {
 		const email = {
 			email: emailValue
 		};
+
+		if (userId !== editableJar.owner) {
+			toast.warning('Only the owner can modify this jar');
+			return;
+		}
+		setIsLoading(true);
 		authClient.post<IJar>(`/share/${id}`, email)
 			.then((response) => {
 				const responseData = response.data;
@@ -90,6 +99,8 @@ const ShareJarModal: React.FC = () => {
 						toast.error('Something went wrong');
 					}
 				}
+			}).finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -102,17 +113,13 @@ const ShareJarModal: React.FC = () => {
 				Enter the email of a registered user.
 			</p>
 			<form id="share-jar" className="share-jar__form">
-				<input
+				<InputModal
 					placeholder="Email"
-					required
 					type="text"
 					onChange={ChangeEmailFriend}
 					value={emailValue}
-					className={
-						getErrors('email')
-							? 'share-jar__form__input share-jar__form__input_error'
-							: 'share-jar__form__input'
-					}
+					error={getErrors('email')}
+					disabled={userId !== editableJar.owner}
 				/>
 				<ErrorMessage text={getErrors('email')} />
 			</form>
@@ -129,20 +136,21 @@ const ShareJarModal: React.FC = () => {
 							{users.map((user) => (
 								<div key={user._id} className="share-jar__users__item">
 									<p className="share-jar__users__name">{user.firstName}</p>
-									<button aria-label="trash" onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
-										<SvgIconTrash />
-									</button>
+									{userId === editableJar.owner && (
+										<button aria-label="trash" onClick={() => { ClickDeleteUser(user._id); }} className="edit-jar__users__delete">
+											<SvgIconTrash />
+										</button>
+									)}
 								</div>
 							))}
 						</div>
 					)}
 			</div>
-			<button onClick={ClickShareJar} className="share-jar__btn">
-				<span className="spinner__wrapper">
-					{isLoading && <Spinner />}
-					Invite
-				</span>
-			</button>
+			<ActionSubmitButton
+				text="Invite"
+				isLoading={isLoading}
+				onClick={ClickShareJar}
+			/>
 		</div>
 	);
 };

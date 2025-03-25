@@ -13,7 +13,8 @@ import { closeModal } from '../../reducers/ModalReducer';
 import { RootState } from '../../store';
 import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
 import useErrorManager from '../../hooks/useErrorManager';
-import Spinner from '../UI/Spinner/Spinner';
+import { ActionSubmitButton } from '../UI/ActionButton/ActionButton';
+import InputModal from '../UI/InputModal/InputModal';
 
 const EditJarModal: React.FC = () => {
 	const { id } = useParams();
@@ -78,16 +79,11 @@ const EditJarModal: React.FC = () => {
 				You can edit the Jar by specifying a new name and color
 			</p>
 			<form id="edit-jar" className="edit-jar__form">
-				<input
-					className={
-						getErrors('name')
-							? 'edit-jar__form__input edit-jar__form__input_error'
-							: 'edit-jar__form__input'
-					}
+				<InputModal
 					placeholder="Jar name"
-					required
 					type="text"
 					onChange={ChangeNameJar}
+					error={getErrors('name')}
 					value={jarName}
 				/>
 				<ErrorMessage text={getErrors('name')} />
@@ -102,12 +98,11 @@ const EditJarModal: React.FC = () => {
 					/>
 				))}
 			</div>
-			<button onClick={ClickEditJar} className="edit-jar__btn">
-				<span className="spinner__wrapper">
-					{isLoading && <Spinner />}
-					Edit
-				</span>
-			</button>
+			<ActionSubmitButton
+				text="Edit"
+				isLoading={isLoading}
+				onClick={ClickEditJar}
+			/>
 		</div>
 	);
 };

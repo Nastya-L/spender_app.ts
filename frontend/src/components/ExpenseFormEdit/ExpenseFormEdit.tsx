@@ -1,181 +1,113 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import Calendar from 'react-calendar';
+import React, { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
-import authClient, { IAuthClientError } from '../../services/authClient';
-import { IExpense } from '../../interfaces/Expense';
-import Category from '../UI/Category/Category';
-import { ErrorResponse } from '../../types/Error';
-import ErrorMessage from '../UI/ErrorMessage/ErrorMessage';
+import { IExpense, UpdatedExpense } from '../../interfaces/Expense';
 import GetUTC from '../../utils/GetUTC';
-import { CategoryImgBig } from '../../utils/CategoryImg';
+import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import { ActionSubmitButton, ActionRemoveButton } from '../UI/ActionButton/ActionButton';
+import { CalendarDate } from '../../types/CalendarDate';
 import useErrorManager from '../../hooks/useErrorManager';
-import { SvgIconArrow, SvgIconTrash } from '../UI/SvgIcon/SvgIcon';
-import Spinner from '../UI/Spinner/Spinner';
+import { ErrorResponse } from '../../types/Error';
 
-type CalendarDate = Date | [Date, Date];
-
-interface INewExpenseProps {
+export interface IExpenseFormEditProps {
+	isAnimationEnd: boolean
 	expense: IExpense
 	close: () => void
-	UpdateExpense: (expense: IExpense) => void
-	DeleteExpense: (id: string) => void
+	UpdateExpense: (expense: UpdatedExpense) => Promise<void>
+	DeleteExpense: (id: string) => Promise<void>
+	isLoading: boolean
+
 }
 
-const ExpenseFormEdit: React.FC<INewExpenseProps> = ({
-	expense, close, UpdateExpense, DeleteExpense
+const ExpenseFormEdit: React.FC<IExpenseFormEditProps> = ({
+	isAnimationEnd, expense, close, UpdateExpense,
+	DeleteExpense, isLoading
 }) => {
-	const { id } = useParams();
-	const navigate = useNavigate();
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(expense.date);
 	const [expenseValue, setExpenseValue] = useState(expense.value);
 	const [expenseCategory, setExpenseCategory] = useState(expense.category);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const ref = useRef<HTMLInputElement>(null);
 
 	const {
 		setErrors, getErrors, clearErrors
 	} = useErrorManager();
 
-	const CloseForm = () => {
-		clearErrors();
-		close();
-	};
-
 	useEffect(() => {
-		if (ref.current) {
-			ref.current.focus();
-		}
-	}, []);
+		setExpenseDate(expense.date);
+		setExpenseValue(expense.value);
+		setExpenseCategory(expense.category);
+	}, [expense]);
 
-	const ChangeExpenseValue = (e: React.FormEvent<HTMLInputElement>) => {
-		setExpenseValue(e.currentTarget.value);
-	};
-
-	const ChangeExpenseCategory = (category: string) => {
-		setExpenseCategory(category);
+	const CloseForm = () => {
+		close();
+		clearErrors();
+		setExpenseValue('');
+		setExpenseCategory('');
+		setExpenseDate(new Date());
 	};
 
 	const ClickUpdateExpense = () => {
 		const updateExpense = {
+			id: expense._id,
 			value: expenseValue,
 			category: expenseCategory,
 			date: GetUTC(new Date(expenseDate as Date))
 		};
-		setIsLoading(true);
-		authClient.put<IExpense>(`/jar/${id}/expense/${expense._id}`, updateExpense)
-			.then((response) => {
-				const responseData = response.data;
-				setExpenseValue('');
-				setExpenseCategory('');
-				setExpenseDate(new Date());
-				UpdateExpense(responseData);
-				clearErrors();
+		UpdateExpense(updateExpense)
+			.then(() => {
 				close();
-			}).catch((error: IAuthClientError) => {
-				if (error.redirect) {
-					navigate(error.redirect);
-					return;
+			}).catch((err) => {
+				const error = err as AxiosError<ErrorResponse, Record<string, unknown>>;
+				if (error.response?.data) {
+					const errorResponse = error.response.data;
+					setErrors(errorResponse);
+				} else {
+					toast.error('Something went wrong');
 				}
-				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (error.response.data) {
-						const errorResponse = error.response.data;
-						setErrors(errorResponse);
-					} else {
-						toast.error('Something went wrong');
-					}
-				}
-			}).finally(() => {
-				setIsLoading(false);
 			});
 	};
 
 	const ClickDeleteExpense = () => {
-		setIsLoading(true);
-		authClient.delete(`/jar/${id}/expense/${expense._id}`)
+		DeleteExpense(expense._id)
 			.then(() => {
-				setExpenseValue('');
-				setExpenseCategory('');
-				setExpenseDate(new Date());
-				DeleteExpense(expense._id);
-				close();
-				toast.success('The expense has been successfully deleted');
-			}).catch((error: IAuthClientError) => {
-				if (error.redirect) {
-					navigate(error.redirect);
-					return;
+				CloseForm();
+			}).catch((err) => {
+				const error = err as AxiosError<ErrorResponse, Record<string, unknown>>;
+				if (!error.response.data) {
+					toast.error('Something went wrong');
 				}
-				if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
-					if (!error.response) {
-						toast.error('Something went wrong');
-					}
-				}
-			}).finally(() => {
-				setIsLoading(false);
 			});
 	};
 
-	return (
-		<div className={isLoading
-			? 'expense-form-edit expense-form-edit_background'
-			: 'expense-form-edit'}
-		>
-			{isLoading && (
-				<div className="expense-form-edit__loading">
-					<Spinner />
-				</div>
-			)}
-			<h2 className="expense-form-edit__title">Edit Expense</h2>
-			<button aria-label="arrow" onClick={CloseForm} className="expense-form__close">
-				<SvgIconArrow />
-			</button>
-			<div className="expense-form-edit__value">
-				<input
-					ref={ref}
-					required
-					placeholder="Value"
-					type="text"
-					onChange={ChangeExpenseValue}
-					value={expenseValue}
-					className={
-						getErrors('value')
-							? 'expense-form-edit__input expense-form-edit__input_error'
-							: 'expense-form-edit__input'
-					}
-				/>
-				<ErrorMessage text={getErrors('value')} />
-			</div>
-			<div className="expense-form-edit__categories">
-				{
-					CategoryImgBig.map((category) => (
-						<Category
-							key={category.name}
-							name={category.name}
-							path={category.path}
-							checked={(category.name === expense.category)}
-							ChangeCategory={ChangeExpenseCategory}
-						/>
-					))
-				}
-			</div>
-			<div className="expense-form-edit__date">
-				<Calendar
-					locale="en"
-					onChange={setExpenseDate}
-					value={expenseDate}
-				/>
-			</div>
-			<div className="expense-form-edit__button">
-				<button onClick={ClickUpdateExpense} className="expense-form-edit__update">
-					Update
-				</button>
-				<button onClick={ClickDeleteExpense} className="expense-form-edit__delete">
-					<SvgIconTrash />
-					Delete
-				</button>
-			</div>
+	const footerForm = (
+		<div className="expense-form__button">
+			<ActionSubmitButton
+				text="Update"
+				isLoading={false}
+				onClick={ClickUpdateExpense}
+			/>
+			<ActionRemoveButton
+				text="Delete"
+				isLoading={false}
+				onClick={ClickDeleteExpense}
+			/>
 		</div>
+	);
+
+	return (
+		<ExpenseForm
+			name="edit expense"
+			isAnimationEnd={isAnimationEnd}
+			isLoading={isLoading}
+			expenseValue={expenseValue}
+			expenseCategory={expenseCategory}
+			expenseDate={expenseDate}
+			setExpenseDate={setExpenseDate}
+			setExpenseValue={setExpenseValue}
+			setExpenseCategory={setExpenseCategory}
+			CloseForm={CloseForm}
+			footerForm={footerForm}
+			getErrors={getErrors}
+		/>
 	);
 };
 

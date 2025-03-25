@@ -9,12 +9,27 @@
     display: inherit;
 }
 
+.infinite-scroll {
+    @include flex-center;
+
+    height: 30px;
+    position: relative;
+
+        .spinner {
+            left: 50%;
+
+            &__animation {
+                background: #8aaff9;
+            }
+    }
+}
+
 .history-jar {
     max-width: $content-max-width;
-    height: 100%;
-    overflow: auto;
     position: relative;
     padding-right: 18px;
+    overflow: auto;
+    height: 100%;
 
     &__wrapper {
         height: 100%;
@@ -98,20 +113,7 @@
     }
 }
 
-.new-expense {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .5s ease-out;
-
-    &_open {
-        transition: max-height .5s ease-out;
-        max-height: 700px;
-        overflow: hidden;
-        margin-top: 10px;
-    }
-}
-
-.statistics {
+.dialogue-section {
     max-height: 0;
     overflow: hidden;
     transition: max-height .5s ease-out;

@@ -16,7 +16,6 @@
 @use './scss/components/modal';
 @use './scss/components/deleteJarModal';
 @use './scss/components/editJarModal';
-@use './scss/components/expenseFormEdit';
 @use './scss/components/shareJar';
 @use './scss/components/errorMessage';
 @use './scss/components/mobileMenuButton';
@@ -27,6 +26,8 @@
 @use './scss/components/sidebarPreloader';
 @use './scss/components/spinner';
 @use './scss/components/jarStatisticsPreloader';
+@use './scss/components/actionButton';
+@use './scss/components/input';
 
 // pages
 @use './scss/pages/greetings';

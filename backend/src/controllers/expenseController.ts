@@ -8,6 +8,7 @@ import expenseWithUserMapper from '../utils/expenseMapper.js';
 import type { IUserRequest } from '../middleware/getUserFromToken.js';
 import getAllExpensesFromJar from '../utils/getAllExpensesFromJar.js';
 import ExpensePeriod from '../models/ExpensePeriodSchema.js';
+import jarWithPaginatedExpensesMapper from '../utils/jarWithPaginatedExpensesMapper.js';
 
 export interface IExpense {
   value: string
@@ -25,6 +26,10 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
 
     const userId = new mongoose.Types.ObjectId(req.user?._id);
     const jarId = new mongoose.Types.ObjectId(req.params.id);
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || undefined;
+    const skip = limit ? (page - 1) * limit : 0;
+
     try {
       const foundJar = await Jar.findOne({ _id: jarId, users: userId });
       if (!foundJar) {
@@ -32,8 +37,39 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
         return;
       }
 
-      const expenses = await getAllExpensesFromJar(jarId, userId);
-      res.status(200).json(expenses);
+      const expenses = await getAllExpensesFromJar(limit, skip, jarId, userId);
+      const totalExpenses = expenses?.totalExpenses ?? 0;
+      const totalPages = limit ? Math.ceil((totalExpenses) / limit) : 1;
+
+      const pagination = {
+        page,
+        limit,
+        totalExpenses: totalExpenses,
+        totalPages: totalPages
+      };
+
+      const DefaultResultExpenses = {
+        jar: {
+          _id: foundJar._id,
+          name: foundJar.name,
+          color: foundJar.color,
+          owner: foundJar.owner,
+          users: foundJar.users,
+          expenses: []
+        },
+        pagination: {
+          page,
+          limit,
+          totalExpenses: 0,
+          totalPages: 0
+        }
+      };
+
+      const resultExpensesWithPagination = expenses
+        ? jarWithPaginatedExpensesMapper(expenses, pagination)
+        : DefaultResultExpenses;
+
+      res.status(200).json(resultExpensesWithPagination);
     } catch (err) {
       res.status(500).json({ error: [{ msg: err }] });
     }
@@ -167,7 +203,7 @@ export const deleteExpense = (req: IUserRequest, res: Response): void => {
         return;
       }
 
-      const result = await ExpensePeriod.updateOne({ jar: jarId }, { $pull: { expenses: { _id: expenseId, owner: user._id } } }).exec();
+      const result = await ExpensePeriod.updateMany({ jar: jarId }, { $pull: { expenses: { _id: expenseId, owner: user._id } } }).exec();
 
       if (result.modifiedCount === 0) {
         return res.status(503).json({ error: [{ msg: 'Try again later' }] });
