@@ -26,6 +26,7 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
 
     const userId = new mongoose.Types.ObjectId(req.user?._id);
     const jarId = new mongoose.Types.ObjectId(req.params.id);
+    const categories = req.query.category;
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || undefined;
     const skip = limit ? (page - 1) * limit : 0;
@@ -37,7 +38,10 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
         return;
       }
 
-      const expenses = await getAllExpensesFromJar(limit, skip, jarId, userId);
+      const categoryFilter: string[] =
+        (typeof categories === 'string') ? (categories).split(',') : [];
+
+      const expenses = await getAllExpensesFromJar(limit, skip, jarId, userId, categoryFilter);
       const totalExpenses = expenses?.totalExpenses ?? 0;
       const totalPages = limit ? Math.ceil((totalExpenses) / limit) : 1;
 

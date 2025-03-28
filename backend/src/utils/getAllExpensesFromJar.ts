@@ -9,7 +9,8 @@ export interface IJar extends IJarToFE {
 }
 
 const getAllExpensesFromJar = async (
-  limit: number | undefined, skip: number, jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId
+  limit: number | undefined, skip: number, jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId,
+  categoryFilter: string[]
 ): Promise<IJar | null> => {
   try {
     const resultExpenses = await Jar.aggregate([
@@ -57,6 +58,23 @@ const getAllExpensesFromJar = async (
       },
       {
         $addFields: {
+          expenses: {
+            $filter: {
+              input: '$expenses',
+              as: 'expense',
+              cond: {
+                $or: [
+                  { $eq: [categoryFilter.length, 0] },
+                  { $in: ['$$expense.category', categoryFilter] }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          totalExpenses: { $size: '$expenses' },
           expenses: {
             $sortArray: {
               input: '$expenses',
