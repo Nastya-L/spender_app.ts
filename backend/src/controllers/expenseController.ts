@@ -9,6 +9,9 @@ import type { IUserRequest } from '../middleware/getUserFromToken.js';
 import getAllExpensesFromJar from '../utils/getAllExpensesFromJar.js';
 import ExpensePeriod from '../models/ExpensePeriodSchema.js';
 import jarWithPaginatedExpensesMapper from '../utils/jarWithPaginatedExpensesMapper.js';
+import { parseDate } from '../utils/parseDate.js';
+import { type IExpenseFilter } from '../interface/IFilter.js';
+import { buildMatchFilters } from '../utils/buildMatchFilters.js';
 
 export interface IExpense {
   value: string
@@ -27,6 +30,8 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
     const userId = new mongoose.Types.ObjectId(req.user?._id);
     const jarId = new mongoose.Types.ObjectId(req.params.id);
     const categories = req.query.category;
+    const startDate = parseDate(req.query.startDate as string);
+    const endDate = parseDate(req.query.endDate as string, true);
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || undefined;
     const skip = limit ? (page - 1) * limit : 0;
@@ -41,7 +46,9 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
       const categoryFilter: string[] =
         (typeof categories === 'string') ? (categories).split(',') : [];
 
-      const expenses = await getAllExpensesFromJar(limit, skip, jarId, userId, categoryFilter);
+      const expenseFilter: IExpenseFilter = buildMatchFilters(categoryFilter, startDate, endDate);
+
+      const expenses = await getAllExpensesFromJar(limit, skip, jarId, userId, expenseFilter);
       const totalExpenses = expenses?.totalExpenses ?? 0;
       const totalPages = limit ? Math.ceil((totalExpenses) / limit) : 1;
 

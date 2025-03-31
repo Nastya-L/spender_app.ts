@@ -2,6 +2,7 @@ import Jar from '../models/JarSchema.js';
 import type mongoose from 'mongoose';
 import type { IJarToFE } from './jarMapper.js';
 import type { IExpenseModel } from '../models/ExpenseSchema.js';
+import { type IExpenseFilter } from '../interface/IFilter.js';
 
 export interface IJar extends IJarToFE {
   expenses: IExpenseModel[]
@@ -10,7 +11,7 @@ export interface IJar extends IJarToFE {
 
 const getAllExpensesFromJar = async (
   limit: number | undefined, skip: number, jarId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId,
-  categoryFilter: string[]
+  expenseFilter: IExpenseFilter
 ): Promise<IJar | null> => {
   try {
     const resultExpenses = await Jar.aggregate([
@@ -34,6 +35,7 @@ const getAllExpensesFromJar = async (
         }
       },
       { $unwind: '$expensePeriods.expenses.owner' },
+      ...(expenseFilter.length > 0 ? [{ $match: { $and: expenseFilter } }] : []),
       {
         $group: {
           _id: '$_id',
@@ -51,22 +53,6 @@ const getAllExpensesFromJar = async (
               owner: {
                 _id: '$expensePeriods.expenses.owner._id',
                 firstName: '$expensePeriods.expenses.owner.firstName'
-              }
-            }
-          }
-        }
-      },
-      {
-        $addFields: {
-          expenses: {
-            $filter: {
-              input: '$expenses',
-              as: 'expense',
-              cond: {
-                $or: [
-                  { $eq: [categoryFilter.length, 0] },
-                  { $in: ['$$expense.category', categoryFilter] }
-                ]
               }
             }
           }
