@@ -20,14 +20,17 @@ const useExpenses = () => {
 		setExpenses([]);
 	}, [id]);
 
-	const GetExpenses = useCallback(async (requestPage: number): Promise<void> => {
+	const GetExpenses = useCallback(async (requestPage: number, filter?: string): Promise<void> => {
 		setIsLoading(true);
 		try {
-			const response = await authClient.get<IGetJarWithPaginatedExpenses>(`/jar/${id}/expense?page=${requestPage}&limit=${limit}`);
+			const baseUrl = `/jar/${id}/expense?page=${requestPage}&limit=${limit}`;
+			const fullUrl = filter ? `${baseUrl}&${filter}` : baseUrl;
+
+			const response = await authClient.get<IGetJarWithPaginatedExpenses>(fullUrl);
 			const { jar } = response.data;
 			const { page, totalPages } = response.data.pagination;
 			setHasMore(page < totalPages);
-			setExpenses((prev) => [...prev, ...jar.expenses]);
+			setExpenses((prev) => (requestPage === 1 ? jar.expenses : [...prev, ...jar.expenses]));
 		} catch (error) {
 			if (axios.isAxiosError<ErrorResponse, Record<string, unknown>>(error)) {
 				throw error;

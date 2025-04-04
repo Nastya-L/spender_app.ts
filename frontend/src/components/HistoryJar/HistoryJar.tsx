@@ -20,9 +20,12 @@ import InfiniteScrollWrapper from './InfiniteScrollWrapper/InfiniteScrollWrapper
 import ExpensesList from './ExpensesList/ExpensesList';
 import useDialogueSection from '../../hooks/useDialogueSection';
 import useExpenses from '../../hooks/useExpenses';
+import Filters from '../Filters/Filters';
+import buildFilterQuery from './helpers/buildFilterQuery';
 
 const HistoryJar: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
+	const [filters, setFilters] = useState<Array<string>>([]);
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
@@ -52,7 +55,16 @@ const HistoryJar: React.FC = () => {
 
 	useEffect(() => {
 		setCurrentPage(startPage);
+		setFilters([]);
 	}, [id]);
+
+	const GetFilters = (selectedFilter: string[]) => {
+		setCurrentPage(startPage);
+		setFilters((prev) => (prev.length !== selectedFilter.length
+			|| !prev.every((val, index) => val === selectedFilter[index])
+			? selectedFilter
+			: prev));
+	};
 
 	useEffect(() => {
 		if (!authState) {
@@ -64,10 +76,12 @@ const HistoryJar: React.FC = () => {
 			navigate('/home');
 			return;
 		}
-		GetExpenses(currentPage).catch(() => {
-			toast.error('Something went wrong');
-		});
-	}, [id, currentPage]);
+
+		const stringRequest = filters.length ? buildFilterQuery(filters) : '';
+		GetExpenses(currentPage, stringRequest)
+			.then(CloseDialogueSection)
+			.catch(() => toast.error('Something went wrong'));
+	}, [id, currentPage, filters]);
 
 	useEffect(() => {
 		if (isOpenDialogueSection) {
@@ -78,6 +92,12 @@ const HistoryJar: React.FC = () => {
 			}
 		}
 	}, [isOpenDialogueSection]);
+
+	const ClickClear = () => {
+		setFilters([]);
+		setCurrentPage(startPage);
+		CloseDialogueSection();
+	};
 
 	const OpenStatistics = () => {
 		OpenDialogueSection({
@@ -110,6 +130,18 @@ const HistoryJar: React.FC = () => {
 		});
 	};
 
+	const OpenFilter = () => {
+		OpenDialogueSection({
+			component: Filters,
+			props: {
+				close: CloseDialogueSection,
+				GetFilters,
+				ClickClear,
+				filters
+			}
+		});
+	};
+
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
 			{isLoading && expenses.length === 0
@@ -130,6 +162,7 @@ const HistoryJar: React.FC = () => {
 								enableStatistics={expenses.length !== 0}
 								OpenNewExpense={OpenNewExpense}
 								OpenStatistics={OpenStatistics}
+								OpenFilter={OpenFilter}
 								jar={selectedJar}
 							/>
 							<div className="history-jar__body">

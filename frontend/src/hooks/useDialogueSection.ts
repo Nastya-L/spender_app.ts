@@ -2,9 +2,10 @@ import { ComponentType, useState } from 'react';
 import { IExpenseFormEditProps } from '../components/ExpenseFormEdit/ExpenseFormEdit';
 import { INewExpenseNewProps } from '../components/ExpenseFormNew/ExpenseFormNew';
 import { JarStatisticsProps } from '../components/JarStatistics/JarStatistics';
+import { FiltersProps } from '../components/Filters/Filters';
 
 export type DialogueSectionPropsType =
-JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps;
+JarStatisticsProps | INewExpenseNewProps | IExpenseFormEditProps | FiltersProps;
 
 export type DialogueSectionType<T> = {
 	component: ComponentType<T> | null;
