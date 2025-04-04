@@ -12,7 +12,7 @@ interface ExpensesListProps {
 }
 
 const ExpensesList: React.FC<ExpensesListProps> = ({ expenses, ClickToExpenseEdit }) => {
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
+	const userId = useSelector((state: IAuthState) => state.auth.user._id);
 	const [selectedExpenseId, setSelectedExpenseId] = useState('');
 
 	const ClickToExpense = (idExp: string) => {

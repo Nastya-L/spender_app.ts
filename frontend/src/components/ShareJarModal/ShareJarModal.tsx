@@ -27,7 +27,7 @@ const ShareJarModal: React.FC = () => {
 	const [emailValue, setEmailValue] = useState('');
 	const [users, setUsers] = useState<Array<IUsersJar>>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
+	const userId = useSelector((state: IAuthState) => state.auth.user._id);
 
 	const {
 		setErrors, getErrors, clearErrors
