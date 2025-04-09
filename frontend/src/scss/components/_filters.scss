@@ -2,28 +2,33 @@
 @use '../utils/mixins' as *;
 
 .filters {
-    @include flex-center;
+	@include flex-center;
 
-    gap: 1.1rem;
-    border: 1px solid #BDBDBD;
-    border-radius: 15px;
-    padding: 1.1333rem 1.8667rem;
-    position: relative;
-    margin-top: 10px;
+	gap: 1.1rem;
+	border: 1px solid $calendar-day-color;
+	border-radius: 15px;
+	padding: 1.1333rem 1.8667rem;
+	position: relative;
+	margin-top: 10px;
 
-    &__close {
-        position: absolute;
-        top: 1.0667rem;
-        left: 0.2667rem;
-    }
+	&__container {
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+
+	&__close {
+		position: absolute;
+		top: 1.0667rem;
+		left: 0.2667rem;
+	}
 
 	&__title {
 		@include title-text(1rem, 1rem, 600);
 
-        color: $title-color-text;
-        text-transform: capitalize;
+		color: $title-color-text;
+		text-transform: capitalize;
 		text-align: center;
-		margin-bottom: 15px;
 	}
 
 	&__wrapper {
@@ -33,14 +38,20 @@
 	}
 
 	&__item {
+		display: flex;
+		flex-wrap: wrap;
+		row-gap: 0.3333rem;
+		justify-content: space-evenly;
+		text-transform: capitalize;
+		position: relative;
+		margin-bottom: 5px;
+
 		&__container {
-			display: flex;
-			flex-wrap: wrap;
-			row-gap: 0.3333rem;
-			justify-content: space-evenly;
-			text-transform: capitalize;
-			position: relative;
-			margin-bottom: 5px;
+			&__calendar {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
 		}
 
 		&__list {
@@ -75,6 +86,10 @@
 
 			text-transform: capitalize;
 		}
+
+		&__calendar {
+			width: 85%;
+		}
 	}
 
 	&__actions {
@@ -85,7 +100,7 @@
 		&__btn {
 			@include title-text(0.8667rem, 1rem, 400);
 
-			height: 27px;
+			height: 38px;
 			border-radius: 0.5333rem;
 			width: 45%;
 
@@ -95,8 +110,9 @@
 			}
 
 			&_clear {
-				border: 1px solid $btn-color;
-				background-color: $grey-medium-color;
+				border: 1px solid $grey-medium-color;
+				background-color: $background-color-grey;
+				color: $btn-color;
 			}
 		}
 	}

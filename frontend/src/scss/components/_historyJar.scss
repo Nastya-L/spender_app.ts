@@ -76,6 +76,23 @@
             }
         }
 
+        &__filter {
+            padding: 5px;
+            position: relative;
+
+            &_active::before {
+                position: absolute;
+                content: '';
+                right: 0;
+                top: 0;
+                background-color: $error-color;
+                border-radius: 50%;
+                width: 8px;
+                height: 8px;
+                pointer-events: none;
+            }
+        }
+
         &-item {
             padding: 0.1333rem 0 0;
 

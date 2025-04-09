@@ -1,61 +1,64 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useParams } from 'react-router-dom';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import Calendar from 'react-calendar';
 import { CategoryImgBig } from '../../utils/CategoryImg';
 import { SvgIconArrow } from '../UI/SvgIcon/SvgIcon';
+import { CalendarDate } from '../../types/CalendarDate';
+import CheckboxLinear from '../UI/CheckboxLinear/CheckboxLinear';
 
 export interface FiltersProps {
 	close: () => void;
-	GetFilters: (selectedFilter: string[]) => void;
-	ClickClear: () => void;
-	filters: string[];
+	getFilters: (selectedFilterCategory: string[], selectedDate: CalendarDate) => void;
+	onClearFilters: () => void;
+	filterCategory: string[];
+	filterDate: CalendarDate;
 }
 
 const Filters: React.FC<FiltersProps> = ({
-	close, GetFilters, ClickClear, filters
+	close, getFilters, onClearFilters, filterCategory, filterDate
 }) => {
-	const { id } = useParams();
-	const [selectedFilter, setSelectedFilter] = useState<Array<string>>(filters);
+	const [selectedCategory, setSelectedCategory] = useState<Array<string>>(filterCategory);
+	const [selectedDate, setSelectedDate] = useState<CalendarDate>(filterDate);
+	const [isRange, setIsRange] = useState(false);
 
-	const onChangeFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const onChangeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.currentTarget;
-		const idFilter = e.currentTarget.id;
-		setSelectedFilter((prev) => (checked
-			? [...prev, idFilter]
-			: prev.filter((fil) => fil !== idFilter)));
+		const addedCategory = e.currentTarget.id;
+		setSelectedCategory((prev) => (checked
+			? [...prev, addedCategory]
+			: prev.filter((category) => category !== addedCategory)));
 	};
 
-	useEffect(() => {
-		setSelectedFilter(filters);
-	}, [id]);
-
-	const ApplyFilters = () => {
-		GetFilters(selectedFilter);
+	const handleCalendarChange = (date: CalendarDate) => {
+		setSelectedDate(date);
 	};
 
-	const ClearFilters = () => {
-		setSelectedFilter([]);
-		ClickClear();
+	const applyFilters = () => {
+		getFilters(selectedCategory, selectedDate);
+	};
+
+	const clearFilters = () => {
+		setSelectedCategory([]);
+		setSelectedDate(undefined);
+		onClearFilters();
 	};
 
 	const categoryElements = useMemo(() => CategoryImgBig.map(({ name, path }) => (
 		<div key={name}>
 			<input
-				onChange={onChangeFilters}
+				onChange={onChangeCategory}
 				type="checkbox"
 				id={name}
 				name="category"
 				value={name}
 				className="filters__item__list"
-				checked={selectedFilter.includes(name)}
+				checked={selectedCategory?.includes(name)}
 			/>
 			<label className="filters__item__label" htmlFor={name}>
 				<img src={path} alt={name} />
 				{name}
 			</label>
 		</div>
-	)), [selectedFilter]);
+	)), [selectedCategory]);
 
 	return (
 		<div className="filters">
@@ -70,26 +73,40 @@ const Filters: React.FC<FiltersProps> = ({
 				</button>
 				<div className="filters__wrapper">
 					<div className="filters__item">
-						<ul className="filters__item__container">
-							{categoryElements}
-						</ul>
+						{categoryElements}
 					</div>
+					<CheckboxLinear
+						id="isRange"
+						checked={isRange}
+						onChange={() => setIsRange(!isRange)}
+						text="Date range"
+					/>
 					<div className="filters__item">
-						<div className="filters__item__container">
-							Date
+						<div className="filters__item__container__calendar">
+							<div className="filters__item__calendar">
+								<Calendar
+									locale="en"
+									onChange={handleCalendarChange}
+									value={selectedDate}
+									maxDate={new Date()}
+									minDate={new Date(2020, 0, 1)}
+									selectRange={isRange}
+									showNeighboringCentury={false}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div className="filters__actions">
 					<button
 						type="submit"
-						onClick={ApplyFilters}
+						onClick={applyFilters}
 						className="filters__actions__btn filters__actions__btn_apply"
 					>
 						Apply
 					</button>
 					<button
-						onClick={ClearFilters}
+						onClick={clearFilters}
 						className="filters__actions__btn filters__actions__btn_clear"
 					>
 						Clear

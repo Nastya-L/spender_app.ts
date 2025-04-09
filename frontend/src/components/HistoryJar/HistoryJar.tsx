@@ -22,10 +22,13 @@ import useDialogueSection from '../../hooks/useDialogueSection';
 import useExpenses from '../../hooks/useExpenses';
 import Filters from '../Filters/Filters';
 import buildFilterQuery from './helpers/buildFilterQuery';
+import { CalendarDate } from '../../types/CalendarDate';
+import normalizeDateFilter from './helpers/normalizeDateFilter';
 
 const HistoryJar: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
-	const [filters, setFilters] = useState<Array<string>>([]);
+	const [filterCategory, setFilterCategory] = useState<Array<string>>([]);
+	const [filterDate, setFilterDate] = useState<CalendarDate>();
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const authState = useSelector((state: IAuthState) => state.auth.isAuthenticated);
@@ -38,6 +41,7 @@ const HistoryJar: React.FC = () => {
 	const isMobile = windowWidth <= breakpoints.tablet;
 
 	const startPage: number = 1;
+	const isFilterActive = filterCategory.length > 0 || !!filterDate;
 
 	const {
 		CloseDialogueSection, OpenDialogueSection, isOpenDialogueSection, dialogueSection,
@@ -53,17 +57,22 @@ const HistoryJar: React.FC = () => {
 		hasMore
 	} = useExpenses();
 
-	useEffect(() => {
+	const onClearFilters = () => {
+		CloseDialogueSection();
+		setFilterCategory([]);
+		setFilterDate(undefined);
 		setCurrentPage(startPage);
-		setFilters([]);
+	};
+
+	useEffect(() => {
+		onClearFilters();
+		setCurrentPage(startPage);
 	}, [id]);
 
-	const GetFilters = (selectedFilter: string[]) => {
+	const getFilters = (selectedFilterCategory: string[], selectedDate: CalendarDate) => {
 		setCurrentPage(startPage);
-		setFilters((prev) => (prev.length !== selectedFilter.length
-			|| !prev.every((val, index) => val === selectedFilter[index])
-			? selectedFilter
-			: prev));
+		setFilterCategory(selectedFilterCategory);
+		setFilterDate(selectedDate);
 	};
 
 	useEffect(() => {
@@ -77,11 +86,19 @@ const HistoryJar: React.FC = () => {
 			return;
 		}
 
-		const stringRequest = filters.length ? buildFilterQuery(filters) : '';
+		const [startDate, endDate] = normalizeDateFilter(filterDate);
+
+		const stringRequest = filterCategory ? buildFilterQuery(filterCategory, startDate, endDate) : '';
 		GetExpenses(currentPage, stringRequest)
-			.then(CloseDialogueSection)
+			.then(() => {
+				if (dialogueSection && dialogueSection.component) {
+					if (dialogueSection.component.name === Filters.name) {
+						CloseDialogueSection();
+					}
+				}
+			})
 			.catch(() => toast.error('Something went wrong'));
-	}, [id, currentPage, filters]);
+	}, [currentPage, filterCategory, filterDate]);
 
 	useEffect(() => {
 		if (isOpenDialogueSection) {
@@ -92,12 +109,6 @@ const HistoryJar: React.FC = () => {
 			}
 		}
 	}, [isOpenDialogueSection]);
-
-	const ClickClear = () => {
-		setFilters([]);
-		setCurrentPage(startPage);
-		CloseDialogueSection();
-	};
 
 	const OpenStatistics = () => {
 		OpenDialogueSection({
@@ -130,14 +141,15 @@ const HistoryJar: React.FC = () => {
 		});
 	};
 
-	const OpenFilter = () => {
+	const openFilter = () => {
 		OpenDialogueSection({
 			component: Filters,
 			props: {
 				close: CloseDialogueSection,
-				GetFilters,
-				ClickClear,
-				filters
+				getFilters,
+				onClearFilters,
+				filterCategory,
+				filterDate
 			}
 		});
 	};
@@ -162,8 +174,9 @@ const HistoryJar: React.FC = () => {
 								enableStatistics={expenses.length !== 0}
 								OpenNewExpense={OpenNewExpense}
 								OpenStatistics={OpenStatistics}
-								OpenFilter={OpenFilter}
+								OpenFilter={openFilter}
 								jar={selectedJar}
+								isFilters={isFilterActive}
 							/>
 							<div className="history-jar__body">
 								{selectedJar && (

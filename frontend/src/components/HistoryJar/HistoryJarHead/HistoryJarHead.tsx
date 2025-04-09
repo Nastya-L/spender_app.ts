@@ -19,10 +19,11 @@ interface HistoryJarHeaderProps {
 	OpenStatistics: () => void;
 	OpenFilter: () => void;
 	jar: IJar;
+	isFilters: boolean;
 }
 
 const HistoryJarHead: React.FC<HistoryJarHeaderProps> = ({
-	enableStatistics, OpenNewExpense, OpenStatistics, OpenFilter, jar
+	enableStatistics, OpenNewExpense, OpenStatistics, OpenFilter, jar, isFilters
 }) => {
 	const dispatch = useDispatch();
 	const userId = useSelector((state: IAuthState) => state.auth.user._id);
@@ -59,7 +60,11 @@ const HistoryJarHead: React.FC<HistoryJarHeaderProps> = ({
 			<h2 className="history-jar__name">{jarName}</h2>
 			{!isMobile
 				&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
-			<button className="history-jar__head__filter" aria-label="filter" onClick={OpenFilter}>
+			<button
+				className={classNames('history-jar__head__filter', (isFilters && 'history-jar__head__filter_active'))}
+				aria-label="filter"
+				onClick={OpenFilter}
+			>
 				<SvgIconFilter />
 			</button>
 			<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>

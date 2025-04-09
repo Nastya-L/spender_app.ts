@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,10 +15,6 @@ const useExpenses = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
 	const limit: number = 10;
-
-	useEffect(() => {
-		setExpenses([]);
-	}, [id]);
 
 	const GetExpenses = useCallback(async (requestPage: number, filter?: string): Promise<void> => {
 		setIsLoading(true);
