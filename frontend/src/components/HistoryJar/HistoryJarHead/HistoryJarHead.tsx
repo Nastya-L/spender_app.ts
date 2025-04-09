@@ -23,7 +23,7 @@ const HistoryJarHead: React.FC<HistoryJarHeaderProps> = ({
 	enableStatistics, OpenNewExpense, OpenStatistics, jar
 }) => {
 	const dispatch = useDispatch();
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
+	const userId = useSelector((state: IAuthState) => state.auth.user._id);
 	const [jarOptionsIsOpen, setJarOptionsIsOpen] = useState(false);
 
 	const jarName = useMemo(() => (jar ? jar.name : 'Oops'), [jar]);

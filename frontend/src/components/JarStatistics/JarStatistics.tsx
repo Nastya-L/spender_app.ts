@@ -15,7 +15,7 @@ export interface JarStatisticsProps {
 }
 
 const JarStatistics: React.FC<JarStatisticsProps> = ({ close }) => {
-	const userId = useSelector((state: IAuthState) => state.auth.user.id);
+	const userId = useSelector((state: IAuthState) => state.auth.user._id);
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [statistics, setStatistics] = useState<Array<ITotalAmounts>>(null);
