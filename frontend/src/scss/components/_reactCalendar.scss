@@ -6,11 +6,30 @@
 
     align-items: stretch;
 
+    &__tile--active:enabled:hover,
+    .react-calendar__tile--active:enabled:focus {
+        background: $selected-color;
+    }
+
+    &__tile:disabled {
+        color: $calendar-day-color;
+        cursor: default;
+    }
+
     &__navigation {
         @include flex-center;
 
         flex-direction: row;
         margin-bottom: 1.2rem;
+
+        button {
+            min-width: 12px;
+
+            &:disabled {
+                color: $calendar-day-color;
+                cursor: default;
+            }
+        }
 
         &__label {
             @include title-text(1.2667rem, 1.4667rem, 400);
