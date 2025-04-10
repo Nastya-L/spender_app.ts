@@ -1,4 +1,11 @@
-const GetUTC = (date: Date) => new Date(date.getTime() - ((date.getTimezoneOffset() * 60 * 1000)))
-	.toISOString();
+const GetUTC = (date: Date) => {
+	const utcDate = new Date(Date.UTC(
+		date.getFullYear(),
+		date.getMonth(),
+		date.getDate(),
+	));
+
+	return utcDate.toISOString();
+};
 
 export default GetUTC;

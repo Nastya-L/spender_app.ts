@@ -60,7 +60,7 @@ const getAllExpensesFromJar = async (
           expenses: {
             $sortArray: {
               input: '$expenses',
-              sortBy: { date: -1 }
+              sortBy: { date: -1, _id: -1 }
             }
           }
         }

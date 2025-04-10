@@ -96,7 +96,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 				<Calendar
 					locale="en"
 					onChange={setExpenseDate}
-					value={expenseDate}
+					value={(expenseDate)}
+					maxDate={new Date()}
+					minDate={new Date(2020, 0, 1)}
+					showNeighboringCentury={false}
 				/>
 			</div>
 			{footerForm}
