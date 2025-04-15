@@ -88,15 +88,6 @@
 
 }
 
-.filters {
-    padding-left: 0.8rem;
-    margin-top: 1.2rem;
-
-    &__title {
-        @include title-text(1rem, 1rem, 600);
-    }
-}
-
 .is-active {
     display: flex;
     align-items: center;

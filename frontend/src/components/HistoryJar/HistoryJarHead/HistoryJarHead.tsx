@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import AddExpenseButton from '../../UI/AddExpenseButton/AddExpenseButton';
 import {
-	SvgIconAdd, SvgIconDots, SvgIconUsers, SvgIconPen, SvgIconTrash, SvgIconInfo
+	SvgIconAdd, SvgIconDots, SvgIconUsers, SvgIconPen, SvgIconTrash, SvgIconInfo,
+	SvgIconFilter
 } from '../../UI/SvgIcon/SvgIcon';
 import JarMenuButton from '../JarMenuButton/JarMenuButton';
 import breakpoints from '../../../constants/breakpoints';
@@ -16,11 +17,13 @@ interface HistoryJarHeaderProps {
 	enableStatistics: boolean;
 	OpenNewExpense: () => void;
 	OpenStatistics: () => void;
+	OpenFilter: () => void;
 	jar: IJar;
+	isFilters: boolean;
 }
 
 const HistoryJarHead: React.FC<HistoryJarHeaderProps> = ({
-	enableStatistics, OpenNewExpense, OpenStatistics, jar
+	enableStatistics, OpenNewExpense, OpenStatistics, OpenFilter, jar, isFilters
 }) => {
 	const dispatch = useDispatch();
 	const userId = useSelector((state: IAuthState) => state.auth.user._id);
@@ -57,6 +60,13 @@ const HistoryJarHead: React.FC<HistoryJarHeaderProps> = ({
 			<h2 className="history-jar__name">{jarName}</h2>
 			{!isMobile
 				&& <AddExpenseButton OpenNewExpense={OpenNewExpense} icon={<SvgIconAdd />} />}
+			<button
+				className={classNames('history-jar__head__filter', (isFilters && 'history-jar__head__filter_active'))}
+				aria-label="filter"
+				onClick={OpenFilter}
+			>
+				<SvgIconFilter />
+			</button>
 			<div className={classNames('history-jar__head__menu', (jarOptionsIsOpen && 'history-jar__head__menu_active'))}>
 				<JarMenuButton
 					ariaLabel="list"

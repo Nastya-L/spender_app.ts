@@ -48,9 +48,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isPreloader, jars, setIsOpen }) => {
 									<ButtonNewJar nameClass="sidebar__jars-add" />
 								</div>
 							)}
-						<div className="filters">
-							<h3 className="filters__title">Filters</h3>
-						</div>
 					</div>
 					<div className="sidebar__menu">
 						<NavLink className="sidebar__menu__item" to="/">
