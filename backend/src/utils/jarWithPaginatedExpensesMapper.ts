@@ -15,7 +15,7 @@ interface JarWithPagination {
   color: string
   users: [mongoose.Types.ObjectId]
   owner: mongoose.Types.ObjectId
-  expenses: IExpenseModel[]
+  days: IExpenseModel[]
 }
 
 interface JarWithPaginatedExpensesResponse {
@@ -31,7 +31,7 @@ const jarWithPaginatedExpensesMapper = (jar: IJar, pagination: Pagination): JarW
       color: jar.color,
       owner: jar.owner,
       users: jar.users,
-      expenses: jar.expenses
+      days: jar.days
     },
     pagination: {
       page: pagination.page,

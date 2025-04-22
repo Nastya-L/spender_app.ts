@@ -5,7 +5,7 @@ import type { IExpenseModel } from '../models/ExpenseSchema.js';
 import { type IExpenseFilter } from '../interface/IFilter.js';
 
 export interface IJar extends IJarToFE {
-  expenses: IExpenseModel[]
+  days: IExpenseModel[]
   totalExpenses: number
 }
 
@@ -38,12 +38,15 @@ const getAllExpensesFromJar = async (
       ...(expenseFilter.length > 0 ? [{ $match: { $and: expenseFilter } }] : []),
       {
         $group: {
-          _id: '$_id',
+          _id: {
+            jarId: '$_id',
+            date: { $dateToString: { format: '%Y-%m-%dT00:00:00.000Z', date: '$expensePeriods.expenses.date' } }
+          },
           name: { $first: '$name' },
           color: { $first: '$color' },
           owner: { $first: '$owner' },
           users: { $first: '$users' },
-          totalExpenses: { $sum: 1 },
+          totalSum: { $sum: '$expensePeriods.expenses.value' },
           expenses: {
             $push: {
               _id: '$expensePeriods.expenses._id',
@@ -59,12 +62,46 @@ const getAllExpensesFromJar = async (
         }
       },
       {
+        $group: {
+          _id: '$_id.jarId',
+          name: { $first: '$name' },
+          color: { $first: '$color' },
+          owner: { $first: '$owner' },
+          users: { $first: '$users' },
+          totalExpenses: { $sum: { $size: '$expenses' } },
+          expenses: {
+            $push: {
+              date: '$_id.date',
+              totalSum: '$totalSum',
+              expenses: '$expenses'
+            }
+          }
+        }
+      },
+      {
         $addFields: {
-          totalExpenses: { $size: '$expenses' },
           expenses: {
             $sortArray: {
-              input: '$expenses',
-              sortBy: { date: -1, _id: -1 }
+              input: {
+                $map: {
+                  input: '$expenses',
+                  as: 'day',
+                  in: {
+                    $mergeObjects: [
+                      '$$day',
+                      {
+                        expenses: {
+                          $sortArray: {
+                            input: '$$day.expenses',
+                            sortBy: { date: -1, _id: -1 }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              sortBy: { date: -1 }
             }
           }
         }
@@ -77,7 +114,7 @@ const getAllExpensesFromJar = async (
           owner: 1,
           users: 1,
           totalExpenses: 1,
-          expenses: limit ? { $slice: ['$expenses', skip, limit] } : '$expenses'
+          days: limit ? { $slice: ['$expenses', skip, limit] } : '$expenses'
         }
       }
     ]).exec();
