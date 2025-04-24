@@ -11,6 +11,7 @@ export interface IUser extends Document {
   password: string
   time: Date
   role: number
+  resetPasswordToken: string | null
 }
 
 const UserSchema = new Schema<IUser>({
@@ -29,6 +30,10 @@ const UserSchema = new Schema<IUser>({
   password: {
     type: String,
     required: true
+  },
+  resetPasswordToken: {
+    type: String,
+    default: null
   },
   time: {
     type: Date,

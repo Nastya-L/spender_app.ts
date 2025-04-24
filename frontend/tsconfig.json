@@ -10,6 +10,6 @@
     "esModuleInterop": true,
     "moduleResolution": "node"
     },
-    "include": ["src", "declaration.d.ts"],
+    "include": ["src", "declaration.d.ts", "scripts"],
     "exclude": ["node_modules"]
 }
