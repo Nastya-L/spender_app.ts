@@ -53,13 +53,26 @@
 
         margin-top: 1.3333rem;
         user-select: none;
+
+        &:hover {
+            @include basic-text(1.2rem, 1.3333rem);
+    
+            text-decoration: underline;
+            cursor: pointer;
+        }
     }
 
-    &__button-signin:hover {
-        @include basic-text(1.2rem, 1.3333rem);
+    &__button-forgot-password {
+        @include basic-text(1rem, 1.3333rem);
 
-        text-decoration: underline;
-        cursor: pointer;
+        margin-top: 1rem;
+
+        &:hover {
+            @include basic-text(1.2rem, 1.3333rem);
+    
+            text-decoration: underline;
+            cursor: pointer;
+        }
     }
 }
 

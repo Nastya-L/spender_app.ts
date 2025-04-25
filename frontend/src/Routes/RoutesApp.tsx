@@ -4,12 +4,16 @@ import SingUp from '../components/SingUp/SingUp';
 import SingIn from '../components/SingIn/SingIn';
 import Greetings from '../components/Greetings/Greetings';
 import Home from '../components/Home/Home';
+import ForgotPassword from '../components/ForgotPassword/ForgotPassword';
+import ResetPassword from '../components/ResetPassword/ResetPassword';
 
 const RoutesApp = () => (
 	<Routes>
 		<Route path="/" element={<Greetings />} />
 		<Route path="/user/register" element={<SingUp />} />
 		<Route path="/user/login" element={<SingIn />} />
+		<Route path="/user/forgot-password" element={<ForgotPassword />} />
+		<Route path="/user/reset-password" element={<ResetPassword />} />
 		<Route path="/home" element={<Home />} />
 		<Route path="/home/jar" element={<Home />} />
 		<Route path="/home/jar/:id" element={<Home />} />

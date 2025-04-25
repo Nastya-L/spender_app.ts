@@ -130,6 +130,7 @@ const SingIn: React.FC = () => {
 								</span>
 							</button>
 						</form>
+						<NavLink to="/user/forgot-password" className="greetings__button-forgot-password">Forgot your password?</NavLink>
 						<NavLink to="/user/register" className="greetings__button-signin">Don&lsquo;t have an account? Sign up</NavLink>
 					</div>
 				</div>

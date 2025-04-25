@@ -67,4 +67,6 @@ const ValidateUser = (user: User): string | undefined => {
 	return error;
 };
 
-export { User, ValidateUserField, ValidateUser };
+export {
+	User, ValidateUserField, ValidateUser, isValidPassword, isValidEmail
+};

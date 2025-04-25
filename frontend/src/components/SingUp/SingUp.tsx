@@ -9,12 +9,12 @@ import breakpoints from '../../constants/breakpoints';
 import useWidthWindow from '../../hooks/useWidthWindows';
 import Spinner from '../UI/Spinner/Spinner';
 
-enum ResultMessageType {
+export enum ResultMessageType {
 	error = 'error',
 	success = 'success',
 }
 
-interface ResultResponse {
+export interface ResultResponse {
 	result: string
 }
 
