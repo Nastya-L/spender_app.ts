@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import SingUp from '../components/SingUp/SingUp';
-import SingIn from '../components/SingIn/SingIn';
+import SingUp from '../pages/SingUp/SingUp';
+import SingIn from '../pages/SingIn/SingIn';
 import Greetings from '../components/Greetings/Greetings';
-import Home from '../components/Home/Home';
-import ForgotPassword from '../components/ForgotPassword/ForgotPassword';
-import ResetPassword from '../components/ResetPassword/ResetPassword';
+import Home from '../pages/Home/Home';
+import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword/ResetPassword';
 
 const RoutesApp = () => (
 	<Routes>

@@ -1,9 +1,11 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { IJar } from '../../interfaces/Jar';
 import ButtonNewJar from '../UI/ButtonNewJar/ButtonNewJar';
 import { SvgIconLogOut, SvgIconSettings } from '../UI/SvgIcon/SvgIcon';
 import SidebarPreloader from '../UI/SidebarPreloader/SidebarPreloader';
+import { logout } from '../../reducers/AuthReducer';
 
 interface SidebarProps {
 	isPreloader: boolean;
@@ -12,6 +14,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isPreloader, jars, setIsOpen }) => {
+	const dispatch = useDispatch();
+
 	const onChange = () => {
 		setIsOpen(false);
 	};
@@ -54,7 +58,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isPreloader, jars, setIsOpen }) => {
 							<SvgIconSettings />
 							Settings
 						</NavLink>
-						<NavLink className="sidebar__menu__item" to="/user/login">
+						<NavLink
+							onClick={() => { dispatch(logout()); }}
+							className="sidebar__menu__item"
+							to="/user/login"
+						>
 							<SvgIconLogOut />
 							Sign Out
 						</NavLink>

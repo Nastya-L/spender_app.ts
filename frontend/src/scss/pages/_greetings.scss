@@ -48,7 +48,7 @@
         padding: 0.6667rem 10rem;
     }
 
-    &__button-signin {
+    &__link {
         @include basic-text(1rem, 1.3333rem);
 
         margin-top: 1.3333rem;
@@ -56,20 +56,7 @@
 
         &:hover {
             @include basic-text(1.2rem, 1.3333rem);
-    
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
 
-    &__button-forgot-password {
-        @include basic-text(1rem, 1.3333rem);
-
-        margin-top: 1rem;
-
-        &:hover {
-            @include basic-text(1.2rem, 1.3333rem);
-    
             text-decoration: underline;
             cursor: pointer;
         }

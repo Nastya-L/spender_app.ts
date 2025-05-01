@@ -30,14 +30,11 @@
 @use './scss/components/input';
 @use './scss/components/filters';
 @use './scss/components/checkboxLinear';
+@use './scss/components/authForm.scss';
 
 // pages
 @use './scss/pages/greetings';
-@use './scss/pages/singIn';
-@use './scss/pages/singUp';
 @use './scss/pages/home';
-@use './scss/pages/forgotPassword';
-@use './scss/pages/resetPassword';
 
 // utils
 @use './scss/utils/mixins';
