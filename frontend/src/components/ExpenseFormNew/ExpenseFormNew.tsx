@@ -20,7 +20,7 @@ const ExpenseFormNew: React.FC<INewExpenseNewProps> = ({
 	isAnimationEnd, close, AddExpense, isLoading,
 }) => {
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(new Date());
-	const [expenseValue, setExpenseValue] = useState('');
+	const [expenseValue, setExpenseValue] = useState<string>('');
 	const [expenseCategory, setExpenseCategory] = useState('');
 
 	const {
@@ -37,7 +37,7 @@ const ExpenseFormNew: React.FC<INewExpenseNewProps> = ({
 
 	const CreateExpense = () => {
 		const newExpense = {
-			value: expenseValue,
+			value: Number(expenseValue),
 			category: expenseCategory,
 			date: GetUTC(expenseDate as Date)
 		};

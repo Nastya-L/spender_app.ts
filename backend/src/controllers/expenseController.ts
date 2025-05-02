@@ -66,7 +66,7 @@ export const getExpense = (req: IUserRequest, res: Response): void => {
           color: foundJar.color,
           owner: foundJar.owner,
           users: foundJar.users,
-          expenses: []
+          days: []
         },
         pagination: {
           page,

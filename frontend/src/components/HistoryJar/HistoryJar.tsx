@@ -24,6 +24,7 @@ import Filters from '../Filters/Filters';
 import buildFilterQuery from './helpers/buildFilterQuery';
 import { CalendarDate } from '../../types/CalendarDate';
 import normalizeDateFilter from './helpers/normalizeDateFilter';
+import findExpenseById from './helpers/findExpenseById';
 
 const HistoryJar: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +49,7 @@ const HistoryJar: React.FC = () => {
 	} = useDialogueSection();
 
 	const {
-		expenses,
+		expDays,
 		GetExpenses,
 		AddExpense,
 		DeleteExpense,
@@ -133,7 +134,7 @@ const HistoryJar: React.FC = () => {
 		OpenDialogueSection({
 			component: ExpenseFormEdit,
 			props: {
-				expense: expenses.find((expense) => expense._id === idExp),
+				expense: findExpenseById(expDays, idExp),
 				close: CloseDialogueSection,
 				UpdateExpense,
 				DeleteExpense,
@@ -156,7 +157,7 @@ const HistoryJar: React.FC = () => {
 
 	return (
 		<div className="history-jar__wrapper" ref={refDialogueSection}>
-			{isLoading && expenses.length === 0
+			{isLoading && expDays.length === 0
 				? <HistoryJarPreloader />
 				: (
 					<div className="history-jar" id="scrollableDiv">
@@ -166,12 +167,12 @@ const HistoryJar: React.FC = () => {
 							</div>
 						)}
 						<InfiniteScrollWrapper
-							dataLength={expenses.length}
+							dataLength={expDays.length}
 							hasMore={hasMore}
 							setCurrentPage={setCurrentPage}
 						>
 							<HistoryJarHead
-								enableStatistics={expenses.length !== 0}
+								enableStatistics={expDays.length !== 0}
 								OpenNewExpense={OpenNewExpense}
 								OpenStatistics={OpenStatistics}
 								OpenFilter={openFilter}
@@ -187,7 +188,7 @@ const HistoryJar: React.FC = () => {
 										isLoading={isLoading}
 									/>
 								)}
-								<ExpensesList expenses={expenses} ClickToExpenseEdit={ClickToExpenseEdit} />
+								<ExpensesList expDays={expDays} ClickToExpenseEdit={ClickToExpenseEdit} />
 							</div>
 						</InfiniteScrollWrapper>
 					</div>
