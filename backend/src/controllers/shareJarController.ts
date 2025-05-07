@@ -5,11 +5,18 @@ import User from '../models/UserSchema.js';
 import Jar from '../models/JarSchema.js';
 import jarMapper from '../utils/jarMapper.js';
 import ExpensePeriod from '../models/ExpensePeriodSchema.js';
+import { shareJarTemplate } from '../templates/shareJarTemplate.js';
+import { sendMail } from '../utils/sendMail.js';
 
 export const shareJar = (req: IUserRequest, res: Response): void => {
   (async () => {
     const userEmail: string = req.body.email;
     const idJar: string = req.params.id;
+    const user = req.user;
+
+    if (!user) {
+      return res.status(404).json({ error: [{ msg: 'User not found' }] });
+    }
 
     await User.findOne({ email: userEmail })
       .then(async (foundUser) => {
@@ -38,6 +45,14 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
               return res.status(503).json({ error: [{ msg: 'Try again later' }] });
             }
             const jar = jarMapper(updateJar);
+
+            const htmlContent = shareJarTemplate(jar.name, user?.firstName);
+            await sendMail(
+              userEmail,
+              'Jar Invitation',
+              htmlContent
+            );
+
             res.status(200).json(jar);
           });
       }).catch((err) => {
