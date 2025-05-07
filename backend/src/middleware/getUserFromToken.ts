@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export interface IUserRequest extends Request {
-  user?: IAuthUser
+  user: IAuthUser
 }
 
 const getUserFromToken = (req: IUserRequest, res: Response, next: NextFunction): void => {

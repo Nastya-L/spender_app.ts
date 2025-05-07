@@ -18,6 +18,6 @@ export const sendMail = async (to: string, subject: string, html: string): Promi
     from: 'Spender',
     to,
     subject,
-    html,
+    html
   });
 };
