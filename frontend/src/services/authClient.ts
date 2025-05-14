@@ -1,7 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import store, { RootState } from '../store';
 import { ErrorResponse } from '../types/Error';
+import { logout } from '../reducers/AuthReducer';
 
 const authClient = axios.create({
 	baseURL: process.env.API_URL
@@ -30,6 +32,7 @@ authClient.interceptors.request.use(
 authClient.interceptors.response.use(
 	(res) => res,
 	(error: IAuthClientError) => {
+		const dispatch = useDispatch();
 		if (axios.isAxiosError(error)) {
 			if (error.response) {
 				const errorResponse = error.response.data as ErrorResponse;
@@ -38,10 +41,12 @@ authClient.interceptors.response.use(
 				switch (statusCode) {
 				case 401:
 					error.redirect = '/user/login';
+					dispatch(logout());
 					toast.error(`Unauthorized user: ${errorResponse.error[0].msg}`);
 					break;
 				case 403:
 					error.redirect = '/user/login';
+					dispatch(logout());
 					toast.error(`Token has expired: ${errorResponse.error[0].msg}`);
 					break;
 				case 404:

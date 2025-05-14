@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import User from '../models/UserSchema.js';
-import { createHash } from 'crypto';
 import errorFormatter from '../utils/errorFormatter.js';
+import { createHashPassword } from '../utils/createHashPassword.js';
 
 export const getUser = (req: Request, res: Response): void => {
   res.send('Not implemented');
@@ -11,7 +11,7 @@ export const getUser = (req: Request, res: Response): void => {
 export const registerUser = (req: Request, res: Response): void => {
   const errors = validationResult(req).formatWith(errorFormatter);
   const email: string = req.body.email;
-  const password: string = createHash('sha256').update(req.body.password as string).digest('hex');
+  const password: string = createHashPassword(req.body.password as string);
 
   if (!errors.isEmpty()) {
     res.status(400).json({ error: errors.array() });
