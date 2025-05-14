@@ -6,6 +6,7 @@ import Greetings from '../components/Greetings/Greetings';
 import Home from '../pages/Home/Home';
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword/ResetPassword';
+import Settings from '../pages/Settings/Settings';
 
 const RoutesApp = () => (
 	<Routes>
@@ -17,6 +18,7 @@ const RoutesApp = () => (
 		<Route path="/home" element={<Home />} />
 		<Route path="/home/jar" element={<Home />} />
 		<Route path="/home/jar/:id" element={<Home />} />
+		<Route path="/settings" element={<Settings />} />
 
 		<Route path="*" element={<Greetings />} />
 	</Routes>

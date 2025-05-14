@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isPreloader, jars, setIsOpen }) => {
 							)}
 					</div>
 					<div className="sidebar__menu">
-						<NavLink className="sidebar__menu__item" to="/">
+						<NavLink className="sidebar__menu__item" to="/settings">
 							<SvgIconSettings />
 							Settings
 						</NavLink>

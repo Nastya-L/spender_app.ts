@@ -8,6 +8,7 @@ export interface TextInputProps {
 	type?: string;
 	formId: string;
 	disabled?: boolean;
+	value?: string | null;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -17,7 +18,8 @@ const TextInput: React.FC<TextInputProps> = ({
 	onBlur,
 	type,
 	formId,
-	disabled
+	disabled,
+	value
 }) => (
 	<input
 		name={name}
@@ -29,13 +31,15 @@ const TextInput: React.FC<TextInputProps> = ({
 		onChange={onChange}
 		onBlur={onBlur}
 		disabled={disabled}
+		value={value}
 	/>
 );
 
 TextInput.defaultProps = {
 	type: 'text',
 	disabled: false,
-	onBlur: () => {}
+	onBlur: () => {},
+	value: null
 };
 
 export default TextInput;

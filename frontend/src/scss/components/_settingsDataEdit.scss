@@ -1,0 +1,83 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.settings-data-edit {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	position: relative;
+
+	&__wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+
+		&__password {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+	}
+
+	&__container {
+		.auth-form {
+			&__input {
+				@include title-text(14px, 16px, 500);
+
+				background: $background-main;
+			}
+		}
+	}
+
+	&__header {
+		@include basic-text(12px, 14px);
+
+		margin-bottom: 10px;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-start;
+		gap: 15px;
+	}
+
+	&__button {
+		@include title-text(0.8667rem, 1rem, 400);
+
+		height: 28px;
+		border-radius: 0.5333rem;
+		width: 40%;
+
+		&_apply {
+			background-color: $btn-color;
+			color: #fff;
+
+			.spinner {
+				&__animation {
+					width: 12px;
+				}
+			}
+		}
+
+		&_cancel {
+			border: 1px solid $grey-medium-color;
+			background-color: $background-color-grey;
+			color: $btn-color;
+		}
+	}
+}
+
+@media only screen and (width <= 650px) {
+	.settings-data-edit {
+		&__container {
+			padding-right: 28px;
+
+			.auth-form {
+				&__input {
+					width: 100%;
+					font-size: 13px;
+				}
+			}
+		}
+	}
+}

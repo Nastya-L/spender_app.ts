@@ -1,0 +1,53 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.settings-item-wrapper {
+	border: 1px solid $calendar-day-color;
+	border-radius: 15px;
+	padding: 1.1333rem 1.8667rem;
+	box-shadow: rgba(0, 0, 0, 24%) 0 3px 8px;
+
+	&__container {
+		.svg-icon {
+			&__arrow {
+			transform: rotate(-90deg);
+			}
+		}
+
+		&:open {
+			.svg-icon {
+				&__arrow {
+					transform: rotate(90deg);
+				}
+			}
+		}
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__title {
+		@include title-text(16px, 18px, 600);
+	}
+
+	&__summary {
+		cursor: pointer;
+		padding-bottom: 10px;
+	}
+
+	&__none {
+		display: none;
+	}
+
+	&__desc {
+		display: block;
+		margin-top: 12px;
+	}
+
+	&__text {
+		@include basic-text(14px, 16px);
+	}
+}
