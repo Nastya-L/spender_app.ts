@@ -1,6 +1,6 @@
 import type mongoose from 'mongoose';
 import type { IExpenseModel } from '../models/ExpenseSchema.js';
-import type { IUserToFE } from './userMapper.js';
+import type { IAuthUser } from './userMapper.js';
 
 export interface IExpenseOwner {
   _id: mongoose.Types.ObjectId
@@ -15,7 +15,7 @@ export interface IExpenseToFE {
   date: Date
 };
 
-const expenseWithUserMapper = (expense: IExpenseModel, user: IUserToFE): IExpenseToFE => {
+const expenseWithUserMapper = (expense: IExpenseModel, user: IAuthUser): IExpenseToFE => {
   return {
     _id: expense._id,
     value: expense.value,

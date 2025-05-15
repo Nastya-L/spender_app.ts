@@ -76,6 +76,23 @@
             }
         }
 
+        &__filter {
+            padding: 5px;
+            position: relative;
+
+            &_active::before {
+                position: absolute;
+                content: '';
+                right: 0;
+                top: 0;
+                background-color: $error-color;
+                border-radius: 50%;
+                width: 8px;
+                height: 8px;
+                pointer-events: none;
+            }
+        }
+
         &-item {
             padding: 0.1333rem 0 0;
 
@@ -99,10 +116,25 @@
 }
 
 .history-day {
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.6rem 0 0.8rem;
+    }
+
+    &__sum {
+        @include basic-text(1rem, 1rem);
+
+        margin-right: 16px;
+
+        &_symbol {
+            font-size: 0.9333rem;
+        }
+    }
+
     &__title {
         @include title-text(1.3333rem, 1.8667rem, 500);
-
-        padding: 1.6rem 0 0.8rem;
     }
 
     &__not-found {

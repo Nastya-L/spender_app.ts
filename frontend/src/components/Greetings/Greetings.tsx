@@ -38,7 +38,7 @@ const Greetings: React.FC = () => {
 							spender you are. Register now, it&apos;s easy and will only take a few minutes.
 						</p>
 						<button className="greetings__button" onClick={ClickStarted}>Get Started</button>
-						<NavLink to="/user/login" className="greetings__button-signin">Already have an account? Sign In</NavLink>
+						<NavLink to="/user/login" className="greetings__link">Already have an account? Sign In</NavLink>
 					</div>
 				</div>
 			</div>

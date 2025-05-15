@@ -3,20 +3,15 @@ import type { Document, Model } from 'mongoose';
 
 const { Schema } = mongoose;
 
-export interface IToken {
-  token: string
-  time: Date
-}
-
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId
   lastName: string
   firstName: string
   email: string
   password: string
-  token: IToken
   time: Date
   role: number
+  resetPasswordToken: string | null
 }
 
 const UserSchema = new Schema<IUser>({
@@ -36,9 +31,9 @@ const UserSchema = new Schema<IUser>({
     type: String,
     required: true
   },
-  token: {
-    token: { type: String },
-    time: { type: Date }
+  resetPasswordToken: {
+    type: String,
+    default: null
   },
   time: {
     type: Date,

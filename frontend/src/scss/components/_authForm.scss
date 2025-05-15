@@ -1,0 +1,136 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.auth-form {
+	&__container {
+		padding: 0;
+		margin: 0;
+		background-color: #fff;
+		display: flex;
+		gap: 1.6667rem;
+		height: 100vh;
+	}
+
+	&__content {
+		@include flex-center;
+
+		border-radius: $border-radius;
+		background-color: $background-color-grey;
+		width: 50%;
+		margin: $padding-home 3rem $padding-home 0;
+	}
+
+	&__wrap {
+		@include flex-center;
+
+		width: 60%;
+		max-width: 302px;
+	}
+
+	&__title {
+		@include title-text(2.4rem, 2.8rem, 700);
+
+		align-self: flex-start;
+	}
+
+	&__form {
+		@include flex-center;
+
+		gap: 1.5625rem;
+		margin-bottom: 0.3333rem
+	}
+
+	&__desc {
+		@include basic-text(1rem, 1.12rem);
+
+		align-self: flex-start;
+	}
+
+	&__label {
+		position: relative;
+
+		&__desc {
+			@include basic-text(1rem, 1.12rem);
+
+			align-self: flex-start;
+			margin-bottom: 10px;
+		}
+	}
+
+	&__input {
+		@include input;
+		@include basic-text(1rem, 1.12rem);
+
+		padding: 0.3333rem 0.8rem;
+		width: 18.3333rem;
+	}
+
+	&__img {
+		position: absolute;
+		top: 55%;
+		right: 0.3333rem;
+		border: none;
+		background: none;
+		transform: translate(-50%, -50%);
+	}
+
+	&__message {
+		@include basic-text(1rem, 1.3333rem);
+
+		width: 100%;
+		height: 40px;
+		overflow-wrap: anywhere;
+		text-align: center;
+		align-content: center;
+
+		&_success {
+			color: green;
+		}
+
+		&_error {
+			color: red;
+		}
+	}
+
+	&__button {
+		@include button(1rem, 1.3333rem);
+
+		width: 100%;
+		height: 40px;
+
+		.spinner {
+			&__animation {
+				background: $title-color-text;
+			}
+		}
+	}
+
+	&__link {
+		@include basic-text(1rem, 1.3333rem);
+
+		margin-top: 1rem;
+		user-select: none;
+
+		&:hover {
+			@include basic-text(1.2rem, 1.3333rem);
+
+			text-decoration: underline;
+			cursor: pointer;
+		}
+	}
+}
+
+@media only screen and (width <= 650px) {
+	.auth-form {
+		width: 100%;
+
+		&__wrap {
+			width: 100%;
+		}
+
+		&__content {
+			width: 100%;
+			margin: 15px;
+		}
+	}
+}

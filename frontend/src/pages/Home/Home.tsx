@@ -4,20 +4,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ErrorResponse } from '../../types/Error';
-import Sidebar from '../Sidebar/Sidebar';
-import HistoryJar from '../HistoryJar/HistoryJar';
+import Sidebar from '../../components/Sidebar/Sidebar';
+import HistoryJar from '../../components/HistoryJar/HistoryJar';
 import { IAuthState } from '../../interfaces/AuthState';
 import { IJar } from '../../interfaces/Jar';
 import authClient, { IAuthClientError } from '../../services/authClient';
-import NoJar from '../NoJar/NoJar';
-import Modal from '../UI/Modal/Modal';
+import NoJar from '../../components/NoJar/NoJar';
+import Modal from '../../components/UI/Modal/Modal';
 import { setJars } from '../../reducers/JarsReducer';
 import { RootState } from '../../store';
 import breakpoints from '../../constants/breakpoints';
 import useWidthWindow from '../../hooks/useWidthWindows';
-import MobileMenuButton from '../UI/MobileMenuButton/MobileMenuButton';
-import { SvgIconCross } from '../UI/SvgIcon/SvgIcon';
-import HistoryJarPreloader from '../UI/HistoryJarPreloader/HistoryJarPreloader';
+import MobileMenuButton from '../../components/UI/MobileMenuButton/MobileMenuButton';
+import { SvgIconCross } from '../../components/UI/SvgIcon/SvgIcon';
+import HistoryJarPreloader from '../../components/UI/HistoryJarPreloader/HistoryJarPreloader';
 
 const Home: React.FC = () => {
 	const navigate = useNavigate();

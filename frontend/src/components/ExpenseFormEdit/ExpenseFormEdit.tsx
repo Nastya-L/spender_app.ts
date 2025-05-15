@@ -24,7 +24,7 @@ const ExpenseFormEdit: React.FC<IExpenseFormEditProps> = ({
 	DeleteExpense, isLoading
 }) => {
 	const [expenseDate, setExpenseDate] = useState<CalendarDate>(expense.date);
-	const [expenseValue, setExpenseValue] = useState(expense.value);
+	const [expenseValue, setExpenseValue] = useState<string>(String(expense.value));
 	const [expenseCategory, setExpenseCategory] = useState(expense.category);
 
 	const {
@@ -33,7 +33,7 @@ const ExpenseFormEdit: React.FC<IExpenseFormEditProps> = ({
 
 	useEffect(() => {
 		setExpenseDate(expense.date);
-		setExpenseValue(expense.value);
+		setExpenseValue(String(expense.value));
 		setExpenseCategory(expense.category);
 	}, [expense]);
 
@@ -48,7 +48,7 @@ const ExpenseFormEdit: React.FC<IExpenseFormEditProps> = ({
 	const ClickUpdateExpense = () => {
 		const updateExpense = {
 			id: expense._id,
-			value: expenseValue,
+			value: Number(expenseValue),
 			category: expenseCategory,
 			date: GetUTC(new Date(expenseDate as Date))
 		};
