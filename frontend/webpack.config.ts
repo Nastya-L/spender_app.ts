@@ -58,10 +58,16 @@ module.exports = {
       chunkFilename: "[id].css",
     }),
     new CopyPlugin({
-      patterns: [{ 
+      patterns: [
+        { 
           from: path.resolve(__dirname, "public"), 
           to: path.resolve(__dirname, "build"),
-      }],
+        },
+        {
+          from: path.resolve(__dirname, "src/images/email-logo.png"),
+          to: path.resolve(__dirname, "build/static/media/email-logo.png"),
+        }
+      ],
     }),
     new Dotenv({
       systemvars: true,
