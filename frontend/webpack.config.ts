@@ -23,11 +23,22 @@ module.exports = {
         loader: "ts-loader",
       },
       {
-        test: /\.(png|jpeg|gif|svg|webp|jpg)$/i,
-        type: 'asset/resource',
-        generator: {
-          filename: 'static/media/[name].[hash][ext]'
-        }
+        oneOf: [
+          {
+            test: /email-logo\.png$/i,
+            type: 'asset/resource',
+            generator: {
+              filename: 'static/media/[name][ext]',
+            },
+          },
+          {
+            test: /\.(png|jpeg|gif|svg|webp|jpg)$/i,
+            type: 'asset/resource',
+            generator: {
+              filename: 'static/media/[name].[hash][ext]',
+            },
+          },
+        ]
       },
       {
         test: /\.(s[ac]ss|css)$/i,
