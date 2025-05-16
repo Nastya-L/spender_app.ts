@@ -5,6 +5,8 @@ dotenv.config();
 export const resetPasswordTemplate = (resetURL: string): string => {
   const frontendUrl = String(process.env.FRONTEND_URL);
 
+  const emailLogo = `${frontendUrl}/static/media/email-logo.png`;
+
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -81,7 +83,7 @@ export const resetPasswordTemplate = (resetURL: string): string => {
               <tr>
                 <td style="vertical-align: middle; padding-right: 10px;">
                   <a href="${frontendUrl}">
-                    <img src="cid:logoimg" alt="Logo" width="100"/>
+                    <img src=${emailLogo} alt="Logo" width="100"/>
                   </a>
                 </td>
               </tr>
