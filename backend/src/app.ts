@@ -19,7 +19,7 @@ const {
 } = process.env;
 app.use(cors());
 app.use(express.json());
-app.use('/user/register', userRouter);
+app.use('/user', userRouter);
 app.use('/user', authorizationRouters);
 app.use('/jar', jarRouter);
 app.use('/share', shareJarRouter);
