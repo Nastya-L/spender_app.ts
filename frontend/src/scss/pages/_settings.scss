@@ -14,12 +14,16 @@
 	}
 
 	&__sidebar {
+		height: calc(100vh - 28px);
 		padding-right: 3.2667rem;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: flex-start;
-		padding-bottom: 2.4rem;
+
+		&__wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: flex-start;
+			height: 90%;
+		}
 	}
 
 	&__back {

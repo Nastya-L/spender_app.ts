@@ -8,19 +8,21 @@ const SidebarSettings: React.FC = () => {
 	const dispatch = useDispatch();
 	return (
 		<div className="settings__sidebar">
-			<Link to="/home" className="settings__back">
-				<SvgIconArrow />
-				<p className="settings__back__text">Back to Jars</p>
-			</Link>
-			<div className="settings__sidebar__item">
-				<Link
-					onClick={() => { dispatch(logout()); }}
-					className="sidebar__menu__item"
-					to="/user/login"
-				>
-					<SvgIconLogOut />
-					Sign Out
+			<div className="settings__sidebar__wrapper">
+				<Link to="/home" className="settings__back">
+					<SvgIconArrow />
+					<p className="settings__back__text">Back to Jars</p>
 				</Link>
+				<div className="settings__sidebar__item">
+					<Link
+						onClick={() => { dispatch(logout()); }}
+						className="sidebar__menu__item"
+						to="/user/login"
+					>
+						<SvgIconLogOut />
+						Sign Out
+					</Link>
+				</div>
 			</div>
 		</div>
 	);

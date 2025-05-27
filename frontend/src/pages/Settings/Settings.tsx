@@ -34,7 +34,12 @@ const Settings: React.FC = () => {
 
 	const renderEditComponent = (id: SettingsSectionId) => {
 		const EditComponent = EditComponentsMap[id];
-		return EditComponent ? <EditComponent onCancel={closeEditComponent} /> : null;
+		return EditComponent ? (
+			<EditComponent
+				onCancel={closeEditComponent}
+				setEditingSection={setEditingSection}
+			/>
+		) : null;
 	};
 
 	return (

@@ -1,69 +1,93 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import { IAuthState } from '../../interfaces/AuthState';
 import SettingsEditBase from '../SettingsEditBase/SettingsEditBase';
 import SettingsEditField from '../SettingsEditField/SettingsEditField';
 import TextInput from '../Auth/TextInput/TextInput';
 import { isValidFirstLastNames } from '../../validators/ValidateUser';
+import { IUser } from '../../interfaces/User';
+import { apiUserUpdateProfile } from '../../services/BackendUrl';
+import authClient from '../../services/authClient';
+import { loginSuccess } from '../../reducers/AuthReducer';
+import useAuthFormMessage from '../../hooks/useAuthFormMessage';
+import handleApiError from '../Auth/helpers/handleApiError';
+import AuthFormMessageType from '../../types/AuthFormMessageType';
+import { EditComponentType } from '../EditComponentsMap/types/EditComponentProps';
 
-interface EditPersonalDataProps {
-	onCancel: () => void;
-}
-
-const EditPersonalData: React.FC<EditPersonalDataProps> = ({ onCancel }) => {
+const EditPersonalData: React.FC<EditComponentType> = ({ onCancel, setEditingSection }) => {
 	const authUser = useSelector((state: IAuthState) => state.auth.user);
-	const [userData, setUserData] = useState({
-		firstName: authUser.firstName,
-		lastName: authUser.lastName
-	});
+	const [lastName, setLastName] = useState(authUser.lastName);
+	const [firstName, setFirstName] = useState(authUser.firstName);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const dispatch = useDispatch();
 
-	const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
-		const { name, value } = event.currentTarget;
+	const { message, displayMessage } = useAuthFormMessage();
 
-		setUserData((prev) => ({
-			...prev,
-			[name]: value
-		}));
+	const handleInputChangeLastName = (event: React.FormEvent<HTMLInputElement>) => {
+		const { value } = event.currentTarget;
+		setLastName(value);
+	};
+
+	const handleInputChangeFirstName = (event: React.FormEvent<HTMLInputElement>) => {
+		const { value } = event.currentTarget;
+		setFirstName(value);
 	};
 
 	const handleApply = (event: React.MouseEvent<HTMLElement>) => {
 		event.preventDefault();
-		const errorsFirstName = isValidFirstLastNames(userData.firstName);
-		const errorsLastName = isValidFirstLastNames(userData.lastName);
+		const errorsFirstName = isValidFirstLastNames(firstName);
+		const errorsLastName = isValidFirstLastNames(lastName);
 		if (errorsFirstName !== undefined) {
-			toast.error(errorsFirstName);
+			displayMessage(errorsFirstName, AuthFormMessageType.error);
 			return;
 		}
 		if (errorsLastName !== undefined) {
-			toast.error(errorsFirstName);
+			displayMessage(errorsLastName, AuthFormMessageType.error);
 			return;
 		}
 		setIsLoading(true);
-		console.log('Applying personal data changes', userData);
+		const userData = {
+			firstName,
+			lastName
+		};
+
+		authClient
+			.patch<IUser>(`${apiUserUpdateProfile}/${authUser._id}`, userData)
+			.then((response) => {
+				const responseData = response.data;
+				dispatch(loginSuccess(responseData));
+				setEditingSection(null);
+			})
+			.catch((error) => handleApiError(error, displayMessage))
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
-		<SettingsEditBase onApply={handleApply} onCancel={onCancel} isLoading={isLoading}>
+		<SettingsEditBase
+			onApply={handleApply}
+			onCancel={onCancel}
+			isLoading={isLoading}
+			message={message}
+		>
 			<SettingsEditField label="First Name">
 				<TextInput
-					formId="Last Name"
+					formId="First Name"
 					placeholder="First Name"
-					onChange={handleInputChange}
+					onChange={handleInputChangeFirstName}
 					type="text"
 					name="First Name"
-					value={userData.firstName}
+					value={firstName}
 				/>
 			</SettingsEditField>
-
 			<SettingsEditField label="Last Name">
 				<TextInput
 					formId="Last Name"
 					name="Last Name"
 					placeholder="Last Name"
-					onChange={handleInputChange}
-					value={userData.lastName}
+					onChange={handleInputChangeLastName}
+					value={lastName}
 					type="text"
 				/>
 			</SettingsEditField>

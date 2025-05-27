@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import { IAuthState } from '../../interfaces/AuthState';
 import SettingsEditBase from '../SettingsEditBase/SettingsEditBase';
 import SettingsEditField from '../SettingsEditField/SettingsEditField';
 import TextInput from '../Auth/TextInput/TextInput';
 import { isValidEmail } from '../../validators/ValidateUser';
+import useAuthFormMessage from '../../hooks/useAuthFormMessage';
+import { EditComponentType } from '../EditComponentsMap/types/EditComponentProps';
+import AuthFormMessageType from '../../types/AuthFormMessageType';
+import authClient from '../../services/authClient';
+import { IUser } from '../../interfaces/User';
+import { apiUserUpdateProfile } from '../../services/BackendUrl';
+import { loginSuccess } from '../../reducers/AuthReducer';
+import handleApiError from '../Auth/helpers/handleApiError';
 
-interface EditEmailProps {
-	onCancel: () => void;
-}
-
-const EditEmail: React.FC<EditEmailProps> = ({ onCancel }) => {
+const EditEmail: React.FC<EditComponentType> = ({ onCancel, setEditingSection }) => {
 	const authUser = useSelector((state: IAuthState) => state.auth.user);
 	const [email, setEmail] = useState<string>(authUser.email);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const dispatch = useDispatch();
+
+	const { message, displayMessage } = useAuthFormMessage();
 
 	const handleEmailChange = (e: React.FormEvent<HTMLInputElement>): void => {
 		setEmail(e.currentTarget.value);
@@ -24,15 +30,33 @@ const EditEmail: React.FC<EditEmailProps> = ({ onCancel }) => {
 		event.preventDefault();
 		const errors = isValidEmail(email);
 		if (errors !== undefined) {
-			toast.error(errors);
+			displayMessage(errors, AuthFormMessageType.error);
 			return;
 		}
 		setIsLoading(true);
-		console.log('Applying email changes', email);
+		const userData = {
+			email
+		};
+		authClient
+			.patch<IUser>(`${apiUserUpdateProfile}/${authUser._id}`, userData)
+			.then((response) => {
+				const responseData = response.data;
+				dispatch(loginSuccess(responseData));
+				setEditingSection(null);
+			})
+			.catch((error) => handleApiError(error, displayMessage))
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
-		<SettingsEditBase onApply={handleApply} onCancel={onCancel} isLoading={isLoading}>
+		<SettingsEditBase
+			onApply={handleApply}
+			onCancel={onCancel}
+			isLoading={isLoading}
+			message={message}
+		>
 			<SettingsEditField label="Email">
 				<TextInput
 					formId="EditEmail"
