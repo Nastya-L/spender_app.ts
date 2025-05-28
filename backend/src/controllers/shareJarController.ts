@@ -5,11 +5,15 @@ import User from '../models/UserSchema.js';
 import Jar from '../models/JarSchema.js';
 import jarMapper from '../utils/jarMapper.js';
 import ExpensePeriod from '../models/ExpensePeriodSchema.js';
+import { shareJarTemplate } from '../templates/shareJarTemplate.js';
+import { sendMail } from '../utils/sendMail.js';
+import { type IAuthUser } from '../utils/userMapper.js';
 
 export const shareJar = (req: IUserRequest, res: Response): void => {
   (async () => {
     const userEmail: string = req.body.email;
     const idJar: string = req.params.id;
+    const user: IAuthUser = req.user;
 
     await User.findOne({ email: userEmail })
       .then(async (foundUser) => {
@@ -24,7 +28,7 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
           return res.status(404).json({ error: [{ msg: 'No jar found' }] });
         }
 
-        if (!foundJar.owner.equals(req.user?._id)) {
+        if (!foundJar.owner.equals(user._id)) {
           return res.status(403).json({ error: [{ msg: 'You are not owner' }] });
         }
 
@@ -38,6 +42,14 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
               return res.status(503).json({ error: [{ msg: 'Try again later' }] });
             }
             const jar = jarMapper(updateJar);
+
+            const emailTemplate = shareJarTemplate(jar.name, user.firstName);
+            await sendMail(
+              userEmail,
+              'Jar Invitation',
+              emailTemplate
+            );
+
             res.status(200).json(jar);
           });
       }).catch((err) => {
