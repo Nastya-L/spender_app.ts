@@ -1,0 +1,36 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.settings-item {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin-top: 15px;
+
+	&__wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-right: 60px;
+	}
+
+	&__header {
+		@include basic-text(12px, 14px);
+
+		margin-bottom: 10px;
+	}
+
+	&__text {
+		@include title-text(14px, 16px, 500);
+	}
+
+	&__button {
+		@include title-text(0.8667rem, 1rem, 600);
+
+		background-color: $btn-color;
+		color: #fff;
+		border-radius: 0.5333rem;
+		height: 27px;
+		width: 20%;
+	}
+}

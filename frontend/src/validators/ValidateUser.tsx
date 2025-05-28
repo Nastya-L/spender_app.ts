@@ -19,7 +19,7 @@ const isValidPassword = (password: string, repeatPassword: string): string | und
 	const lettersConsist: boolean = /[a-zA-Z]/.test(password);
 	const digitsConsist: boolean = /[0-9]/.test(password);
 
-	if (repeatPassword && repeatPassword !== password) {
+	if (repeatPassword.length === 0 && repeatPassword !== password) {
 		return 'Password mismatch';
 	}
 	if (password.length < minLengthPassword && password.length !== 0) {
@@ -68,5 +68,5 @@ const ValidateUser = (user: User): string | undefined => {
 };
 
 export {
-	User, ValidateUserField, ValidateUser, isValidPassword, isValidEmail
+	User, ValidateUserField, ValidateUser, isValidPassword, isValidEmail, isValidFirstLastNames
 };

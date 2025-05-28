@@ -31,10 +31,14 @@
 @use './scss/components/filters';
 @use './scss/components/checkboxLinear';
 @use './scss/components/authForm.scss';
+@use './scss/components/settingsItemWrapper';
+@use './scss/components/settingsItem';
+@use './scss/components/settingsDataEdit.scss';
 
 // pages
 @use './scss/pages/greetings';
 @use './scss/pages/home';
+@use './scss/pages/settings';
 
 // utils
 @use './scss/utils/mixins';

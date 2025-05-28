@@ -1,0 +1,75 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.settings {
+	&__main {
+		padding: 18px;
+	}
+
+	&__wrapper {
+		overflow: auto;
+		height: 100%;
+		padding: 0 10px 10px;
+		max-width: $content-max-width;
+	}
+
+	&__sidebar {
+		height: calc(100vh - 28px);
+		padding-right: 3.2667rem;
+
+		&__wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: flex-start;
+			height: 90%;
+		}
+	}
+
+	&__back {
+		display: flex;
+		align-items: center;
+		padding: 2.2667rem 0 2.2667rem 0.6667rem;
+
+		&__text {
+			@include title-text(18px, 20px, 500);
+		}
+	}
+
+	&__title {
+		@include title-text(2.4rem, 2.8rem, 400);
+	}
+
+	&__container {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+		margin-top: 22px;
+	}
+}
+
+@media only screen and (width <= 650px) {
+	.settings {
+		&__wrapper {
+			overflow: hidden;
+		}
+
+		&__sidebar {
+			height: 90%;
+
+			&__item {
+				padding-left: 0.8rem;
+			}
+		}
+
+		&__back {
+			&__text {
+				font-size: 15px;
+			}
+		}
+
+		&__title {
+			font-size: 28px;
+		}
+	}
+}
