@@ -13,7 +13,7 @@ export const shareJar = (req: IUserRequest, res: Response): void => {
   (async () => {
     const userEmail: string = req.body.email;
     const idJar: string = req.params.id;
-    const user: IAuthUser = req.user;
+    const user: IAuthUser = (req.user as IAuthUser);
 
     await User.findOne({ email: userEmail })
       .then(async (foundUser) => {

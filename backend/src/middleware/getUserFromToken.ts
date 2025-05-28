@@ -8,10 +8,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export interface IUserRequest extends Request {
-  user: IAuthUser
+  user?: IAuthUser
 }
 
-const getUserFromToken = (req: IUserRequest, res: Response, next: NextFunction): void => {
+const getUserFromToken = (req: Request, res: Response, next: NextFunction): void => {
   (async () => {
     const secretKey = String(process.env.JWT_SECRET);
     const bearer = req.headers.authorization?.split(' ');
@@ -34,7 +34,7 @@ const getUserFromToken = (req: IUserRequest, res: Response, next: NextFunction):
         return res.status(401).json({ error: [{ msg: 'User not found' }] });
       }
 
-      req.user = authUserMapper(user);
+      (req as IUserRequest).user = authUserMapper(user);
       next();
     } catch (error) {
       return res.status(403).json({ error: [{ msg: 'Invalid or expired token' }] });
